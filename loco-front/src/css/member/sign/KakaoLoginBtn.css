@@ -1,0 +1,16 @@
+.kakao-login-btn {
+  width: 100%;
+  background-color: #fee500;
+  border: none;
+  border-radius: 5px;
+  padding: 12px;
+  font-size: 18px;
+  font-weight: bold;
+  cursor: pointer;
+  color: #3c1e1e;
+  margin-bottom: 10px;
+}
+
+.kakao-login-btn:hover {
+  background-color: #fdd835;
+}
