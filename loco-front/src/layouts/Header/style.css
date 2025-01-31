@@ -1,0 +1,126 @@
+/* Header 전체 스타일 */
+#header {
+  padding: 10px 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.header-container {
+  width: 1200px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.header-left-box {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  cursor: pointer;
+}
+
+.icon-box {
+  width: 50px;
+  height: 50px;
+  margin-right: 10px;
+}
+
+.header-logo {
+  color: rgba(0, 0, 0, 1);
+  font-family: "Inter";
+  font-size: 30px;
+  font-weight: bold;
+  line-height: 140%;
+  letter-spacing: -0.4px;
+}
+
+.header-right-box {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+}
+
+.header-main-menu {
+  width: 100%;
+  background-color: rgba(55, 55, 55, 1);
+  padding: 1px 0;
+  text-align: center;
+  margin-top: 10px;
+}
+
+.header-main-menu .menu {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  justify-content: center;
+  gap: 30px;
+  position: relative;
+}
+
+.header-main-menu .menu > li {
+  position: relative;
+  padding: 10px 15px;
+}
+
+.header-main-menu .menu > li > a {
+  text-decoration: none;
+  color: white;
+  font-size: 16px;
+  padding: 10px 20px;
+  display: inline-block;
+  font-weight: bold;
+}
+
+.header-main-menu .menu > li:hover > a {
+  background-color: #444;
+  border-radius: 5px;
+}
+
+.header-main-menu .menu > li .dropdown {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  width: max-content;
+  min-width: 170px;
+  background-color: #fff;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  z-index: 1000;
+  transition: opacity 0.3s ease, transform 0.3s ease;
+  opacity: 0;
+  transform: translateY(10px);
+  display: none;
+  padding: 5px 0;
+}
+
+.header-main-menu .menu > li:hover .dropdown {
+  display: block;
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.header-main-menu .menu > li .dropdown li {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.header-main-menu .menu > li .dropdown li a {
+  display: block;
+  padding: 8px 15px;
+  color: rgba(55, 55, 55, 1);
+  font-size: 13px;
+  font-weight: normal;
+  text-align: left;
+  transition: background-color 0.3s ease, color 0.3s ease;
+  text-decoration: none;
+}
+
+.header-main-menu .menu > li .dropdown li a:hover {
+  background-color: rgba(0, 0, 0, 0.15);
+  color: rgba(0, 0, 0, 1);
+}
