@@ -1,0 +1,144 @@
+.black-button {
+  border-radius: 46px;
+  width: 95px;
+  height: 30px;
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  background-color: rgba(0, 0, 0, 1);
+
+  color: rgba(255, 255, 255, 1);
+
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 140%;
+
+  cursor: pointer;
+}
+
+.black-button:hover {
+  background-color: rgba(0, 0, 0, 0.85);
+}
+
+.black-large-full-button {
+  border-radius: 46px;
+  width: 100%;
+  height: 48px;
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  background-color: rgba(0, 0, 0, 1);
+
+  color: rgba(255, 255, 255, 1);
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 140%;
+
+  cursor: pointer;
+}
+
+.black-large-full-button:hover {
+  background-color: rgba(0, 0, 0, 0.85);
+}
+
+.disable-button {
+  border-radius: 46px;
+  width: 95px;
+  height: 30px;
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  background-color: rgba(0, 0, 0, 0.4);
+
+  color: rgba(255, 255, 255, 1);
+
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 140%;
+
+  cursor: not-allowed;
+}
+
+.white-button {
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  border-radius: 46px;
+  width: 93px;
+  height: 28px;
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  background-color: rgba(255, 255, 255, 1);
+
+  color: rgba(0, 0, 0, 0.5);
+
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 140%;
+
+  cursor: pointer;
+}
+
+.white-button:hover {
+  background-color: rgba(0, 0, 0, 0.05);
+}
+
+.icon-button {
+  border-radius: 50% 50%;
+
+  width: 24px;
+  height: 24px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  cursor: pointer;
+}
+
+.icon-button:hover {
+  background-color: rgba(0, 0, 0, 0.05);
+}
+
+.icon {
+  width: 100%;
+  height: 100%;
+
+  background-position: 50% 50%;
+  background-size: 100% 100%;
+}
+
+.eye-light-off-icon {
+  background-image: url(assets/images/eye-light-off.png);
+}
+
+.eye-light-on-icon {
+  background-image: url(assets/images/eye-light-on.png);
+}
+
+.expand-right-light-icon {
+  background-image: url(assets/images/expand-right-light.png);
+}
+
+.insta-icon {
+  background-image: url(assets/images/insta.png);
+}
+
+.naver-blog-icon {
+  background-image: url(assets/images/naver-blog.png);
+}
+
+.logo-main-icon {
+  background-image: url(assets/images/main-logo.png);
+}
+
+.search-light-icon {
+  background-image: url(assets/images/search-light.png);
+}
