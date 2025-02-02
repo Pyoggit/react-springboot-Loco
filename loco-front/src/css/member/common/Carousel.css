@@ -37,7 +37,7 @@
   opacity: 1;
 }
 
-button {
+ /* button {
   position: absolute;
   top: 50%;
   transform: translateY(-50%);
@@ -62,4 +62,46 @@ button {
 button svg {
   filter: none;
   box-shadow: none;
+}  */
+
+/* 범용적인 button 이름 사용으로 클래스명 추가한 css */
+.carousel button {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  background: none;
+  color: white;
+  border: none;
+  padding: 10px;
+  cursor: pointer;
+  border-radius: 50%;
+  font-size: 24px;
+  z-index: 10;
 }
+
+.carousel .prev {
+  left: 15px;
+}
+
+.carousel .next {
+  right: 15px;
+}
+
+.carousel button svg {
+  filter: none;
+  box-shadow: none;
+} 
+
+.carousel-button {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  background: none;
+  color: white;
+  border: none;
+  padding: 10px;
+  cursor: pointer;
+  border-radius: 50%;
+  font-size: 24px;
+  z-index: 10;
+}  

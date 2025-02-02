@@ -43,9 +43,13 @@ function Carousel({ children }) {
   return (
     <div className="carousel-wrapper">
       <div className="carousel">
-        <button className="prev" onClick={handlePrevious}>
+        {/* <button className="prev" onClick={handlePrevious}>
           <FontAwesomeIcon icon={faChevronLeft} size="lg" />
-        </button>
+        </button>  */}
+        {/* 범용적인 button 이름 사용으로 클래스명 추가 */}
+        <button className="carousel-button prev" onClick={handlePrevious}>
+          <FontAwesomeIcon icon={faChevronLeft} size="lg" />
+        </button> 
 
         <div className="carousel-inner">
           {children.map((child, index) => (
@@ -57,9 +61,13 @@ function Carousel({ children }) {
             </div>
           ))}
         </div>
-        <button className="next" onClick={handleNext}>
+        {/* <button className="next" onClick={handleNext}>
           <FontAwesomeIcon icon={faChevronRight} size="lg" />
-        </button>
+        </button>  */}
+        {/* 범용적인 button 이름 사용으로 클래스명 추가 */}
+        <button className="carousel-button next" onClick={handleNext}>
+          <FontAwesomeIcon icon={faChevronRight} size="lg" />
+        </button> 
       </div>
     </div>
   );

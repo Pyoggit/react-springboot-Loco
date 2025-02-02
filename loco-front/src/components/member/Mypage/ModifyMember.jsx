@@ -1,27 +1,28 @@
 import { useState } from "react";
-import DaumPostcode from "react-daum-postcode";
-import "@/css/member/sign/SignUpForm.css";
+import DaumPostcode from "react-daum-postcode"; // 우편번호 검색 라이브러리
+import "@/css/member/mypage/ModifyMember.css"; // 기존 CSS 유지
 
-const SignUpForm = () => {
-  const [formData, setFormData] = useState({
-    email: "",
-    password: "",
-    confirmPassword: "",
-    name: "",
-    gender: "",
+const ModifyMember = () => {
+  const dummyUser = {
+    email: "test@example.com",
+    password: "password123",
+    confirmPassword: "password123",
+    name: "홍길동",
+    gender: "M",
     mobile1: "010",
-    mobile2: "",
-    mobile3: "",
+    mobile2: "1234",
+    mobile3: "5678",
     phone1: "02",
-    phone2: "",
-    phone3: "",
-    birthDate: "",
-    zonecode: "",
-    address: "",
-    detailAddress: "",
+    phone2: "123",
+    phone3: "4567",
+    birthDate: "1995-06-15",
+    zonecode: "12345",
+    address: "서울특별시 강남구 테헤란로 123",
+    detailAddress: "아파트 101호",
     profileImage: null,
-  });
+  };
 
+  const [formData, setFormData] = useState(dummyUser);
   const [isOpen, setIsOpen] = useState(false);
 
   const handleComplete = (data) => {
@@ -62,12 +63,12 @@ const SignUpForm = () => {
       alert("비밀번호가 일치하지 않습니다.");
       return;
     }
-    console.log("서버로 보낼 데이터:", formData);
+    console.log("수정된 데이터:", formData);
   };
 
   return (
-    <div className="signup-container">
-      <h2>회원가입</h2>
+    <div className="modify-container">
+      <h2>회원정보 수정</h2>
       <form onSubmit={handleSubmit}>
         <div className="group">
           <label className="title">이메일</label>
@@ -76,8 +77,7 @@ const SignUpForm = () => {
             type="email"
             name="email"
             value={formData.email}
-            onChange={handleChange}
-            required
+            readOnly
           />
         </div>
 
@@ -126,7 +126,6 @@ const SignUpForm = () => {
             onChange={handleChange}
             required
           >
-            <option value="">선택하세요</option>
             <option value="M">남성</option>
             <option value="F">여성</option>
           </select>
@@ -212,7 +211,8 @@ const SignUpForm = () => {
               type="text"
               name="zonecode"
               value={formData.zonecode}
-              readOnly
+              onChange={handleChange}
+              required
             />
             <button
               className="btn-zipcode"
@@ -231,7 +231,8 @@ const SignUpForm = () => {
             type="text"
             name="address"
             value={formData.address}
-            readOnly
+            onChange={handleChange}
+            required
           />
         </div>
 
@@ -258,15 +259,17 @@ const SignUpForm = () => {
           />
         </div>
 
-        <button type="submit" className="signup-btn">
-          가입하기
+        <button type="submit" className="modify-btn">
+          수정하기
         </button>
       </form>
 
       {isOpen && (
         <div className="modal-overlay">
           <div className="modal-content">
-            <button onClick={() => setIsOpen(false)}>닫기</button>
+            <button className="close-btn" onClick={() => setIsOpen(false)}>
+              닫기
+            </button>
             <DaumPostcode onComplete={handleComplete} />
           </div>
         </div>
@@ -275,4 +278,4 @@ const SignUpForm = () => {
   );
 };
 
-export default SignUpForm;
+export default ModifyMember;
