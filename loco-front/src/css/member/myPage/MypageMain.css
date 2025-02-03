@@ -1,0 +1,54 @@
+.mypage-container {
+    display: flex;
+    width: 100%;
+    max-width: 1200px;
+    margin: 50px auto;
+    gap: 20px;
+}
+
+.mypage-aside {
+    width: 250px;
+    padding: 20px;
+    border: 1px solid #ddd;
+    border-radius: 10px;
+    background-color: #f9f9f9;
+}
+
+.mypage-aside h2 {
+    font-size: 20px;
+    margin-bottom: 15px;
+    text-align: center;
+}
+
+.mypage-aside ul {
+    list-style: none;
+    padding: 0;
+}
+
+.mypage-aside li {
+    padding: 10px;
+    text-align: center;
+    border-radius: 5px;
+}
+
+.mypage-aside li a {
+    text-decoration: none;
+    color: #333;
+    font-weight: bold;
+}
+
+.mypage-aside li:hover {
+    background-color: #ddd;
+}
+
+.mypage-content {
+    flex-grow: 1;
+    padding: 20px;
+    border: 1px solid #ddd;
+    border-radius: 10px;
+    background-color: #fff;
+    min-height: 300px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
