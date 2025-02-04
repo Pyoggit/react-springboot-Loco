@@ -1,6 +1,5 @@
 import { Route, Routes } from "react-router-dom";
 import "./App.css";
-import Container from "./layouts/Container";
 import Member from "./pages/member/Member";
 import AdminLoginMain from "./components/admin/AdminLogin/AdminLoginMain";
 import LoginMain from "./components/member/Sign/LoginForm";
@@ -10,7 +9,7 @@ import ModifyMember from "./components/member/Mypage/ModifyMember";
 import DeleteMember from "./components/member/Mypage/DeleteMember";
 import MypageMain from "./components/member/Mypage/MypageMain";
 import BusinesspageMain from "./components/member/Mypage/BusinesspageMain";
-import AdminpageMain from "./components/member/Mypage/AdminpageMain";
+import Admin from "./pages/admin/Admin";
 
 function App() {
   return (
@@ -19,16 +18,14 @@ function App() {
       <Route path="/admin/login" element={<AdminLoginMain />} />
       <Route path="/login" element={<LoginMain />} />
       <Route path="/signup" element={<SignUp />} />
-      <Route path="/adminpage/*" element={<AdminpageMain />} />
+      <Route path="/adminpage/*" element={<Admin />} />
+
       <Route path="*" element={<h1> 404 Not Found</h1>} />
 
-      {/* 따로 경로 설정 */}
-      {/* <Route path="/auth/kakao" element={<KakaoCallback />} />
-        <Route path="/user/:email/modify" element={<ModifyMember />} />
-        <Route path="/user/:email/delete" element={<DeleteMember />} />
-        
-        <Route path="/businesspage/*" element={<BusinesspageMain />} /> */}
-      {/* 따로 경로 설정 */}
+      <Route path="/auth/kakao" element={<KakaoCallback />} />
+      <Route path="/user/:email/modify" element={<ModifyMember />} />
+      <Route path="/user/:email/delete" element={<DeleteMember />} />
+      <Route path="/businesspage/*" element={<BusinesspageMain />} />
     </Routes>
   );
 }
