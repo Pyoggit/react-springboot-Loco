@@ -1,0 +1,48 @@
+.calendar-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 8px;
+  padding: 16px;
+}
+
+.dates-list {
+  display: flex;
+  gap: 8px;
+  transition: transform 0.3s ease-in-out;
+}
+
+.animating {
+  transform: translateX(10px);
+}
+
+.date-item {
+  text-align: center;
+  width: 50px;
+  padding: 8px;
+  border-radius: 50%;
+  cursor: pointer;
+  background-color: #f0f0f0;
+  color: #333;
+}
+
+.date-item:hover {
+  background-color: #dcdcdc;
+}
+
+.selected {
+  background-color: #007bff;
+  color: white;
+}
+
+.today {
+  border: 2px solid green;
+}
+
+.sunday {
+  color: red;
+}
+
+.saturday {
+  color: blue;
+}

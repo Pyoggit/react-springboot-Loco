@@ -1,0 +1,14 @@
+.calendar-nav-button {
+  background-color: #e0e0e0;
+  border: none;
+  border-radius: 50%;
+  padding: 8px 12px;
+  cursor: pointer;
+  font-size: 18px;
+}
+
+.calendar-nav-button:hover {
+  background-color: #d0d0d0;
+  transform: scale(1.05);
+  transition: all 0.2s ease;
+}
