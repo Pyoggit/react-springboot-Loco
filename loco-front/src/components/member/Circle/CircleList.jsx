@@ -18,7 +18,7 @@ const CircleList = () => {
         <button
           className=".black-button"
           onClick={() => {
-            nav(`/new`);
+            nav(`/Circle/new`);
           }}
         >
           모임 만들기

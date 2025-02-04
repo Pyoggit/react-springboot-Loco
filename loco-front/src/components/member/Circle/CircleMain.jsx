@@ -1,7 +1,7 @@
 import CalendarNavigation from './CalendarNavigation';
 import './css/CalendarNavigation.css'; // 스타일 파일 연결
 import './css/CalendarButton.css';
-import './CircleMain.css';
+import './css/CircleMain.css';
 import CircleCategory from './CircleCategory';
 import CircleList from './CircleList';
 
@@ -68,10 +68,13 @@ const CircleMain = () => {
 
   return (
     <>
+      <CalendarNavigation />
+      <CircleList />
       <main className="main-layout">
+        <aside className="category-section">
+          <CircleCategory />
+        </aside>
         <div className="content-section">
-          <CalendarNavigation />
-          <CircleList />
           <div className="mock-post-container">
             {mockPosts.map((post) => (
               <div key={post.id} className="post-card">
@@ -90,9 +93,6 @@ const CircleMain = () => {
             ))}
           </div>
         </div>
-        <aside className="category-section">
-          <CircleCategory />
-        </aside>
       </main>
     </>
   );
