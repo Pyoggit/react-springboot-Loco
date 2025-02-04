@@ -15,7 +15,7 @@ export default function Header() {
     navigate("/");
   };
 
-  const LOGIN_PATH = () => "/member/Sign/LoginMain";
+  const LOGIN_PATH = () => "/login";
   const MAIN_PATH = () => "/";
   const USER_PATH = (userEmail) => `/user/${userEmail}`;
 
@@ -86,78 +86,69 @@ export default function Header() {
             <a href="#">페이지소개</a>
             <ul className="dropdown">
               <li>
-                <a href="#">종합안내</a>
-              </li>
-            </ul>
-          </li>
-          <li>
-            <a href="#">모임/참여</a>
-            <ul className="dropdown">
-              <li>
-                <a href="#">스포츠</a>
+                <a href="#">인사말</a>
               </li>
               <li>
-                <a href="#">맛집탐방</a>
+                <a href="#">사용가이드</a>
               </li>
-              <li>
-                <a href="#">독서</a>
-              </li>
-              <li>
-                <a href="#">친목</a>
-              </li>
-              <li>
-                <a href="#">전시</a>
-              </li>
-              <li>
-                <a href="#">취미활동</a>
-              </li>
-              <li>
-                <a href="#">스터디</a>
-              </li>
-            </ul>
-          </li>
-          <li>
-            <a href="#">커뮤니티</a>
-            <ul className="dropdown">
               <li>
                 <a href="#">공지사항</a>
               </li>
+            </ul>
+          </li>
+          <li>
+            <a href="/circle">모임/참여</a>
+            <ul className="dropdown">
+              <li>
+                <a href="#">모임 보기</a>
+              </li>
+              <li>
+                <a href="#">모임 개설하기</a>
+              </li>
+              <li>
+                <a href="#">지역별 활동량</a>
+              </li>
+            </ul>
+          </li>
+          <li>
+            <a href="/board">커뮤니티</a>
+            <ul className="dropdown">
               <li>
                 <a href="#">자유게시판</a>
               </li>
               <li>
-                <a href="#">리뷰</a>
+                <a href="#">익명게시판</a>
               </li>
             </ul>
           </li>
           <li>
-            <a href="#">공구몰</a>
+            <a href="/market">중고거래</a>
             <ul className="dropdown">
               <li>
-                <a href="#">스포츠</a>
+                <a href="/">상품 보기</a>
               </li>
               <li>
-                <a href="#">스터디</a>
+                <a href="#">상품 등록하기</a>
               </li>
               <li>
-                <a href="#">의류</a>
+                <a href="#">장바구니</a>
               </li>
             </ul>
           </li>
           <li>
-            <a href="#">고객센터</a>
+            <a href="/service">고객센터</a>
             <ul className="dropdown">
               <li>
                 <a href="#">FAQ</a>
               </li>
               <li>
-                <a href="#">판매자등록문의</a>
+                <a href="#">문의하기</a>
               </li>
               <li>
                 <a href="#">사이트 불편&개선사항</a>
               </li>
               <li>
-                <a href="#">기타문의</a>
+                <a href="#">신고하기</a>
               </li>
             </ul>
           </li>

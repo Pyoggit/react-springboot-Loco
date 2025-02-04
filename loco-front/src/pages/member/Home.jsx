@@ -1,4 +1,4 @@
-import Carousel from "@/components/member/Carousel/Carousel";
+import Carousel from "@/components/member/Common/Carousel";
 import One from "/src/assets/images/slide-1.jpg";
 import Two from "/src/assets/images/slide-2.jpg";
 import Three from "/src/assets/images/slide-3.jpg";
