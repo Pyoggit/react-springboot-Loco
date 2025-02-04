@@ -1,0 +1,28 @@
+.itemShoesTab {
+  background-color: #f4f4f4;
+  padding: 15px;
+  border-radius: 10px;
+  width: 250px;
+}
+
+.itemShoesTab ul {
+  list-style: none;
+  padding: 0;
+}
+
+.itemShoesTab li {
+  margin-bottom: 8px;
+  display: flex;
+  align-items: center;
+}
+
+.itemShoesTab label {
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.itemShoesTab input[type='checkbox'] {
+  transform: scale(1.2);
+}
