@@ -124,3 +124,11 @@
   background-color: rgba(0, 0, 0, 0.15);
   color: rgba(0, 0, 0, 1);
 }
+
+@media (max-width: 768px) {
+  .header-main-menu .menu {
+    flex-direction: column;
+    align-items: center;
+    gap: 15px;
+  }
+}

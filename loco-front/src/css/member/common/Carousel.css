@@ -1,5 +1,5 @@
 .carousel-wrapper {
-  background-color: rgb(239, 217, 253);
+  background-color: rgba(224, 231, 255, 0.9);
   display: flex;
   justify-content: center;
   align-items: center;
@@ -37,34 +37,6 @@
   opacity: 1;
 }
 
- /* button {
-  position: absolute;
-  top: 50%;
-  transform: translateY(-50%);
-  background: none;
-  color: white;
-  border: none;
-  padding: 10px;
-  cursor: pointer;
-  border-radius: 50%;
-  font-size: 24px;
-  z-index: 10;
-}
-
-.prev {
-  left: 15px;
-}
-
-.next {
-  right: 15px;
-}
-
-button svg {
-  filter: none;
-  box-shadow: none;
-}  */
-
-/* 범용적인 button 이름 사용으로 클래스명 추가한 css */
 .carousel button {
   position: absolute;
   top: 50%;
@@ -90,7 +62,7 @@ button svg {
 .carousel button svg {
   filter: none;
   box-shadow: none;
-} 
+}
 
 .carousel-button {
   position: absolute;
@@ -104,4 +76,4 @@ button svg {
   border-radius: 50%;
   font-size: 24px;
   z-index: 10;
-}  
+}

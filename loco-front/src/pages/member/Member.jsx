@@ -1,26 +1,27 @@
 import { Routes, Route } from "react-router-dom";
-import { Suspense, lazy } from "react";
+import Container from "../../layouts/Container";
 import Home from "./Home";
+import MarketPage from "./MarketPage";
+import CircleMain from "../../components/member/Circle/CircleMain";
+import ServicePage from "./ServicePage";
+import BoardPage from "./BoardPage";
+import MypageMain from "../../components/member/Mypage/MypageMain";
 
-const Loading = <div>Loading...</div>;
-const SignUp = lazy(() => import("@/components/member/Sign/SignUpForm"));
-const KakaoLogin = lazy(() => import("@/components/member/Sign/KakaoLoginBtn"));
-const GoogleLogin = lazy(() =>
-  import("@/components/member/Sign/GoogleLoginBtn")
-);
-const Login = lazy(() => import("@/components/member/Sign/LoginForm"));
-
+//일반사용자 화면
 const Member = () => {
   return (
-    <Suspense fallback={Loading}>
+    <>
       <Routes>
-        <Route path="/" element={<Home />} />
-        <Route path="/signup" element={<SignUp />} />
-        <Route path="/kakaoLogin" element={<KakaoLogin />} />
-        <Route path="/googleLogin" element={<GoogleLogin />} />
-        <Route path="/login" element={<Login />} />
+        <Route element={<Container />}>
+          <Route path="/" element={<Home />} />
+          <Route path="/market" element={<MarketPage />} />
+          <Route path="/circle" element={<CircleMain />} />
+          <Route path="/board" element={<BoardPage />} />
+          <Route path="/service" element={<ServicePage />} />
+          <Route path="/mypage/*" element={<MypageMain />} />
+        </Route>
       </Routes>
-    </Suspense>
+    </>
   );
 };
 

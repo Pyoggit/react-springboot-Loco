@@ -15,19 +15,20 @@ import AdminpageMain from "./components/member/Mypage/AdminpageMain";
 function App() {
   return (
     <Routes>
-      <Route element={<Container />}>
-        <Route path="/*" element={<Member />} />
-        <Route path="/admin/login" element={<AdminLoginMain />} />
-        <Route path="/member/Sign/LoginMain" element={<LoginMain />} />
-        <Route path="/member/Sign/signup" element={<SignUp />} />
-        <Route path="/auth/kakao" element={<KakaoCallback />} />
+      <Route path="/*" element={<Member />} />
+      <Route path="/admin/login" element={<AdminLoginMain />} />
+      <Route path="/login" element={<LoginMain />} />
+      <Route path="/signup" element={<SignUp />} />
+      <Route path="/adminpage/*" element={<AdminpageMain />} />
+      <Route path="*" element={<h1> 404 Not Found</h1>} />
+
+      {/* 따로 경로 설정 */}
+      {/* <Route path="/auth/kakao" element={<KakaoCallback />} />
         <Route path="/user/:email/modify" element={<ModifyMember />} />
         <Route path="/user/:email/delete" element={<DeleteMember />} />
-        <Route path="/mypage/*" element={<MypageMain />} />
-        <Route path="/businesspage/*" element={<BusinesspageMain />} />
-        <Route path="/adminpage/*" element={<AdminpageMain />} />
-        <Route path="*" element={<h1> 404 Not Found</h1>} />
-      </Route>
+        
+        <Route path="/businesspage/*" element={<BusinesspageMain />} /> */}
+      {/* 따로 경로 설정 */}
     </Routes>
   );
 }
