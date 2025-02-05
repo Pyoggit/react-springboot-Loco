@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.loco.aroundme.mapper.KakaoUsersMapper">
+
+
+	<!-- 카카오 ID로 사용자 정보 조회 -->
+	<select id="findByKakaoId" parameterType="string"
+		resultType="com.loco.aroundme.domain.KakaoUsers">
+		SELECT * FROM KAKAO_USERS WHERE KAKAO_ID = #{kakaoId}
+	</select>
+
+	<!-- 카카오 사용자 정보 삽입 -->
+	<insert id="insertKakaoUser"
+		parameterType="com.loco.aroundme.domain.KakaoUsers">
+		INSERT INTO KAKAO_USERS (KAKAO_ID, USER_EMAIL, USER_NAME, SYS_FILE,
+		ORIGIN_FILE, ROLE_ID)
+		VALUES (#{kakaoId}, #{userEmail}, #{userName}, #{sysFile}, #{originFile},
+		#{roleId})
+	</insert>
+
+
+</mapper>
