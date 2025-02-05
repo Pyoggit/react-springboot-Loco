@@ -1,6 +1,6 @@
-import React, { useState, useEffect, useRef } from 'react';
-import './css/CalendarNavigation.css'; // 스타일 파일 연결
-import './css/CalendarButton.css';
+import React, { useState, useEffect, useRef } from "react";
+import "@/css/member/circle/CalendarNavigation.css"; // 스타일 파일 연결
+import "@/css/member/circle/CalendarButton.css";
 
 const CalendarNavigation = () => {
   const [selectedDate, setSelectedDate] = useState(new Date());
@@ -39,13 +39,13 @@ const CalendarNavigation = () => {
 
   const handleDragStart = (e) => {
     startXRef.current =
-      e.type === 'touchstart' ? e.touches[0].clientX : e.clientX;
+      e.type === "touchstart" ? e.touches[0].clientX : e.clientX;
   };
 
   const handleDragEnd = (e) => {
     if (!startXRef.current) return;
     const endX =
-      e.type === 'touchend' ? e.changedTouches[0].clientX : e.clientX;
+      e.type === "touchend" ? e.changedTouches[0].clientX : e.clientX;
     const distance = startXRef.current - endX;
 
     if (Math.abs(distance) > 50) {
@@ -60,12 +60,12 @@ const CalendarNavigation = () => {
         className="calendar-nav-button"
         onClick={() => handleDateTransition(-1)}
       >
-        {'<'}
+        {"<"}
       </button>
 
       <div
         ref={listRef}
-        className={`dates-list ${isAnimating ? 'animating' : ''}`}
+        className={`dates-list ${isAnimating ? "animating" : ""}`}
         onMouseDown={handleDragStart}
         onMouseUp={handleDragEnd}
         onMouseLeave={handleDragEnd}
@@ -74,14 +74,14 @@ const CalendarNavigation = () => {
       >
         {datesInView.map((date, index) => {
           const dayOfWeek = date.getDay();
-          let dateClass = 'date-item';
+          let dateClass = "date-item";
 
-          if (dayOfWeek === 0) dateClass += ' sunday';
-          if (dayOfWeek === 6) dateClass += ' saturday';
+          if (dayOfWeek === 0) dateClass += " sunday";
+          if (dayOfWeek === 6) dateClass += " saturday";
           if (date.toDateString() === selectedDate.toDateString())
-            dateClass += ' selected';
+            dateClass += " selected";
           if (date.toDateString() === new Date().toDateString())
-            dateClass += ' today';
+            dateClass += " today";
 
           return (
             <div
@@ -91,7 +91,7 @@ const CalendarNavigation = () => {
             >
               <div>{date.getDate()}일</div>
               <div className="day-text">
-                {['일', '월', '화', '수', '목', '금', '토'][dayOfWeek]}
+                {["일", "월", "화", "수", "목", "금", "토"][dayOfWeek]}
               </div>
             </div>
           );
@@ -102,7 +102,7 @@ const CalendarNavigation = () => {
         className="calendar-nav-button"
         onClick={() => handleDateTransition(1)}
       >
-        {'>'}
+        {">"}
       </button>
     </div>
   );

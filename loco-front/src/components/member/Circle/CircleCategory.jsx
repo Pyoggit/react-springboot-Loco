@@ -1,23 +1,23 @@
-import { useState } from 'react';
-import { Link } from 'react-router-dom';
-import './css/CircleCategory.css';
+import { useState } from "react";
+import { Link } from "react-router-dom";
+import "@/css/member/circle/CircleCategory.css";
 const CircleSidebar = () => {
   const categories = [
-    '전체',
-    '스포츠',
-    '독서',
-    '전시',
-    '사교/인맥',
-    '문화/공연/축제',
-    '게임 오락',
-    '음악/악기',
-    '댄스/무용',
-    '여행',
-    '봉사활동',
-    '공예/원데이클레스',
-    '반려동물',
-    '사진/영상',
-    '기타',
+    "전체",
+    "스포츠",
+    "독서",
+    "전시",
+    "사교/인맥",
+    "문화/공연/축제",
+    "게임 오락",
+    "음악/악기",
+    "댄스/무용",
+    "여행",
+    "봉사활동",
+    "공예/원데이클레스",
+    "반려동물",
+    "사진/영상",
+    "기타",
   ];
 
   const [selectedCategories, setSelectedCategories] = useState([]);
