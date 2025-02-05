@@ -5,7 +5,7 @@ import "@/css/member/sign/KakaoLoginBtn.css";
 const KakaoLoginBtn = () => {
   const navigate = useNavigate();
   const Rest_api_key = "e1f580827a6c5e6b1a1fc6ae9f79a1c8"; // REST API KEY
-  const redirect_uri = "http://localhost:5173/auth/kakao"; // redirect_uri
+  const redirect_uri = "http://localhost:5173/kakao-callback"; // 수정 redirect URI
 
   const kakaoURL = `https://kauth.kakao.com/oauth/authorize?client_id=${Rest_api_key}&redirect_uri=${redirect_uri}&response_type=code`;
 
