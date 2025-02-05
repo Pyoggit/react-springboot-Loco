@@ -24,17 +24,18 @@ public class AuthController {
         this.passwordEncoder = passwordEncoder;
     }
 
-    // 회원가입 API (CORS 허용)
-    @CrossOrigin(origins = "http://localhost:5173")
-    @PostMapping("/signup")
-    public ResponseEntity<String> signup(@RequestBody Users user) throws Exception {
-        if (usersMapper.read(user.getUserEmail()) != null) {
-            return ResponseEntity.badRequest().body("이미 사용 중인 이메일입니다.");
-        }
-        user.setPassword(passwordEncoder.encode(user.getPassword()));
-        usersMapper.insertUser(user);
-        return ResponseEntity.ok("회원가입 성공!");
-    }
+    // Userscontroller에서 처리하고 잇어서 안써도 됨 
+//    // 회원가입 API (CORS 허용)
+//    @CrossOrigin(origins = "http://localhost:5173")
+//    @PostMapping("/signup")
+//    public ResponseEntity<String> signup(@RequestBody Users user) throws Exception {
+//        if (usersMapper.read(user.getUserEmail()) != null) {
+//            return ResponseEntity.badRequest().body("이미 사용 중인 이메일입니다.");
+//        }
+//        user.setPassword(passwordEncoder.encode(user.getPassword()));
+//        usersMapper.insertUser(user);
+//        return ResponseEntity.ok("회원가입 성공!");
+//    }
 
     // 로그인 API (CORS 허용)
     @CrossOrigin(origins = "http://localhost:5173")

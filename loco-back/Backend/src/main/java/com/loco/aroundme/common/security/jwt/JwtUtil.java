@@ -17,14 +17,19 @@ public class JwtUtil {
     @Value("${jwt.secret}") // `application.properties`에서 가져오기!
     private String secretKey;
 
-    private final long TOKEN_VALIDITY = 1000 * 60 * 60 * 24; // 24시간
-
+    // 엑세스 토큰 
+//    private final long TOKEN_VALIDITY = 1000 * 60 * 60 ; // 1시간
+        // 엑세스 토큰 
+    private final long ACCESS_TOKEN = 1000 * 60 * 60; // 1시간
+    // 리프레시 토큰 
+    private final long REFRESH_TOKEN = 1000 * 60 * 60 * 24; // 24시간
+    
     //JWT 토큰 생성
     public String generateToken(String username) {
         return Jwts.builder()
                 .setSubject(username)
                 .setIssuedAt(new Date())
-                .setExpiration(new Date(System.currentTimeMillis() + TOKEN_VALIDITY))
+                .setExpiration(new Date(System.currentTimeMillis() + ACCESS_TOKEN))
                 .signWith(getSigningKey(), SignatureAlgorithm.HS256) // Secret Key 적용
                 .compact();
     }
