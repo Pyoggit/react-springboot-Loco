@@ -1,29 +1,30 @@
-.itemShoesTab {
-  background-color: #f4f4f4;
-  padding: 15px;
-  border-radius: 10px;
-  width: 250px;
+.category-dropdown {
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.1s;
 }
 
-.itemShoesTab ul {
+.category-dropdown.open {
+  max-height: 400px;
+}
+
+.category-toggle-button {
+  background-color: #a5a5a5;
+  color: black;
+  padding: 0.6rem 1rem;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 1rem;
+  margin-bottom: 10px;
+}
+
+.category-list {
   list-style: none;
   padding: 0;
+  margin: 0;
 }
 
-.itemShoesTab li {
-  margin-bottom: 8px;
-  display: flex;
-  align-items: center;
-  padding: 10px;
-}
-
-.itemShoesTab label {
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-
-.itemShoesTab input[type='checkbox'] {
-  transform: scale(1.2);
+.category-list li {
+  padding: 0.5rem 0;
 }

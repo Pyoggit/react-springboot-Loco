@@ -1,0 +1,41 @@
+.new-circle-form-container {
+  max-width: 400px;
+  margin: 20px auto;
+  padding: 20px;
+  background-color: #f9f9f9;
+  border-radius: 8px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.new-circle-form label {
+  display: block;
+  margin-bottom: 10px;
+  font-weight: bold;
+}
+
+.new-circle-form input,
+.new-circle-form textarea {
+  width: 100%;
+  padding: 8px;
+  margin-top: 5px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  font-size: 1rem;
+}
+
+.new-circle-form textarea {
+  resize: none;
+  height: 80px;
+}
+
+.submit-button {
+  background-color: #006bded5;
+  color: white;
+  padding: 10px 15px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 1rem;
+  width: 100%;
+  margin-top: 15px;
+}
