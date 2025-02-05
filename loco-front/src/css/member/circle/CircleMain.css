@@ -5,7 +5,9 @@
   padding: 20px;
 }
 .content-section {
-  flex: 3;
+  display: flex;
+  justify-content: center;
+  flex: 6;
 }
 .mock-post-container {
   display: flex;
@@ -22,10 +24,8 @@
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 .category-section {
-  flex: 1;
-  background-color: #f0f0f0;
-  padding: 20px;
   border-radius: 12px;
+  position: fixed;
 }
 .itemShoesTab {
   background-color: #f4f4f4;
