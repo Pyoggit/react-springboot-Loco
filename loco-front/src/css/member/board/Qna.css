@@ -1,0 +1,85 @@
+.list {
+    width: 80%;
+    margin: auto;
+    font-family: Arial, sans-serif;
+}
+
+.header {
+    background-color: none;
+    color: black;
+    padding: 10px;
+    text-align: center;
+    font-size: 20px;
+}
+
+.listBar {
+    display: flex;
+    justify-content: space-between;
+    margin: 10px 0;
+}
+
+.listBar select, .listBar input {
+    padding: 5px;
+    font-size: 14px;
+}
+
+.listTop table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.listTop td {
+    font-weight: bold;
+    padding: 10px;
+    border-bottom: 2px solid #ddd;
+    text-align: left;
+}
+
+.listItem {
+    border-bottom: 1px solid #ddd;
+    padding: 10px;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+.listItem:hover {
+    background-color: #f1f1f1;
+}
+
+.question {
+    display: flex;
+    justify-content: space-between;
+    padding: 10px;
+    background-color: #f9f9f9;
+}
+
+.reply {
+    padding: 10px;
+    background-color: #e8f5e9;
+    border-left: 4px solid #4CAF50;
+    margin: 5px 0;
+}
+
+.pagination {
+    text-align: center;
+    margin-top: 10px;
+}
+
+.pagination button {
+    margin: 2px;
+    padding: 5px 10px;
+    border: none;
+    background-color: #4CAF50;
+    color: white;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+.pagination button:hover {
+    background-color: #45a049;
+}
+
+.pagination .active {
+    font-weight: bold;
+    background-color: #2E7D32;
+}

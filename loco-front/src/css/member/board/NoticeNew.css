@@ -1,0 +1,23 @@
+/* 공통 버튼 스타일 */
+.notice-new .notice-button button {
+  font-size: 18px;
+  font-weight: bold;
+  padding: 15px 30px;
+  border: none;
+  border-radius: 5px;
+  color: whitesmoke;
+  cursor: pointer;
+  margin-top: 20px;
+  transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+/* 버튼 hover 효과 */
+.notice-new .notice-button button:hover {
+  transform: scale(1.05);
+}
+
+/* 비활성화된 버튼 스타일 */
+.notice-new .notice-button button:disabled {
+  background-color: #ccc;
+  cursor: not-allowed;
+}
