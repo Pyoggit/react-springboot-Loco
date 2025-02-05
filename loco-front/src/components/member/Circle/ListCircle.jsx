@@ -1,6 +1,6 @@
-import React, { useRef, useEffect, useState } from 'react';
-import { useNavigate } from 'react-router';
-import ProductItem from './ProductItem';
+import React, { useRef, useEffect, useState } from "react";
+import { useNavigate } from "react-router";
+import ProductItem from "./ProductItem";
 import {
   Button,
   Col,
@@ -8,7 +8,7 @@ import {
   FloatingLabel,
   Form,
   Row,
-} from 'react-bootstrap';
+} from "react-bootstrap";
 
 function ListCircle() {
   const navigate = useNavigate();
@@ -27,7 +27,7 @@ function ListCircle() {
   }
   //마운트 될때 비동기 방식 처리
   useEffect(() => {
-    getList('http://localhost:8080/product/list');
+    getList("http://localhost:8080/product/list");
   }, []);
   return (
     <>
@@ -59,7 +59,7 @@ function ListCircle() {
         </Row>
         <br />
         <br />
-        <Button onClick={() => navigate('/product/write')}>상품등록</Button>
+        <Button onClick={() => navigate("/product/write")}>상품등록</Button>
         <hr />
         등록된 상품수: {items.length}
         <br />
