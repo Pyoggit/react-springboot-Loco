@@ -1,0 +1,43 @@
+.boardView {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    font-size: 18px;
+ }
+ 
+ .boardView > .table {
+     border-radius: 10px;
+     box-shadow: rgba(0, 0, 0, 0.16) 0px 1px 4px;
+ }
+ 
+ .boardView table {
+     width: 800px;
+     min-height: 400px;
+ }
+ 
+ .boardView table tr, .boardView table td {
+     border-bottom: 1px solid rgb(207, 207, 207);
+     padding: 10px;
+ }
+ 
+ .boardView > .button {
+     width: 800px;
+     display: flex;
+     justify-content: space-between;
+     gap: 2px;
+ }
+ 
+ .boardView > .button > Button {
+     flex: 1;
+ }
+ 
+ .header {
+     display: flex;
+     justify-content: space-between;
+     align-items: center;
+     font-size: 35px;
+     font-weight: bold;
+     padding: 30px 10px;
+ }
+ 

@@ -1,0 +1,92 @@
+/* 자유게시판 전체 스타일 */
+.list {
+    max-width: 1100px;
+    margin: 0 auto;
+}
+
+/* 헤더 스타일 */
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 35px;
+    font-weight: bold;
+    padding: 30px 10px;
+}
+
+/* 검색 및 정렬 바 */
+.listBar {
+    padding: 20px 0px;
+    display: flex;
+    justify-content: space-between;
+}
+
+.listBar input,
+.listBar select {
+    padding: 10px;
+    border: 1px solid rgb(212, 211, 211);
+    border-radius: 5px;
+    margin-right: 5px;
+}
+
+/* 리스트 테이블 스타일 */
+.listTop > table {
+    font-size: 22px;
+    font-weight: bold;
+    padding: 15px 10px;
+    display: flex;
+    background-color: transparent;
+    text-align: left;
+    border-bottom: 6px solid #115aa9; /* 찐한 파란색 밑줄 */
+}
+.board-title{
+    width: 750px;
+    padding-left: 20px;
+}
+.board-writer, .board-date{
+    width: 200px;
+}
+
+/* 버튼 스타일 */
+.button {
+    font-size: 20px;
+    font-weight: bold;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    padding: 13px 15px;
+    color: whitesmoke;
+    margin-top: 20px;
+    background-color: rgb(112, 172, 255);
+}
+
+/* 페이지네이션 스타일 */
+.pagination {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-top: 20px;
+}
+
+.pagination button {
+    margin: 0 5px;
+    padding: 5px 10px;
+    background-color: #f0f0f0;
+    border: 1px solid #ccc;
+    cursor: pointer;
+}
+
+.pagination button:hover {
+    background-color: #ddd;
+}
+
+.pagination button:disabled {
+    background-color: #ccc;
+    cursor: not-allowed;
+}
+
+.pagination .active {
+    font-weight: bold;
+    background-color: #115aa9;
+    color: white;
+}

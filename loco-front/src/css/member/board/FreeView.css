@@ -1,0 +1,91 @@
+.freeBoardView {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  font-size: 18px;
+}
+
+.freeBoardView > .table {
+  border-radius: 10px;
+  box-shadow: rgba(0, 0, 0, 0.16) 0px 1px 4px;
+}
+
+.freeBoardView table {
+  width: 800px;
+  min-height: 400px;
+}
+
+.freeBoardView table tr,
+.freeBoardView table td {
+  border-bottom: 1px solid rgb(207, 207, 207);
+  padding: 10px;
+}
+
+.freeBoardView > .button {
+  width: 800px;
+  display: flex;
+  justify-content: space-between;
+  gap: 10px; /* 버튼 사이 간격 증가 */
+  margin: 10px 0; /* 위아래 여백 추가 */
+}
+
+.freeBoardView > .button > Button {
+  flex: 1;
+  padding: 5px 10px; /* 버튼 세로 길이 조정 */
+}
+
+.comments {
+  width: 800px;
+  margin-top: 20px;
+  font-size: 16px;
+}
+
+.comments h3 {
+  margin-bottom: 10px;
+}
+
+.comments ul {
+  list-style-type: none;
+  padding-left: 0;
+}
+
+.comments ul li {
+  padding: 10px;
+  border-bottom: 1px solid rgb(207, 207, 207);
+}
+
+.commentInput {
+  display: flex;
+  justify-content: space-between; /* 버튼이 오른쪽으로 정렬되도록 조정 */
+  align-items: center;
+  width: 100%;
+  margin-top: 20px;
+}
+
+.commentInput textarea {
+  flex: 1;
+  height: 80px; /* 세로 길이 조정 */
+  padding: 10px;
+  border-radius: 5px;
+  border: 1px solid #ccc;
+  margin-right: 10px; /* 버튼과 간격 조정 */
+}
+
+.commentInput Button {
+  margin-top: 1px;
+  padding: 5px 5px; /* 버튼 세로 길이 조정 */
+  background-color: white;
+  color: rgb(6, 12, 86);
+}
+.top-buttons {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px; /* 버튼 사이 간격 */
+  margin-bottom: 10px; /* 버튼 아래 여백 추가 */
+}
+
+.top-buttons Button {
+  padding: 5px 10px; /* 버튼 세로 길이 줄이기 */
+  height: 44px; /* 버튼 높이 조정 */
+}
