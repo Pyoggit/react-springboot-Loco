@@ -132,9 +132,10 @@ export default function Header() {
           <div className="header-logo">{"Loco"}</div>
         </div>
         <div className="header-right-box">
-          {(isAuthPage || isMainPage || isSearchPage) && (
+          <SearchButton navigate={navigate} />
+          {/* {(isAuthPage || isMainPage || isSearchPage) && (
             <SearchButton navigate={navigate} />
-          )}
+          )} */}
           <MyPageButton />
         </div>
       </div>
