@@ -1,4 +1,4 @@
-import { useNavigate, useParams, useLocation } from "react-router-dom";
+import { Link, useNavigate, useParams, useLocation } from "react-router-dom";
 import { useState, useEffect, useRef } from "react";
 import { useCookies } from "react-cookie";
 import "./style.css";
@@ -142,72 +142,72 @@ export default function Header() {
       <div className="header-main-menu">
         <ul className="menu">
           <li>
-            <a href="#">페이지소개</a>
+            <Link to="#">페이지소개</Link>
             <ul className="dropdown">
               <li>
-                <a href="#">인사말</a>
+                <Link to="#">인사말</Link>
               </li>
               <li>
-                <a href="#">사용가이드</a>
+                <Link to="#">사용가이드</Link>
               </li>
               <li>
-                <a href="#">공지사항</a>
+                <Link to="#">공지사항</Link>
               </li>
             </ul>
           </li>
           <li>
-            <a href="/circle">모임/참여</a>
+            <Link to="/circle">모임/참여</Link>
             <ul className="dropdown">
               <li>
-                <a href="#">모임 보기</a>
+                <Link to="#">모임 보기</Link>
               </li>
               <li>
-                <a href="#">모임 개설하기</a>
+                <Link to="#">모임 개설하기</Link>
               </li>
               <li>
-                <a href="#">지역별 활동량</a>
+                <Link to="#">지역별 활동량</Link>
               </li>
             </ul>
           </li>
           <li>
-            <a href="/board">커뮤니티</a>
+            <Link to="/board">커뮤니티</Link>
             <ul className="dropdown">
               <li>
-                <a href="#">자유게시판</a>
+                <Link to="#">자유게시판</Link>
               </li>
               <li>
-                <a href="#">익명게시판</a>
+                <Link to="#">익명게시판</Link>
               </li>
             </ul>
           </li>
           <li>
-            <a href="/market">중고거래</a>
+            <Link to="/market">중고거래</Link>
             <ul className="dropdown">
               <li>
-                <a href="/">상품 보기</a>
+                <Link to="/">상품 보기</Link>
               </li>
               <li>
-                <a href="#">상품 등록하기</a>
+                <Link to="#">상품 등록하기</Link>
               </li>
               <li>
-                <a href="#">장바구니</a>
+                <Link to="#">장바구니</Link>
               </li>
             </ul>
           </li>
           <li>
-            <a href="/service">고객센터</a>
+            <Link to="/service">고객센터</Link>
             <ul className="dropdown">
               <li>
-                <a href="#">FAQ</a>
+                <Link to="#">FAQ</Link>
               </li>
               <li>
-                <a href="#">문의하기</a>
+                <Link to="#">문의하기</Link>
               </li>
               <li>
-                <a href="#">사이트 불편&개선사항</a>
+                <Link to="#">사이트 불편&개선사항</Link>
               </li>
               <li>
-                <a href="#">신고하기</a>
+                <Link to="#">신고하기</Link>
               </li>
             </ul>
           </li>
