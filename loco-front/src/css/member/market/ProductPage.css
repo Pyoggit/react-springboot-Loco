@@ -1,0 +1,152 @@
+.productPage {
+  max-width: 1100px;
+  margin: 0 auto;
+}
+.list {
+  padding: 10px;
+}
+
+.product-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  justify-content: flex-start;
+  list-style: none;
+  padding: 0;
+}
+
+.topBar {
+  width: 1000px;
+  display: flex;
+  justify-content: space-between;
+  margin: 0 auto;
+  margin-top: 20px;
+  margin-bottom: 10px;
+}
+
+.register-button {
+  position: fixed;
+  bottom: 50px;
+  right: 100px;
+
+  font-size: x-large;
+  padding: 10px 16px;
+  background-color: #007bff;
+  color: white;
+  border: none;
+  border-radius: 50%;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.register-button:hover {
+  background-color: #0056b3;
+}
+
+/* 검색 기능 컨테이너 */
+.listBar {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-bottom: 20px;
+}
+
+/* 검색 바 (검색어 입력 및 검색 옵션 선택) */
+.searchBar {
+  display: flex;
+  gap: 5px;
+  justify-content: flex-start;
+}
+
+.searchBar select,
+.searchBar input {
+  padding: 10px;
+  border: 1px solid #d4d3d3;
+  border-radius: 5px;
+}
+
+.searchBar input {
+  width: 300px;
+}
+
+/* 개별 상품 카드 */
+.listItem {
+  width: calc(22% - 10px);
+  height: 300px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-around;
+  align-items: center;
+  padding: 14px;
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.listItem:hover {
+  background-color: #f9f9f9;
+}
+
+/* 이미지 스타일 */
+.item-image {
+  width: 100px;
+  height: 100px;
+  object-fit: cover;
+  border-radius: 8px;
+  margin-bottom: 8px;
+}
+
+/* 정보 섹션 스타일 */
+.item-info {
+  text-align: center;
+}
+
+.item-info p {
+  margin: 3px 0;
+}
+
+.item-name {
+  font-size: 15px;
+  font-weight: bold;
+}
+
+.item-category,
+.item-price {
+  font-size: 14px;
+  color: #333;
+}
+
+/* 버튼 스타일 */
+.item-buttons {
+  display: flex;
+  gap: 6px;
+  margin-top: 8px;
+}
+
+.detail-button,
+.cart-button {
+  padding: 6px 12px;
+  border: none;
+  border-radius: 4px;
+  color: white;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.detail-button {
+  background-color: #007bff;
+}
+
+.detail-button:hover {
+  background-color: #0056b3;
+}
+
+.cart-button {
+  background-color: #28a745;
+}
+
+.cart-button:hover {
+  background-color: #218838;
+}

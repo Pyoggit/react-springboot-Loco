@@ -1,0 +1,78 @@
+.product-insert {
+  max-width: 900px;
+  margin: 20px auto;
+  padding: 20px;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.input-container {
+  /* display: flex;
+  flex-direction: column;
+  gap: 10px; */
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+.input-container * {
+  width: 800px;
+  font-size: 20px;
+}
+
+.input-container input {
+  min-height: 30px;
+}
+.input-container textarea {
+  min-height: 250px;
+}
+
+.input-container textarea,
+.input-container input,
+.input-container select {
+  border: 1px solid rgb(203, 203, 203);
+  border-radius: 5px;
+  padding: 10px;
+  margin: 5px;
+}
+
+.input-container textarea:focus,
+.input-container input:focus,
+.input-container select:focus {
+  outline: none;
+}
+
+.preview-image {
+  width: 100px;
+  height: 100px;
+  object-fit: cover;
+  margin-top: 10px;
+}
+
+.button-container {
+  /* display: flex;
+  justify-content: space-between;
+  margin-top: 10px; */
+  width: 800px;
+  display: flex;
+  justify-content: space-between;
+  gap: 2px;
+}
+
+.cancel-button,
+.submit-button {
+  padding: 8px 12px;
+  border: none;
+  cursor: pointer;
+  flex: 1;
+}
+
+.submit-button {
+  background-color: #007bff;
+  color: white;
+}
+
+.submit-button:hover {
+  background-color: #0056b3;
+}
