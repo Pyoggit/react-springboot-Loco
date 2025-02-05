@@ -1,26 +1,28 @@
-import { useState } from "react";
+import React, { useRef, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import DaumPostcode from "react-daum-postcode";
+import axios from "axios";
 import "@/css/member/sign/SignUpForm.css";
 
 const SignUpForm = () => {
-  const [formData, setFormData] = useState({
-    email: "",
-    password: "",
-    confirmPassword: "",
-    name: "",
-    gender: "",
-    mobile1: "010",
-    mobile2: "",
-    mobile3: "",
-    phone1: "02",
-    phone2: "",
-    phone3: "",
-    birthDate: "",
-    zonecode: "",
-    address: "",
-    detailAddress: "",
-    profileImage: null,
-  });
+  const navigate = useNavigate();
+
+  const email = useRef();
+  const password = useRef();
+  const confirmPassword = useRef();
+  const name = useRef();
+  const gender = useRef();
+  const mobile1 = useRef();
+  const mobile2 = useRef();
+  const mobile3 = useRef();
+  const phone1 = useRef();
+  const phone2 = useRef();
+  const phone3 = useRef();
+  const birthDate = useRef();
+  const zonecode = useRef();
+  const address = useRef();
+  const detailAddress = useRef();
+  const profileImage = useRef();
 
   const [isOpen, setIsOpen] = useState(false);
 
@@ -38,31 +40,138 @@ const SignUpForm = () => {
       }
     }
 
-    setFormData({
-      ...formData,
-      address: `${fullAddress} ${extraAddress}`,
-      zonecode: data.zonecode,
-    });
-
+    zonecode.current.value = data.zonecode;
+    address.current.value = `${fullAddress} ${extraAddress}`;
     setIsOpen(false);
   };
 
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setFormData({ ...formData, [name]: value });
-  };
+  // fetch 버전
+  // const handleSubmit = async (e) => {
+  //   e.preventDefault();
 
-  const handleFileChange = (e) => {
-    setFormData({ ...formData, profileImage: e.target.files[0] });
-  };
+  //   if (password.current.value !== confirmPassword.current.value) {
+  //     alert("비밀번호가 일치하지 않습니다.");
+  //     return;
+  //   }
 
-  const handleSubmit = (e) => {
+  //   const formData = new FormData();
+  //   formData.append("email", email.current.value);
+  //   formData.append("password", password.current.value);
+  //   formData.append("name", name.current.value);
+  //   formData.append("gender", gender.current.value);
+  //   formData.append(
+  //     "mobile",
+  //     `${mobile1.current.value}-${mobile2.current.value}-${mobile3.current.value}`
+  //   );
+  //   formData.append(
+  //     "phone",
+  //     `${phone1.current.value}-${phone2.current.value}-${phone3.current.value}`
+  //   );
+  //   formData.append("birthDate", birthDate.current.value);
+  //   formData.append("zonecode", zonecode.current.value);
+  //   formData.append("address", address.current.value);
+  //   formData.append("detailAddress", detailAddress.current.value);
+
+  //   if (profileImage.current.files[0]) {
+  //     formData.append("profileImage", profileImage.current.files[0]);
+  //   }
+
+  //   try {
+  //     const response = await fetch("http://localhost:8080/signup", {
+  //       method: "POST",
+  //       body: formData,
+  //     });
+
+  //     if (response.ok) {
+  //       alert("회원가입이 완료되었습니다!");
+  //       navigate("/login"); // 로그인 페이지로 이동
+  //     } else {
+  //       throw new Error("회원가입 실패");
+  //     }
+  //   } catch (error) {
+  //     console.error("회원가입 오류:", error);
+  //     alert("회원가입에 실패했습니다.");
+  //   }
+  // };
+
+  // axios 버전
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    if (formData.password !== formData.confirmPassword) {
+
+    if (password.current.value !== confirmPassword.current.value) {
       alert("비밀번호가 일치하지 않습니다.");
       return;
     }
-    console.log("서버로 보낼 데이터:", formData);
+
+    // user 객체를 JSON으로 변환
+    // const user = {
+    //   userEmail: email.current.value,
+    //   password: password.current.value,
+    //   userName: name.current.value,
+    //   gender: gender.current.value,
+    //   mobile1: mobile1.current.value,
+    //   mobile2: mobile2.current.value,
+    //   mobile3: mobile3.current.value,
+    //   phone1: phone1.current.value,
+    //   phone2: phone2.current.value,
+    //   phone3: phone3.current.value,
+    //   birth: birthDate.current.value,
+    //   zipcode: zonecode.current.value,
+    //   address1: address.current.value,
+    //   address2: detailAddress.current.value || "",
+    //   roleId: 2,
+    // };
+    const user = {
+      userEmail: email.current.value,
+      password: password.current.value,
+      userName: name.current.value,
+      gender: gender.current.value,
+      mobile1: mobile1.current.value,
+      mobile2: mobile2.current.value,
+      mobile3: mobile3.current.value,
+
+      phone1: phone1.current.value || null, // 입력 안 하면 null
+      phone2: phone2.current.value || null, // 입력 안 하면 null
+      phone3: phone3.current.value || null, // 입력 안 하면 null
+      address2: detailAddress.current.value || null, // 입력 안 하면 null
+
+      birth: birthDate.current.value,
+      zipcode: zonecode.current.value,
+      address1: address.current.value,
+      roleId: 2,
+    };
+
+    console.log("회원가입 데이터:", user);
+
+    const formData = new FormData();
+    formData.append(
+      "user",
+      new Blob([JSON.stringify(user)], { type: "application/json" })
+    ); //JSON을 Blob으로 변환
+    if (profileImage.current.files[0]) {
+      formData.append("profileImage", profileImage.current.files[0]);
+    }
+
+    try {
+      const response = await axios.post(
+        "http://localhost:8080/users/signup",
+        formData,
+        {
+          headers: { "Content-Type": "multipart/form-data" },
+          withCredentials: true, // CORS
+        }
+      );
+
+      console.log("회원가입 성공! response:", response); // 서버 응답 확인
+
+      if (response.status === 200) {
+        alert("회원가입이 완료되었습니다!");
+        navigate("/login"); // 로그인 페이지 이동
+      }
+    } catch (error) {
+      console.error("회원가입 오류:", error);
+      alert("회원가입에 실패했습니다.");
+    }
   };
 
   return (
@@ -71,26 +180,12 @@ const SignUpForm = () => {
       <form onSubmit={handleSubmit}>
         <div className="group">
           <label className="title">이메일</label>
-          <input
-            className="input"
-            type="email"
-            name="email"
-            value={formData.email}
-            onChange={handleChange}
-            required
-          />
+          <input className="input" type="email" ref={email} required />
         </div>
 
         <div className="group">
           <label className="title">비밀번호</label>
-          <input
-            className="input"
-            type="password"
-            name="password"
-            value={formData.password}
-            onChange={handleChange}
-            required
-          />
+          <input className="input" type="password" ref={password} required />
         </div>
 
         <div className="group">
@@ -98,37 +193,22 @@ const SignUpForm = () => {
           <input
             className="input"
             type="password"
-            name="confirmPassword"
-            value={formData.confirmPassword}
-            onChange={handleChange}
+            ref={confirmPassword}
             required
           />
         </div>
 
         <div className="group">
           <label className="title">이름</label>
-          <input
-            className="input"
-            type="text"
-            name="name"
-            value={formData.name}
-            onChange={handleChange}
-            required
-          />
+          <input className="input" type="text" ref={name} required />
         </div>
 
         <div className="group">
           <label className="title">성별</label>
-          <select
-            className="input-gender"
-            name="gender"
-            value={formData.gender}
-            onChange={handleChange}
-            required
-          >
+          <select className="input-gender" ref={gender} required>
             <option value="">선택하세요</option>
-            <option value="M">남성</option>
-            <option value="F">여성</option>
+            <option value="남성">남성</option>
+            <option value="여성">여성</option>
           </select>
         </div>
 
@@ -138,25 +218,20 @@ const SignUpForm = () => {
             <input
               className="input-phone1"
               type="text"
-              name="mobile1"
-              value={formData.mobile1}
-              onChange={handleChange}
+              ref={mobile1}
+              defaultValue="010"
               required
             />
             <input
               className="input-phone2"
               type="text"
-              name="mobile2"
-              value={formData.mobile2}
-              onChange={handleChange}
+              ref={mobile2}
               required
             />
             <input
               className="input-phone3"
               type="text"
-              name="mobile3"
-              value={formData.mobile3}
-              onChange={handleChange}
+              ref={mobile3}
               required
             />
           </div>
@@ -165,43 +240,30 @@ const SignUpForm = () => {
         <div className="group">
           <label className="title">전화번호</label>
           <div className="input-phone">
+            {/* <input
+              className="input-phone1"
+              type="text"
+              ref={phone1}
+              defaultValue="02"
+              required
+            />
+            <input className="input-phone2" type="text" ref={phone2} required />
+            <input className="input-phone3" type="text" ref={phone3} required /> */}
             <input
               className="input-phone1"
               type="text"
-              name="phone1"
-              value={formData.phone1}
-              onChange={handleChange}
-              required
+              ref={phone1}
+              defaultValue="02"
             />
-            <input
-              className="input-phone2"
-              type="text"
-              name="phone2"
-              value={formData.phone2}
-              onChange={handleChange}
-              required
-            />
-            <input
-              className="input-phone3"
-              type="text"
-              name="phone3"
-              value={formData.phone3}
-              onChange={handleChange}
-              required
-            />
+            <input className="input-phone2" type="text" ref={phone2} />
+            <input className="input-phone3" type="text" ref={phone3} />
           </div>
         </div>
 
         <div className="group">
           <label className="title">생년월일</label>
-          <input
-            className="input"
-            type="date"
-            name="birthDate"
-            value={formData.birthDate}
-            onChange={handleChange}
-            required
-          />
+          {/* <input className="input" type="date" ref={birthDate} required /> */}
+          <input className="input" type="date" ref={birthDate} />
         </div>
 
         <div className="group">
@@ -210,8 +272,7 @@ const SignUpForm = () => {
             <input
               className="input-zipcodeMain"
               type="text"
-              name="zonecode"
-              value={formData.zonecode}
+              ref={zonecode}
               readOnly
             />
             <button
@@ -226,25 +287,13 @@ const SignUpForm = () => {
 
         <div className="group">
           <label className="title">기본주소</label>
-          <input
-            className="input"
-            type="text"
-            name="address"
-            value={formData.address}
-            readOnly
-          />
+          <input className="input" type="text" ref={address} readOnly />
         </div>
 
         <div className="group">
           <label className="title">상세주소</label>
-          <input
-            className="input"
-            type="text"
-            name="detailAddress"
-            value={formData.detailAddress}
-            onChange={handleChange}
-            required
-          />
+          {/* <input className="input" type="text" ref={detailAddress} required /> */}
+          <input className="input" type="text" ref={detailAddress} />
         </div>
 
         <div className="group">
@@ -252,9 +301,8 @@ const SignUpForm = () => {
           <input
             className="input"
             type="file"
-            name="profileImage"
+            ref={profileImage}
             accept="image/*"
-            onChange={handleFileChange}
           />
         </div>
 
