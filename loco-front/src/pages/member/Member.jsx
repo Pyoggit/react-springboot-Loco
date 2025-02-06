@@ -1,7 +1,6 @@
 import { Routes, Route } from "react-router-dom";
 import Container from "../../layouts/Container";
 import Home from "./Home";
-import MarketPage from "./MarketPage";
 import CircleMain from "../../components/member/Circle/CircleMain";
 import ServicePage from "./ServicePage";
 import BoardPage from "./BoardPage";
@@ -14,6 +13,7 @@ import Freeboard from "../../components/member/Board/Freeboard";
 import Qna from "../../components/member/Board/Qna";
 import Report from "../../components/member/Board/Report";
 import Improvement from "../../components/member/Board/Improvement";
+import ProductPage from "../../components/member/Market/ProductPage";
 
 //일반사용자 화면
 const Member = () => {
@@ -22,7 +22,6 @@ const Member = () => {
       <Routes>
         <Route element={<Container />}>
           <Route path="/" element={<Home />} />
-          <Route path="/market" element={<MarketPage />} />
           <Route path="/search" element={<SerchPage />} />
           <Route path="/circle" element={<CircleMain />} />
           <Route path="/board" element={<BoardPage />} />
@@ -35,6 +34,7 @@ const Member = () => {
           <Route path="/board/qna" element={<Qna />} />
           <Route path="/board/report" element={<Report />} />
           <Route path="/board/improvement" element={<Improvement />} />
+          <Route path="/market" element={<ProductPage />} />
         </Route>
       </Routes>
     </>
