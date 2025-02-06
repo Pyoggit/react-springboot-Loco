@@ -1,15 +1,30 @@
-.login-container {
-  display: block;
+#auth-wrapper {
+  padding: 100px 0px 150px;
+  min-width: 1200px;
+  height: calc(100vh - 64px - 100px - 150px);
+  min-height: 500px;
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  background-image: url("@/assets/images/auth-page.png");
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: cover;
+}
+
+.auth-container {
   width: 400px;
-  margin: 50px auto;
   padding: 30px;
   border: 1px solid #ddd;
   border-radius: 10px;
   text-align: center;
-  background-color: #fff;
+  background-color: rgba(255, 255, 255, 0.9);
+  box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
 }
 
-.login-container h2 {
+.auth-container h2 {
   margin-bottom: 20px;
   font-size: 24px;
   font-weight: bold;
@@ -21,7 +36,6 @@
   align-items: center;
   width: 100%;
 }
-
 
 .input-group {
   margin-bottom: 20px;
@@ -42,8 +56,6 @@
   font-size: 16px;
 }
 
-
-
 .login-btn {
   /* display: block; */
   width: 400px;
@@ -58,10 +70,25 @@
   text-align: center;
 }
 
-
-
 .login-btn:hover {
   background-color: #2563eb;
+}
+
+/* 회원가입 버튼 스타일 */
+.signup-link {
+  margin-top: 20px;
+  font-size: 16px;
+  font-weight: bold;
+  color: #666;
+  text-align: center;
+  cursor: pointer;
+  display: inline-block;
+  padding-right: 10px;
+  letter-spacing: 1px; /* 문자 간격 */
+}
+
+.signup-link:hover {
+  color: #333;
 }
 
 /*
