@@ -6,7 +6,7 @@ const Admin = () => {
     <>
       <h1>관리자모드 렌더링 할 페이지</h1>
       <Routes>
-        <Route path="/adminpage" element={<AdminpageMain />} />
+        <Route path="/" element={<AdminpageMain />} />
       </Routes>
     </>
   );
