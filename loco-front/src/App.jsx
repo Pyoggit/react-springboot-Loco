@@ -15,14 +15,13 @@ function App() {
   return (
     <Routes>
       <Route path="/*" element={<Member />} />
-      <Route path="/admin/login" element={<AdminLoginMain />} />
+      <Route path="/adminpage/*" element={<Admin />} />
+      <Route path="/adminpage/login" element={<AdminLoginMain />} />
       <Route path="/login" element={<LoginMain />} />
       <Route path="/signup" element={<SignUp />} />
 
       {/* 카카오로그인 콜백처리 */}
       <Route path="/kakao-callback" element={<KakaoCallback />} />
-
-      <Route path="/adminpage/*" element={<Admin />} />
 
       <Route path="*" element={<h1> 404 Not Found</h1>} />
 
