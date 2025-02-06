@@ -18,7 +18,6 @@ public class CustomUser extends User {
     }
 
     public CustomUser(Users users) {
-        // roleList 제거 → 기본 역할 "ROLE_USER"만 설정
         super(users.getUserEmail(), users.getPassword(), List.of(new SimpleGrantedAuthority("ROLE_USER")));
         this.users = users;
     }

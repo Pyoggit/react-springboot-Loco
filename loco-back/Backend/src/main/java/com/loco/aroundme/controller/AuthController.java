@@ -24,18 +24,6 @@ public class AuthController {
         this.passwordEncoder = passwordEncoder;
     }
 
-    // 회원가입 API (CORS 허용)
-    @CrossOrigin(origins = "http://localhost:5173")
-    @PostMapping("/signup")
-    public ResponseEntity<String> signup(@RequestBody Users user) throws Exception {
-        if (usersMapper.read(user.getUserEmail()) != null) {
-            return ResponseEntity.badRequest().body("이미 사용 중인 이메일입니다.");
-        }
-        user.setPassword(passwordEncoder.encode(user.getPassword()));
-        usersMapper.insertUser(user);
-        return ResponseEntity.ok("회원가입 성공!");
-    }
-
     // 로그인 API (CORS 허용)
     @CrossOrigin(origins = "http://localhost:5173")
     @PostMapping("/login")
@@ -51,7 +39,13 @@ public class AuthController {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(Map.of("error", "Invalid password"));
         }
 
-        String token = jwtUtil.generateToken(email);
-        return ResponseEntity.ok(Map.of("token", token));
+        // 액세스 토큰 & 리프레시 토큰 생성
+        String accessToken = jwtUtil.generateAccessToken(email);
+        String refreshToken = jwtUtil.generateRefreshToken(email);
+
+        // 응답 헤더에 리프레시 토큰 추가 
+        return ResponseEntity.ok()
+                .header("Refresh-Token", refreshToken) // HTTP 헤더에 리프레시 토큰 추가
+                .body(Map.of("accessToken", accessToken));
     }
 }
