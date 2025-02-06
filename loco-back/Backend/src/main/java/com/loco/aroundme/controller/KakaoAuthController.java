@@ -59,8 +59,15 @@ public class KakaoAuthController {
 		log.info("카카오 사용자 정보: {}", kakaoUser);
 
 		// DB에 사용자 저장 (이미 존재하면 업데이트 X)
-		Optional<KakaoUsers> existingUser = kakaoUsersService.findByKakaoId(kakaoUser.getKakaoId());
-		if (existingUser.isEmpty()) {
+//		Optional<KakaoUsers> existingUser = kakaoUsersService.findByKakaoId(kakaoUser.getKakaoId());
+//		if (existingUser.isEmpty()) {
+//			kakaoUsersService.registerKakaoUser(kakaoUser);
+//			log.info("새로운 카카오 사용자 등록 완료");
+//		} else {
+//			log.info("기존 카카오 사용자 로그인 성공");
+//		}
+		KakaoUsers existingUser = kakaoUsersService.findByKakaoId(kakaoUser.getKakaoId());
+		if (existingUser == null) {
 			kakaoUsersService.registerKakaoUser(kakaoUser);
 			log.info("새로운 카카오 사용자 등록 완료");
 		} else {
@@ -110,7 +117,8 @@ public class KakaoAuthController {
 				: null; // sysFile로 변경
 		String originFile = sysFile; // originFile도 동일하게 설정
 
-		return new KakaoUsers(kakaoId, userEmail, userName, sysFile, originFile, 2L);
+//		return new KakaoUsers(kakaoId, userEmail, userName, sysFile, originFile, 2L);
+		return new KakaoUsers(kakaoId, userEmail, userName, sysFile, originFile, 2L, null);
 	}
 
 }

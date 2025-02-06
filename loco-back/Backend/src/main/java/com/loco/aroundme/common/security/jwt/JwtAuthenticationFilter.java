@@ -11,8 +11,6 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.security.Keys;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -24,40 +22,59 @@ import lombok.RequiredArgsConstructor;
  */
 @RequiredArgsConstructor
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
-    
-    private final JwtUtil jwtUtil; // JwtUtil 주입
+
+    private final JwtUtil jwtUtil;
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain chain)
             throws ServletException, IOException {
-        String token = resolveToken(request); // 토큰 가져오기
+        String accessToken = resolveToken(request);
+        String refreshToken = resolveRefreshToken(request);
 
-        if (token != null && jwtUtil.validateToken(token)) { // 토큰 검증
-            Claims claims = Jwts.parserBuilder()
-                    .setSigningKey(Keys.hmacShaKeyFor(jwtUtil.getSecretKey().getBytes())) // Secret Key 적용
-                    .build()
-                    .parseClaimsJws(token)
-                    .getBody();
+        // ✅ **액세스 토큰이 유효하면 그대로 인증 진행**
+        if (accessToken != null && jwtUtil.validateToken(accessToken)) {
+            authenticateUser(accessToken);
+        } 
+        // ✅ **액세스 토큰이 만료되었지만 리프레시 토큰이 유효하면 새로운 액세스 토큰 발급**
+        else if (refreshToken != null && jwtUtil.validateToken(refreshToken)) {
+            Claims claims = jwtUtil.getClaims(refreshToken);
+            String username = claims.getSubject();
 
-            String username = claims.getSubject(); // 유저 정보 가져오기
+            // 새 액세스 토큰 발급
+            String newAccessToken = jwtUtil.generateAccessToken(username);
+            response.setHeader("Authorization", "Bearer " + newAccessToken); // 새 토큰 발급 후 응답 헤더에 추가
 
-            // 사용자 권한 추가 (필요하면 `claims`에서 역할 정보를 가져와서 설정 가능)
-            UserDetails userDetails = new User(username, "", Collections.singletonList(new SimpleGrantedAuthority("ROLE_USER")));
-
-            //SecurityContext에 사용자 정보 저장
-            UsernamePasswordAuthenticationToken authentication =
-                    new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
-            SecurityContextHolder.getContext().setAuthentication(authentication);
+            authenticateUser(newAccessToken);
         }
+
         chain.doFilter(request, response);
     }
 
-    //HTTP 요청에서 JWT 토큰 추출
+    // ✅ **사용자 인증 처리**
+    private void authenticateUser(String token) {
+        Claims claims = jwtUtil.getClaims(token);
+        String username = claims.getSubject();
+
+        UserDetails userDetails = new User(username, "", Collections.singletonList(new SimpleGrantedAuthority("ROLE_USER")));
+
+        UsernamePasswordAuthenticationToken authentication =
+                new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
+
+        SecurityContextHolder.getContext().setAuthentication(authentication);
+    }
+
+    // ✅ **HTTP 요청에서 액세스 토큰 추출**
     private String resolveToken(HttpServletRequest request) {
         String bearerToken = request.getHeader("Authorization");
         if (bearerToken != null && bearerToken.startsWith("Bearer ")) {
-            return bearerToken.substring(7); // "Bearer " 제거
+            return bearerToken.substring(7);
         }
         return null;
+    }
+
+    // ✅ **HTTP 요청에서 리프레시 토큰 추출**
+    private String resolveRefreshToken(HttpServletRequest request) {
+        String refreshToken = request.getHeader("Refresh-Token");
+        return (refreshToken != null && !refreshToken.isEmpty()) ? refreshToken : null;
     }
 }
