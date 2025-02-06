@@ -104,7 +104,7 @@ public class KakaoAuthController {
 		String userEmail = userInfo.get("kakao_account").has("email")
 				? userInfo.get("kakao_account").get("email").asText()
 				: null; // userEmail로 변경
-		String userName = userInfo.get("properties").get("nickname").asText(); // 변수명 nickname → userName 변경
+		String userName = userInfo.get("properties").get("nickname").asText(); // 변수명 nickname -> userName 
 		String sysFile = userInfo.get("properties").has("profile_image")
 				? userInfo.get("properties").get("profile_image").asText()
 				: null; // sysFile로 변경

@@ -45,9 +45,11 @@ import React from "react";
 import { GoogleOAuthProvider, GoogleLogin } from "@react-oauth/google";
 import { useNavigate } from "react-router-dom";
 import "@/css/member/sign/GoogleLoginBtn.css";
+import dotenv from "dotenv";
 
-const clientId =
-  "461913738960-s9u1nbu4nve43vo3u4r7dnun4er952on.apps.googleusercontent.com";
+const client_id = import.meta.env.VITE_GOOGLE_CLIENT_ID;
+// const clientId =
+//   "461913738960-s9u1nbu4nve43vo3u4r7dnun4er952on.apps.googleusercontent.com";
 
 const GoogleLoginBtn = () => {
   const navigate = useNavigate();
@@ -88,7 +90,7 @@ const GoogleLoginBtn = () => {
   };
 
   return (
-    <GoogleOAuthProvider clientId={clientId}>
+    <GoogleOAuthProvider clientId={client_id}>
       <GoogleLogin
         onSuccess={onSuccess}
         // onError={onFailure}
