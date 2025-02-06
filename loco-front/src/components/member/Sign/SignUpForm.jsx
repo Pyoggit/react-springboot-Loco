@@ -175,72 +175,73 @@ const SignUpForm = () => {
   };
 
   return (
-    <div className="signup-container">
-      <h2>회원가입</h2>
-      <form onSubmit={handleSubmit}>
-        <div className="group">
-          <label className="title">이메일</label>
-          <input className="input" type="email" ref={email} required />
-        </div>
+    <div id="auth-wrapper">
+      <div className="auth-container">
+        <h2>회원가입</h2>
+        <form onSubmit={handleSubmit}>
+          <div className="group">
+            <label className="title">이메일</label>
+            <input className="input" type="email" ref={email} required />
+          </div>
 
-        <div className="group">
-          <label className="title">비밀번호</label>
-          <input className="input" type="password" ref={password} required />
-        </div>
+          <div className="group">
+            <label className="title">비밀번호</label>
+            <input className="input" type="password" ref={password} required />
+          </div>
 
-        <div className="group">
-          <label className="title">비밀번호 확인</label>
-          <input
-            className="input"
-            type="password"
-            ref={confirmPassword}
-            required
-          />
-        </div>
-
-        <div className="group">
-          <label className="title">이름</label>
-          <input className="input" type="text" ref={name} required />
-        </div>
-
-        <div className="group">
-          <label className="title">성별</label>
-          <select className="input-gender" ref={gender} required>
-            <option value="">선택하세요</option>
-            <option value="남성">남성</option>
-            <option value="여성">여성</option>
-          </select>
-        </div>
-
-        <div className="group">
-          <label className="title">휴대폰번호</label>
-          <div className="input-phone">
+          <div className="group">
+            <label className="title">비밀번호 확인</label>
             <input
-              className="input-phone1"
-              type="text"
-              ref={mobile1}
-              defaultValue="010"
-              required
-            />
-            <input
-              className="input-phone2"
-              type="text"
-              ref={mobile2}
-              required
-            />
-            <input
-              className="input-phone3"
-              type="text"
-              ref={mobile3}
+              className="input"
+              type="password"
+              ref={confirmPassword}
               required
             />
           </div>
-        </div>
 
-        <div className="group">
-          <label className="title">전화번호</label>
-          <div className="input-phone">
-            {/* <input
+          <div className="group">
+            <label className="title">이름</label>
+            <input className="input" type="text" ref={name} required />
+          </div>
+
+          <div className="group">
+            <label className="title">성별</label>
+            <select className="input-gender" ref={gender} required>
+              <option value="">선택하세요</option>
+              <option value="남성">남성</option>
+              <option value="여성">여성</option>
+            </select>
+          </div>
+
+          <div className="group">
+            <label className="title">휴대폰번호</label>
+            <div className="input-phone">
+              <input
+                className="input-phone1"
+                type="text"
+                ref={mobile1}
+                defaultValue="010"
+                required
+              />
+              <input
+                className="input-phone2"
+                type="text"
+                ref={mobile2}
+                required
+              />
+              <input
+                className="input-phone3"
+                type="text"
+                ref={mobile3}
+                required
+              />
+            </div>
+          </div>
+
+          <div className="group">
+            <label className="title">전화번호</label>
+            <div className="input-phone">
+              {/* <input
               className="input-phone1"
               type="text"
               ref={phone1}
@@ -249,76 +250,77 @@ const SignUpForm = () => {
             />
             <input className="input-phone2" type="text" ref={phone2} required />
             <input className="input-phone3" type="text" ref={phone3} required /> */}
+              <input
+                className="input-phone1"
+                type="text"
+                ref={phone1}
+                defaultValue="02"
+              />
+              <input className="input-phone2" type="text" ref={phone2} />
+              <input className="input-phone3" type="text" ref={phone3} />
+            </div>
+          </div>
+
+          <div className="group">
+            <label className="title">생년월일</label>
+            {/* <input className="input" type="date" ref={birthDate} required /> */}
+            <input className="input" type="date" ref={birthDate} />
+          </div>
+
+          <div className="group">
+            <label className="title">우편번호</label>
+            <div className="input-zipcode">
+              <input
+                className="input-zipcodeMain"
+                type="text"
+                ref={zonecode}
+                readOnly
+              />
+              <button
+                className="btn-zipcode"
+                type="button"
+                onClick={() => setIsOpen(true)}
+              >
+                찾기
+              </button>
+            </div>
+          </div>
+
+          <div className="group">
+            <label className="title">기본주소</label>
+            <input className="input" type="text" ref={address} readOnly />
+          </div>
+
+          <div className="group">
+            <label className="title">상세주소</label>
+            {/* <input className="input" type="text" ref={detailAddress} required /> */}
+            <input className="input" type="text" ref={detailAddress} />
+          </div>
+
+          <div className="group">
+            <label className="title">프로필 사진</label>
             <input
-              className="input-phone1"
-              type="text"
-              ref={phone1}
-              defaultValue="02"
+              className="input"
+              type="file"
+              ref={profileImage}
+              accept="image/*"
             />
-            <input className="input-phone2" type="text" ref={phone2} />
-            <input className="input-phone3" type="text" ref={phone3} />
           </div>
-        </div>
 
-        <div className="group">
-          <label className="title">생년월일</label>
-          {/* <input className="input" type="date" ref={birthDate} required /> */}
-          <input className="input" type="date" ref={birthDate} />
-        </div>
+          <button type="submit" className="signup-btn">
+            가입하기
+          </button>
+        </form>
 
-        <div className="group">
-          <label className="title">우편번호</label>
-          <div className="input-zipcode">
-            <input
-              className="input-zipcodeMain"
-              type="text"
-              ref={zonecode}
-              readOnly
-            />
-            <button
-              className="btn-zipcode"
-              type="button"
-              onClick={() => setIsOpen(true)}
-            >
-              찾기
-            </button>
+        {isOpen && (
+          <div className="modal-overlay">
+            <div className="modal-content">
+              <button onClick={() => setIsOpen(false)}>닫기</button>
+              <DaumPostcode onComplete={handleComplete} />
+            </div>
           </div>
-        </div>
-
-        <div className="group">
-          <label className="title">기본주소</label>
-          <input className="input" type="text" ref={address} readOnly />
-        </div>
-
-        <div className="group">
-          <label className="title">상세주소</label>
-          {/* <input className="input" type="text" ref={detailAddress} required /> */}
-          <input className="input" type="text" ref={detailAddress} />
-        </div>
-
-        <div className="group">
-          <label className="title">프로필 사진</label>
-          <input
-            className="input"
-            type="file"
-            ref={profileImage}
-            accept="image/*"
-          />
-        </div>
-
-        <button type="submit" className="signup-btn">
-          가입하기
-        </button>
-      </form>
-
-      {isOpen && (
-        <div className="modal-overlay">
-          <div className="modal-content">
-            <button onClick={() => setIsOpen(false)}>닫기</button>
-            <DaumPostcode onComplete={handleComplete} />
-          </div>
-        </div>
-      )}
+        )}
+      </div>
     </div>
   );
 };
