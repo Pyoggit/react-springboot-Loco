@@ -55,20 +55,20 @@ export default function Header() {
 
     if (isLogin && userEmail === loginUser?.email) {
       return (
-        <div className="white-button" onClick={onSignOutButtonClickHandler}>
+        <div className="team-button" onClick={onSignOutButtonClickHandler}>
           {"로그아웃"}
         </div>
       );
     }
     if (isLogin) {
       return (
-        <div className="white-button" onClick={onMyPageButtonClickHandler}>
+        <div className="team-button" onClick={onMyPageButtonClickHandler}>
           {"마이페이지"}
         </div>
       );
     }
     return (
-      <div className="black-button" onClick={onSignInButtonClickHandler}>
+      <div className="team-button" onClick={onSignInButtonClickHandler}>
         {"로그인"}
       </div>
     );
@@ -79,6 +79,7 @@ export default function Header() {
     const [status, setStatus] = useState(false);
     const [word, setWord] = useState("");
     const { searchWord } = useParams();
+    const [category, setCategory] = useState("all");
 
     useEffect(() => {
       if (searchWord) {
@@ -92,11 +93,22 @@ export default function Header() {
         setStatus(true);
         return;
       }
-      navigate(SEARCH_PATH());
+      navigate(`/search?category=${category}&query=${word}`);
     };
 
     return status ? (
       <div className="header-search-input-box">
+        <select
+          className="search-category"
+          value={category}
+          onChange={(e) => setCategory(e.target.value)}
+        >
+          <option value="all">전체</option>
+          <option value="board">게시판</option>
+          <option value="market">중고거래</option>
+          <option value="club">모임</option>
+        </select>
+
         <input
           className="header-search-input"
           type="text"
@@ -129,7 +141,12 @@ export default function Header() {
           <div className="icon-box">
             <div className="icon logo-main-icon"></div>
           </div>
-          <div className="header-logo">{"Loco"}</div>
+          <div
+            className="header-center-box"
+            onClick={() => navigate(MAIN_PATH())}
+          >
+            <div className="header-logo">{"AroundMe"}</div>
+          </div>
         </div>
         <div className="header-right-box">
           <SearchButton navigate={navigate} />
@@ -151,7 +168,7 @@ export default function Header() {
                 <Link to="#">사용가이드</Link>
               </li>
               <li>
-                <Link to="#">공지사항</Link>
+                <Link to="/board/notice">공지사항</Link>
               </li>
             </ul>
           </li>
@@ -173,10 +190,10 @@ export default function Header() {
             <Link to="/board">커뮤니티</Link>
             <ul className="dropdown">
               <li>
-                <Link to="#">자유게시판</Link>
+                <Link to="/board/freeboard">자유게시판</Link>
               </li>
               <li>
-                <Link to="#">익명게시판</Link>
+                <Link to="/board/aanonymous">익명게시판</Link>
               </li>
             </ul>
           </li>
@@ -198,16 +215,16 @@ export default function Header() {
             <Link to="/service">고객센터</Link>
             <ul className="dropdown">
               <li>
-                <Link to="#">FAQ</Link>
+                <Link to="/board/faq">FAQ</Link>
               </li>
               <li>
-                <Link to="#">문의하기</Link>
+                <Link to="/board/qna">문의하기</Link>
               </li>
               <li>
-                <Link to="#">사이트 불편&개선사항</Link>
+                <Link to="/board/improvement">사이트 불편&개선사항</Link>
               </li>
               <li>
-                <Link to="#">신고하기</Link>
+                <Link to="/board/report">신고하기</Link>
               </li>
             </ul>
           </li>
