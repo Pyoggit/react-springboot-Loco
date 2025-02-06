@@ -10,7 +10,7 @@ import com.loco.aroundme.service.UsersService;
 import lombok.RequiredArgsConstructor;
 
 @RestController
-@RequestMapping("/users") //  프론트와 URL 맞춤
+@RequestMapping("/users") // ✅ 프론트와 URL 맞춤
 @RequiredArgsConstructor
 public class UsersController {
 

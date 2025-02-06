@@ -10,18 +10,12 @@
 	</select>
 
 	<!-- 카카오 사용자 정보 삽입 -->
-	<!-- <insert id="insertKakaoUser" parameterType="com.loco.aroundme.domain.KakaoUsers"> 
-		INSERT INTO KAKAO_USERS (KAKAO_ID, USER_EMAIL, USER_NAME, SYS_FILE, ORIGIN_FILE, 
-		ROLE_ID) VALUES (#{kakaoId}, #{userEmail}, #{userName}, #{sysFile}, #{originFile}, 
-		#{roleId}) </insert> -->
 	<insert id="insertKakaoUser"
 		parameterType="com.loco.aroundme.domain.KakaoUsers">
-		INSERT INTO KAKAO_USERS (KAKAO_ID, USER_EMAIL,
-		USER_NAME, SYS_FILE,
-		ORIGIN_FILE, ROLE_ID, USER_REGDATE)
-		VALUES (#{kakaoId},
-		#{userEmail}, #{userName}, #{sysFile}, #{originFile},
-		#{roleId}, SYSDATE)
+		INSERT INTO KAKAO_USERS (KAKAO_ID, USER_EMAIL, USER_NAME, SYS_FILE,
+		ORIGIN_FILE, ROLE_ID)
+		VALUES (#{kakaoId}, #{userEmail}, #{userName}, #{sysFile}, #{originFile},
+		#{roleId})
 	</insert>
 
 

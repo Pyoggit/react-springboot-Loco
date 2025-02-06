@@ -21,13 +21,13 @@ public class KakaoUsers {
 	private Date userRegDate; 
 	
 	
-//	 public KakaoUsers(String kakaoId, String userEmail, String userName, String sysFile, String originFile, Long roleId) {
-//	        this.kakaoId = kakaoId;
-//	        this.userEmail = userEmail;
-//	        this.userName = userName;
-//	        this.sysFile = sysFile;
-//	        this.originFile = originFile;
-//	        this.roleId = roleId;
-//	        this.userRegDate = new Date(); 
-//	    }
+	 public KakaoUsers(String kakaoId, String userEmail, String userName, String sysFile, String originFile, Long roleId) {
+	        this.kakaoId = kakaoId;
+	        this.userEmail = userEmail;
+	        this.userName = userName;
+	        this.sysFile = sysFile;
+	        this.originFile = originFile;
+	        this.roleId = roleId;
+	        this.userRegDate = new Date(); 
+	    }
 }
