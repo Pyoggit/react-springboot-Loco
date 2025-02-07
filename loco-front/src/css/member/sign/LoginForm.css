@@ -56,6 +56,38 @@
   font-size: 16px;
 }
 
+
+
+.find-email-pw {
+  display: flex;
+  justify-content: space-evenly;
+  align-items: center;
+  padding: 10px;
+  margin-top: 10px;
+}
+.find-email{
+  margin-right: 10px;
+  font-size: 16px;
+  border: none;
+  font-weight: bold;
+  color: #666;
+}
+.find-email:hover {
+  cursor: pointer;
+}
+.find-pw {
+  font-size: 16px;
+  border: none;
+  font-weight:bold;
+  color: #666;
+  background-color: none;
+}
+.find-pw:hover {
+  cursor: pointer;
+}
+
+
+
 .login-btn {
   /* display: block; */
   width: 400px;

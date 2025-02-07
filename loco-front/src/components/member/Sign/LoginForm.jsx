@@ -18,6 +18,14 @@ const LoginForm = () => {
     navigate("/signup"); // 회원가입 페이지로 이동
   };
 
+  const onFindEmailClcik = () => {
+    navigate("/find/email");
+  };
+
+  const onFindPwClcik = () => {
+    navigate("/find/pw");
+  };
+
   return (
     <div id="auth-wrapper">
       <div className="auth-container">
@@ -59,6 +67,16 @@ const LoginForm = () => {
           <KakaoLoginBtn />
           <GoogleLoginBtn />
         </div>
+
+        <div className="find-email-pw">
+          <div className="find-email" onClick={onFindEmailClcik}>
+            이메일 찾기
+          </div>
+          <div className="find-pw" onClick={onFindPwClcik}>
+            비밀번호 찾기
+          </div>
+        </div>
+
         <div className="signup-link" onClick={onSignUpClick}>
           회원가입
         </div>

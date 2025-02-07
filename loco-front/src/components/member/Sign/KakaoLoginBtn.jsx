@@ -1,7 +1,7 @@
 import React, { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import "@/css/member/sign/KakaoLoginBtn.css";
-import dotenv from "dotenv";
+// import dotenv from "dotenv";
 
 const KakaoLoginBtn = () => {
   const navigate = useNavigate();
