@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import GoogleMap from './GoogleMap';
 import '@/css/member/market/ProductInsert.css';
 
 const ProductInsert = () => {
@@ -86,6 +87,7 @@ const ProductInsert = () => {
           value={input.price}
           onChange={onChangeInput}
         />
+        <GoogleMap />
         <div className="button-container">
           <button
             className="cancel-button"
