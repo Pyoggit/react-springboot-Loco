@@ -1,24 +1,26 @@
 import React, { useState } from 'react';
-import { Link, Route, Routes, useNavigate } from 'react-router-dom';
+import { Route, Routes, useNavigate } from 'react-router-dom';
 import CalendarNavigation from './CalendarNavigation';
 import '@/css/member/circle/CalendarNavigation.css';
 import '@/css/member/circle/CircleMain.css';
 import CircleCategory from './CircleCategory';
-import CircleList from './CircleList';
+import CircleListDetail from './CircleListDetail';
 import NewCircle from './NewCircle';
+import CircleDetail from './CircleDetail';
+import CircleList from './CircleList';
 
 const CircleMain = () => {
   const navigate = useNavigate();
-  const nav = useNavigate();
-
   const [selectedDate, setSelectedDate] = useState(new Date());
+
   const [mockPosts, setMockPosts] = useState([
     {
       id: 1,
-      createdDate: new Date('2025-02-05').getTime(),
+      createdDate: new Date('2025-02-07').getTime(),
       title: '축구 동아리 모임',
       time: '06:00',
       description: '수원 누누풋살장에서 모여요!',
+      image: '사진1',
     },
     {
       id: 2,
@@ -26,13 +28,15 @@ const CircleMain = () => {
       title: '축구 동아리 모임',
       time: '06:00',
       description: '수원 누누풋살장에서 모여요!',
+      image: '사진1',
     },
     {
       id: 3,
-      createdDate: new Date('2025-02-06').getTime(),
+      createdDate: new Date('2025-02-07').getTime(),
       title: '축구 동아리 모임',
       time: '06:00',
       description: '수원 누누풋살장에서 모여요!',
+      image: '사진1',
     },
     {
       id: 4,
@@ -40,6 +44,7 @@ const CircleMain = () => {
       title: '축구 동아리 모임',
       time: '06:00',
       description: '수원 누누풋살장에서 모여요!',
+      image: '사진1',
     },
     {
       id: 5,
@@ -47,6 +52,7 @@ const CircleMain = () => {
       title: '축구 동아리 모임',
       time: '06:00',
       description: '수원 누누풋살장에서 모여요!',
+      image: '사진1',
     },
     {
       id: 6,
@@ -54,6 +60,7 @@ const CircleMain = () => {
       title: '축구 동아리 모임',
       time: '06:00',
       description: '수원 누누풋살장에서 모여요!',
+      image: '사진1',
     },
     {
       id: 7,
@@ -61,10 +68,12 @@ const CircleMain = () => {
       title: '축구 동아리 모임',
       time: '06:00',
       description: '수원 누누풋살장에서 모여요!',
+      image: '사진1',
     },
     {
       id: 8,
       createdDate: new Date('2025-02-04').getTime(),
+      image: '사진1',
       title: '축구 동아리 모임',
       time: '06:00',
       description: '수원 누누풋살장에서 모여요!',
@@ -75,6 +84,7 @@ const CircleMain = () => {
       title: '보컬 레슨 구합니다~[수원시 인계동]',
       time: '06:00',
       description: '이야야야야~~~~~~~!',
+      image: '사진1',
     },
     {
       id: 10,
@@ -82,6 +92,7 @@ const CircleMain = () => {
       title: '보컬 레슨 구합니다~[수원시 인계동]',
       time: '06:00',
       description: '이야야야야~~~~~~~!',
+      image: '사진1',
     },
     {
       id: 11,
@@ -89,6 +100,7 @@ const CircleMain = () => {
       title: '보컬 레슨 구합니다~[수원시 인계동]',
       time: '06:00',
       description: '이야야야야~~~~~~~!',
+      image: '사진1',
     },
     {
       id: 12,
@@ -96,6 +108,7 @@ const CircleMain = () => {
       title: '보컬 레슨 구합니다~[수원시 인계동]',
       time: '06:00',
       description: '이야야야야~~~~~~~!',
+      image: '사진1',
     },
     {
       id: 13,
@@ -103,6 +116,7 @@ const CircleMain = () => {
       title: '보컬 레슨 구합니다~[수원시 인계동]',
       time: '06:00',
       description: '이야야야야~~~~~~~!',
+      image: '사진1',
     },
   ]);
 
@@ -111,10 +125,10 @@ const CircleMain = () => {
     navigate('/');
   };
 
-  const filteredPosts = mockPosts.filter(
-    (post) =>
-      new Date(post.createdDate).toDateString() === selectedDate.toDateString()
-  );
+  const handleNavigateToDetail = (post) => {
+    localStorage.setItem('selectedPost', JSON.stringify(post));
+    navigate(`/circle/detail/${post.id}`);
+  };
 
   return (
     <>
@@ -122,54 +136,27 @@ const CircleMain = () => {
         selectedDate={selectedDate}
         onDateChange={setSelectedDate}
       />
-      <div className="CircleList">
-        <div className="menubar">
-          <select>
-            <option value={'latest'}>최신순</option>
-            <option value={'oldest'}>오래된순</option>
-          </select>
-          <button
-            className=".black-button"
-            onClick={() => navigate('/circle/new')}
-          >
-            모임 만들기
-          </button>
-        </div>
-      </div>
+      <CircleList />
+      {/* ✅ 항상 렌더링되도록 Routes 바깥으로 이동 */}
+      <CircleListDetail
+        mockPosts={mockPosts}
+        selectedDate={selectedDate}
+        onPostClick={handleNavigateToDetail}
+      />
+
       <aside className="category-section">
         <CircleCategory />
       </aside>
+
       <main className="main-layout">
-        <div className="content-section">
-          <div className="mock-post-container">
-            {filteredPosts.length > 0 ? (
-              filteredPosts.map((post) => (
-                <div key={post.id} className="post-card">
-                  <h3 className="post-title">{post.title}</h3>
-                  <p className="post-date">
-                    📅{' '}
-                    {new Date(post.createdDate).toLocaleDateString('ko-KR', {
-                      year: 'numeric',
-                      month: '2-digit',
-                      day: '2-digit',
-                    })}
-                  </p>
-                  <p className="post-time">🕒 {post.time}</p>
-                  <p className="post-description">{post.description}</p>
-                </div>
-              ))
-            ) : (
-              <p className="no-posts">해당 날짜에 모임이 없습니다.</p>
-            )}
-          </div>
-        </div>
+        <Routes>
+          <Route
+            path="/circle/new"
+            element={<NewCircle onAddCircle={handleAddCircle} />}
+          />
+          <Route path="/circle/detail/:id" element={<CircleDetail />} />
+        </Routes>
       </main>
-      <Routes>
-        <Route
-          path="/circle/new"
-          element={<NewCircle onAddCircle={handleAddCircle} />}
-        />
-      </Routes>
     </>
   );
 };
