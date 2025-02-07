@@ -8,7 +8,6 @@ import SignUp from "./components/member/Sign/SignUpForm";
 import ModifyMember from "./components/member/Mypage/ModifyMember";
 import DeleteMember from "./components/member/Mypage/DeleteMember";
 import MypageMain from "./components/member/Mypage/MypageMain";
-import BusinesspageMain from "./components/member/Mypage/BusinesspageMain";
 import Admin from "./pages/admin/Admin";
 
 function App() {
@@ -28,7 +27,6 @@ function App() {
       <Route path="/auth/kakao" element={<KakaoCallback />} />
       <Route path="/user/:email/modify" element={<ModifyMember />} />
       <Route path="/user/:email/delete" element={<DeleteMember />} />
-      <Route path="/businesspage/*" element={<BusinesspageMain />} />
     </Routes>
   );
 }

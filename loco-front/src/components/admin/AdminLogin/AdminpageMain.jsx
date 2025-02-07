@@ -1,5 +1,5 @@
 import { Link, Route, Routes } from "react-router-dom";
-import "@/css/member/mypage/AdminpageMain.css";
+import "@/css/admin/AdminpageMain.css";
 
 const AdminpageMain = () => {
   return (
