@@ -15,7 +15,7 @@
   font-weight: bold;
 }
 
-.group {
+.signup-group {
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -24,20 +24,20 @@
   max-width: 400px;
 }
 
-.title {
+.signup-title {
   width: 30%;
   font-weight: bold;
   text-align: left;
   padding-right: 10px;
 }
 
-.input {
+.signup-input {
   border: 1px solid #a6a6a6;
   width: 70%;
   padding: 10px;
 }
 
-.select {
+.input-gender{
   width: 70%;
   padding: 10px;
 }
