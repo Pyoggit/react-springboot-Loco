@@ -35,12 +35,13 @@ const DeleteMember = () => {
 
   return (
     <div className="delete-container">
+      {/* <div> */}
       <h2>회원 탈퇴</h2>
 
-      <div className="group">
-        <label className="title">비밀번호 입력</label>
+      <div className="delete-group">
+        <label className="delete-title">비밀번호 입력</label>
         <input
-          className="input"
+          className="delete-input"
           type="password"
           value={password}
           onChange={handleChange}

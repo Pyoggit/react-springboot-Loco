@@ -179,33 +179,38 @@ const SignUpForm = () => {
       <div className="auth-container">
         <h2>회원가입</h2>
         <form onSubmit={handleSubmit}>
-          <div className="group">
-            <label className="title">이메일</label>
-            <input className="input" type="email" ref={email} required />
+          <div className="signup-group">
+            <label className="signup-title">이메일</label>
+            <input className="signup-input" type="email" ref={email} required />
           </div>
 
-          <div className="group">
-            <label className="title">비밀번호</label>
-            <input className="input" type="password" ref={password} required />
-          </div>
-
-          <div className="group">
-            <label className="title">비밀번호 확인</label>
+          <div className="signup-group">
+            <label className="signup-title">비밀번호</label>
             <input
-              className="input"
+              className="signup-input"
+              type="password"
+              ref={password}
+              required
+            />
+          </div>
+
+          <div className="signup-group">
+            <label className="signup-title">비밀번호 확인</label>
+            <input
+              className="signup-input"
               type="password"
               ref={confirmPassword}
               required
             />
           </div>
 
-          <div className="group">
-            <label className="title">이름</label>
-            <input className="input" type="text" ref={name} required />
+          <div className="signup-group">
+            <label className="signup-title">이름</label>
+            <input className="signup-input" type="text" ref={name} required />
           </div>
 
-          <div className="group">
-            <label className="title">성별</label>
+          <div className="signup-group">
+            <label className="signup-title">성별</label>
             <select className="input-gender" ref={gender} required>
               <option value="">선택하세요</option>
               <option value="남성">남성</option>
@@ -213,8 +218,8 @@ const SignUpForm = () => {
             </select>
           </div>
 
-          <div className="group">
-            <label className="title">휴대폰번호</label>
+          <div className="signup-group">
+            <label className="signup-title">휴대폰번호</label>
             <div className="input-phone">
               <input
                 className="input-phone1"
@@ -238,8 +243,8 @@ const SignUpForm = () => {
             </div>
           </div>
 
-          <div className="group">
-            <label className="title">전화번호</label>
+          <div className="signup-group">
+            <label className="signup-title">전화번호</label>
             <div className="input-phone">
               {/* <input
               className="input-phone1"
@@ -261,14 +266,14 @@ const SignUpForm = () => {
             </div>
           </div>
 
-          <div className="group">
-            <label className="title">생년월일</label>
+          <div className="signup-group">
+            <label className="signup-title">생년월일</label>
             {/* <input className="input" type="date" ref={birthDate} required /> */}
             <input className="input" type="date" ref={birthDate} />
           </div>
 
-          <div className="group">
-            <label className="title">우편번호</label>
+          <div className="signup-group">
+            <label className="signup-title">우편번호</label>
             <div className="input-zipcode">
               <input
                 className="input-zipcodeMain"
@@ -286,21 +291,26 @@ const SignUpForm = () => {
             </div>
           </div>
 
-          <div className="group">
-            <label className="title">기본주소</label>
-            <input className="input" type="text" ref={address} readOnly />
-          </div>
-
-          <div className="group">
-            <label className="title">상세주소</label>
-            {/* <input className="input" type="text" ref={detailAddress} required /> */}
-            <input className="input" type="text" ref={detailAddress} />
-          </div>
-
-          <div className="group">
-            <label className="title">프로필 사진</label>
+          <div className="signup-group">
+            <label className="signup-title">기본주소</label>
             <input
-              className="input"
+              className="signup-input"
+              type="text"
+              ref={address}
+              readOnly
+            />
+          </div>
+
+          <div className="signup-group">
+            <label className="signup-title">상세주소</label>
+            {/* <input className="input" type="text" ref={detailAddress} required /> */}
+            <input className="signup-input" type="text" ref={detailAddress} />
+          </div>
+
+          <div className="signup-group">
+            <label className="signup-title">프로필 사진</label>
+            <input
+              className="signup-input"
               type="file"
               ref={profileImage}
               accept="image/*"
