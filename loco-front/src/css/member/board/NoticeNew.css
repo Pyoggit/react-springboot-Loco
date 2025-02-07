@@ -1,5 +1,90 @@
-/* 공통 버튼 스타일 */
-.notice-new .notice-button button {
+/* 전체 컨테이너 */
+.new-list-container {
+  width: 70%;
+  margin: auto;
+  font-family: Arial, sans-serif;
+  padding: 100px 100px;
+}
+
+/* 헤더 스타일 */
+.new-header {
+  color: black;
+  padding: 40px;
+  text-align: center;
+  font-size: 24px;
+  border-radius: 8px 8px 0 0;
+}
+
+.new-header .new-title {
+  font-weight: bold;
+}
+
+/* 입력 영역 스타일 */
+.new-editor {
+  background-color: #f9f9f9;
+  padding: 20px;
+  border-radius: 0 0 8px 8px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+.new-editor .new-input {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.new-editor .new-input .new-input-field,
+.new-editor .new-input .new-textarea {
+  padding: 10px;
+  font-size: 16px;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  background-color: #fff;
+  transition: border-color 0.3s ease;
+}
+
+.new-editor .new-input .new-input-field:focus,
+.new-editor .new-input .new-textarea:focus {
+  border-color: #f2e7f3;
+}
+
+/* 파일 업로드 영역 */
+.new-editor .new-input .new-file-upload {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.new-editor .new-input .new-file-upload input {
+  font-size: 16px;
+  color: #555;
+}
+
+.new-editor .new-input .new-image-preview {
+  display: flex;
+  gap: 10px;
+}
+
+.new-editor .new-input .new-image-preview img {
+  max-width: 100px;
+  border-radius: 5px;
+  box-shadow: 0 0 5px rgba(0, 0, 0, 0.2);
+}
+
+/* 텍스트 영역 스타일 */
+.new-editor .new-input .new-textarea {
+  resize: vertical;
+  min-height: 200px;
+}
+
+/* 버튼 스타일 */
+.new-notice-button {
+  display: flex;
+  gap: 20px;
+  justify-content: center;
+}
+
+.new-notice-button button {
   font-size: 18px;
   font-weight: bold;
   padding: 15px 30px;
@@ -9,15 +94,25 @@
   cursor: pointer;
   margin-top: 20px;
   transition: background-color 0.3s ease, transform 0.2s ease;
+  background-color: #7e717e;
 }
 
-/* 버튼 hover 효과 */
-.notice-new .notice-button button:hover {
+.new-notice-button button:hover {
   transform: scale(1.05);
+  background-color: #423642;
+}
+
+/* 취소 버튼 스타일 */
+.new-notice-button button:nth-child(1) {
+  background-color: hsl(0, 6%, 80%);
+}
+
+.new-notice-button button:nth-child(1):hover {
+  background-color: #423642;
 }
 
 /* 비활성화된 버튼 스타일 */
-.notice-new .notice-button button:disabled {
-  background-color: #ccc;
+.new-notice-button button:disabled {
+  background-color: #9f9f9f;
   cursor: not-allowed;
 }

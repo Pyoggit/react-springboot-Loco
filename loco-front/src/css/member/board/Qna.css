@@ -1,85 +1,187 @@
-.list {
-    width: 80%;
-    margin: auto;
-    font-family: Arial, sans-serif;
+.qna-list {
+  width: 80%;
+  padding: 50px;
+  margin: auto;
+  font-family: "Arial", sans-serif;
 }
 
-.header {
-    background-color: none;
-    color: black;
-    padding: 10px;
-    text-align: center;
-    font-size: 20px;
+.qna-header {
+  color: #333;
+  padding: 15px;
+  text-align: center;
+  font-size: 24px;
+  font-weight: bold;
 }
 
-.listBar {
-    display: flex;
-    justify-content: space-between;
-    margin: 10px 0;
+.qna-listTop {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 5px;
 }
 
-.listBar select, .listBar input {
-    padding: 5px;
-    font-size: 14px;
+.qna-listTop .qna-list-header {
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
 }
 
-.listTop table {
-    width: 100%;
-    border-collapse: collapse;
+.qna-listTop .qna-sort {
+  font-size: 14px;
+  color: #555;
+  padding: 8px 12px; /* Padding 추가 */
+  font-size: 16px; /* 폰트 사이즈 일관되게 맞춤 */
+  border: 1px solid #ccc; /* 동일한 border 스타일 */
+  border-radius: 5px; /* 동일한 border-radius */
+  background-color: #fff; /* 배경색 추가 */
+  transition: all 0.3s ease; /* 부드러운 트랜지션 추가 */
+  margin-left: 15px; /* 작성자 드롭다운과 디자인 맞추기 위해 여백 추가 */
 }
 
-.listTop td {
-    font-weight: bold;
-    padding: 10px;
-    border-bottom: 2px solid #ddd;
-    text-align: left;
+.qna-listTop .qna-sort:hover {
+  background-color: #f1f1f1; /* 호버 시 색상 변화 */
 }
 
-.listItem {
-    border-bottom: 1px solid #ddd;
-    padding: 10px;
-    cursor: pointer;
-    transition: background-color 0.2s;
+.qna-listBar {
+  display: flex;
+  justify-content: flex-end;
+  gap: 15px;
 }
 
-.listItem:hover {
-    background-color: #f1f1f1;
+.qna-listBar select,
+.qna-listBar input {
+  padding: 8px 12px;
+  font-size: 16px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
 }
 
-.question {
-    display: flex;
-    justify-content: space-between;
-    padding: 10px;
-    background-color: #f9f9f9;
+.qna-listTop table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 20px;
 }
 
-.reply {
-    padding: 10px;
-    background-color: #e8f5e9;
-    border-left: 4px solid #4CAF50;
-    margin: 5px 0;
+.qna-listTop td {
+  font-weight: bold;
+  padding: 12px;
+  border-bottom: 2px solid #ddd;
+  text-align: left;
+
+  color: #333;
 }
 
-.pagination {
-    text-align: center;
-    margin-top: 10px;
+/* 질문, 작성자, 작성일 오른쪽 정렬 */
+.qna-listTop .qna-board-writer,
+.qna-listTop .qna-board-date {
+  font-weight: bold;
+  padding: 12px;
+  border-bottom: 2px solid #ddd;
+  text-align: right; /* 오른쪽 정렬 */
+  background-color: #f9f9f9;
+  color: #846c6c;
 }
 
-.pagination button {
-    margin: 2px;
-    padding: 5px 10px;
-    border: none;
-    background-color: #4CAF50;
-    color: white;
-    cursor: pointer;
-    transition: background-color 0.2s;
+/* 제목과 같은 스타일로 맞추기 */
+.qna-listTop .qna-board-title {
+  font-weight: bold;
+  padding: 12px;
+  border-bottom: 2px solid #ddd;
+  text-align: left;
+  background-color: #f9f9f9;
+  color: #846c6c;
 }
 
-.pagination button:hover {
-    background-color: #45a049;
+.qna-listItem {
+  border-bottom: 1px solid #ddd;
+  padding: 15px;
+  cursor: pointer;
+  transition: background-color 0.3s, box-shadow 0.3s;
 }
 
-.pagination .active {
-    font-weight: bold;
-    background-color: #2E7D32;
+.qna-listItem:hover {
+  background-color: #e8f5e9;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+.qna-question {
+  display: flex;
+  justify-content: space-between;
+  padding: 15px;
+  border-radius: 5px;
+  transition: background-color 0.3s;
+}
+
+.qna-question:hover {
+  background-color: #e1e1e1;
+}
+
+.qna-question > .qna-board-title {
+  font-size: 16px;
+  font-weight: bold;
+  width: 50%; /* 제목의 너비를 설정하여 정렬을 맞춤 */
+}
+
+.qna-question > .qna-board-info {
+  display: flex;
+  justify-content: space-between;
+  font-size: 14px;
+  color: #666;
+  width: 45%; /* 작성자와 작성일의 너비를 설정하여 정렬을 맞춤 */
+}
+
+.qna-reply {
+  padding: 12px 15px;
+  background-color: #f4f7f4;
+  border-left: 4px solid #a788d5;
+  margin: 8px 0;
+  font-size: 15px;
+  border-radius: 5px;
+}
+
+.qna-pagination {
+  text-align: center;
+  margin-top: 20px;
+}
+
+.qna-pagination button {
+  margin: 2px;
+  padding: 8px 15px;
+  border: none;
+  background-color: #c3b5d9;
+  color: white;
+  cursor: pointer;
+  border-radius: 5px;
+  transition: background-color 0.3s, transform 0.3s;
+}
+
+.qna-pagination button:hover {
+  background-color: #ccc8d2;
+  transform: scale(1.1);
+}
+
+.qna-pagination .active {
+  font-weight: bold;
+  background-color: #a788d5;
+}
+/* Q&A 글쓰기 버튼 */
+.qna-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 1.5rem;
+}
+
+.qna-write-button {
+  padding: 0.5rem 1rem;
+  font-size: 1rem;
+  background-color: #efc7f3;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.qna-write-button:hover {
+  background-color: #c982d2;
 }

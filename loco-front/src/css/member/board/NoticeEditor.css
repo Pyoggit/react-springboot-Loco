@@ -1,80 +1,85 @@
 /* Header 스타일 */
-.header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    font-size: 35px;
-    font-weight: bold;
-    padding: 30px 10px;
+.notice-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 35px;
+  font-weight: bold;
+  padding: 30px 10px;
 }
 
 /* Editor 스타일 */
-.editor > .input {
-    display: flex;
-    flex-direction: column;  /* flex-direction을 column에서 row로 변경하여 가로로 배치 */
-    justify-content: center;
-    align-items: center;
-    width: 100%;
-    max-width: 1000px;  /* 최대 너비 설정 */
-    margin: 0 auto;
+.editor > .notice-input {
+  display: flex;
+  flex-direction: column; /* flex-direction을 column에서 row로 변경하여 가로로 배치 */
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  max-width: 1000px; /* 최대 너비 설정 */
+  margin: 0 auto;
 }
 
-.editor > .input * {
-    width: 100%;
-    min-height: 30px;
-    font-size: 30px;
+.editor > .notice-input * {
+  width: 100%;
+  min-height: 30px;
+  font-size: 30px;
 }
 
-.editor textarea, .editor input {
-    border: 1px solid rgb(203, 203, 203);
-    border-radius: 5px;
-    padding: 10px;
-    margin: 10px;
-    width: 100%;  /* 전체 너비를 100%로 설정 */
-    box-sizing: border-box; /* padding을 포함한 너비 설정 */
+.editor textarea,
+.editor input {
+  border: 1px solid rgb(203, 203, 203);
+  border-radius: 5px;
+  padding: 10px;
+  margin: 10px;
+  width: 100%; /* 전체 너비를 100%로 설정 */
+  box-sizing: border-box; /* padding을 포함한 너비 설정 */
 }
 
 /* 파일 업로드 영역 */
-.editor > .input > .file-upload {
-    width: 100%; /* 파일 업로드 영역도 100%로 설정 */
-    margin-top: 20px;
+.editor > .notice-input > .notice-file-upload {
+  width: 100%; /* 파일 업로드 영역도 100%로 설정 */
+  margin-top: 20px;
 }
 
 /* 파일 업로드 input 스타일 */
-.editor > .input > .file-upload input[type="file"] {
-    font-size: 16px;
-    padding: 10px;
-    border: 1px solid rgb(203, 203, 203);
-    border-radius: 5px;
-    width: 100%; /* 파일 업로드 버튼도 100%로 설정 */
-    box-sizing: border-box; /* padding을 포함한 너비 설정 */
+.editor > .notice-input > .notice-file-upload input[type="file"] {
+  font-size: 16px;
+  padding: 10px;
+  border: 1px solid rgb(203, 203, 203);
+  border-radius: 5px;
+  width: 100%; /* 파일 업로드 버튼도 100%로 설정 */
+  box-sizing: border-box; /* padding을 포함한 너비 설정 */
 }
 
 /* 업로드한 이미지 미리보기 스타일 */
-.editor > .input > .file-upload .image-preview {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 10px;
-    margin-top: 10px;
+.editor > .notice-input > .notice-file-upload .notice-image-preview {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 10px;
 }
 
-.editor > .input > .file-upload .image-preview .preview-image {
-    width: 100px;
-    height: 100px;
-    object-fit: cover;
-    border-radius: 8px;
-    border: 1px solid #ddd;
-    margin-top: 10px;
+.editor
+  > .notice-input
+  > .notice-file-upload
+  .notice-image-preview
+  .notice-preview-image {
+  width: 100px;
+  height: 100px;
+  object-fit: cover;
+  border-radius: 8px;
+  border: 1px solid #ddd;
+  margin-top: 10px;
 }
 
 /* 스타일이 깨지는 것을 방지하기 위해 버튼 영역 추가 */
-.editor > .input > .button {
-    width: 100%;
-    display: flex;
-    justify-content: space-between;
-    gap: 10px;
+.editor > .notice-input > .notice-button {
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
 }
 
-.editor > .input > .button Button {
-    flex: 1;
+.editor > .notice-input > .notice-button Button {
+  flex: 1;
 }
