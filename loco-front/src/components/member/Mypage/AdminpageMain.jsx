@@ -40,11 +40,11 @@ const AdminpageMain = () => {
         </ul>
       </aside>
 
-      <section className="admin-content">
+      <article className="admin-content">
         <Routes>
-          <Route path="/*" element={<div> 선택한 내용 표시</div>} />
+          <Route path="/*" element={<div> 미작성한 adminpage 컴포넌트</div>} />
         </Routes>
-      </section>
+      </article>
     </div>
   );
 };

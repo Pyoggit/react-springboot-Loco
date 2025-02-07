@@ -67,6 +67,7 @@ const ModifyMember = () => {
   };
 
   return (
+    // <div>
     <div className="modify-container">
       <h2>회원정보 수정</h2>
       <form onSubmit={handleSubmit}>
