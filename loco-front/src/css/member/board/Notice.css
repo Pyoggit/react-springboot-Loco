@@ -1,92 +1,149 @@
-/* 자유게시판 전체 스타일 */
-.list {
-    max-width: 1100px;
-    margin: 0 auto;
+/* 기본 리스트 스타일 */
+.notice-list {
+  max-width: 1100px;
+  margin: 0 auto;
 }
 
 /* 헤더 스타일 */
-.header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    font-size: 35px;
-    font-weight: bold;
-    padding: 30px 10px;
+.notice-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 35px;
+  font-weight: bold;
+  padding: 30px 10px;
+  padding-top: 90px;
 }
 
-/* 검색 및 정렬 바 */
-.listBar {
-    padding: 20px 0px;
-    display: flex;
-    justify-content: space-between;
+/* 최신순 정렬 및 검색 바 스타일 */
+.notice-listTopWrapper {
+  display: flex;
+  flex-direction: column;
+  margin-top: 20px;
 }
 
-.listBar input,
-.listBar select {
-    padding: 10px;
-    border: 1px solid rgb(212, 211, 211);
-    border-radius: 5px;
-    margin-right: 5px;
+.notice-listTop {
+  display: flex;
+  justify-content: space-between; /* 두 항목을 같은 줄에 배치 */
+  align-items: center; /* 수직 정렬 */
+  width: 100%;
+  margin-bottom: 15px; /* 리스트 헤더와 구분을 위한 간격 */
 }
 
-/* 리스트 테이블 스타일 */
-.listTop > table {
-    font-size: 22px;
-    font-weight: bold;
-    padding: 15px 10px;
-    display: flex;
-    background-color: transparent;
-    text-align: left;
-    border-bottom: 6px solid #115aa9; /* 찐한 파란색 밑줄 */
-}
-.board-title{
-    width: 750px;
-    padding-left: 20px;
-}
-.board-writer, .board-date{
-    width: 200px;
+.notice-sortSelect {
+  display: flex;
+  justify-content: flex-start; /* 왼쪽 정렬 */
+  width: 30%; /* 최신순을 왼쪽에 두기 위한 넓이 설정 */
 }
 
-/* 버튼 스타일 */
-.button {
-    font-size: 20px;
-    font-weight: bold;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-    padding: 13px 15px;
-    color: whitesmoke;
-    margin-top: 20px;
-    background-color: rgb(112, 172, 255);
+.notice-searchBar {
+  display: flex;
+  justify-content: flex-end;
+  width: 65%; /* 검색 및 제목/작성자 순을 오른쪽에 두기 위한 넓이 설정 */
+}
+
+.notice-searchBar input,
+.notice-searchBar select,
+.notice-sortSelect select {
+  padding: 10px;
+  border: 1px solid rgb(212, 211, 211);
+  border-radius: 5px; /* 일관된 border-radius 적용 */
+  margin-right: 5px;
+}
+
+/* 글제목, 작성자, 작성일 밑줄 스타일 */
+.notice-listTop > table {
+  font-size: 22px;
+  font-weight: bold;
+  padding: 15px 10px;
+  display: flex;
+  background-color: transparent;
+  text-align: left;
+}
+
+.notice-list-header {
+  border-bottom: 1px solid rgb(205, 156, 191);
+  padding-bottom: 20px;
+}
+
+.notice-board-title {
+  width: 750px;
+  padding-left: 20px;
+}
+
+.notice-board-writer,
+.notice-board-date {
+  width: 200px;
 }
 
 /* 페이지네이션 스타일 */
-.pagination {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    margin-top: 20px;
+.notice-pagination {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-top: 40px;
+  margin-bottom: 40px;
 }
 
-.pagination button {
-    margin: 0 5px;
-    padding: 5px 10px;
-    background-color: #f0f0f0;
-    border: 1px solid #ccc;
-    cursor: pointer;
+.notice-pagination button {
+  margin: 0 5px;
+  padding: 5px 10px;
+  background-color: white;
+  border: 1px solid #f2e9e9;
+  cursor: pointer;
 }
 
-.pagination button:hover {
-    background-color: #ddd;
+.notice-pagination button:hover {
+  background-color: #ddd;
 }
 
-.pagination button:disabled {
-    background-color: #ccc;
-    cursor: not-allowed;
+.notice-pagination button:disabled {
+  background-color: #fcf5f5;
+  cursor: not-allowed;
 }
 
-.pagination .active {
-    font-weight: bold;
-    background-color: #115aa9;
-    color: white;
+.notice-pagination .active {
+  font-weight: bold;
+  background-color: #e7bae7;
+  color: white;
+}
+
+/* 게시글 항목 스타일 */
+.notice-board-item {
+  display: flex;
+  justify-content: space-between;
+  padding: 15px;
+  border-bottom: 1px solid #ddd;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  border-radius: 5px;
+  margin-top: 8px;
+  margin-bottom: 15px;
+}
+
+.notice-board-item:hover {
+  background-color: #e0e0e0; /* 호버 시 배경색 */
+}
+
+.notice-board-title,
+.notice-board-writer,
+.notice-board-date {
+  padding-left: 20px;
+  font-size: 18px;
+}
+
+/* 글쓰기 버튼 스타일 */
+.notice-write-button {
+  background-color: #ebdae2;
+  color: white;
+  border: none;
+  padding: 10px 15px;
+  font-size: 16px;
+  font-weight: bold;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.notice-write-button:hover {
+  background-color: #b9afb4;
 }

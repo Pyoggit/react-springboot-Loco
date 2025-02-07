@@ -26,66 +26,17 @@ const mockData = [
   },
   {
     id: 4,
-    title: "제목2",
-    content: "내용2",
-    writer: "박박박",
+    title: "제목4",
+    content: "내용4",
+    writer: "홍홍홍",
     createdDate: new Date("2025-01-14").getTime(),
   },
   {
     id: 5,
-    title: "제목2",
-    content: "내용2",
-    writer: "박박박",
+    title: "제목5",
+    content: "내용5",
+    writer: "최최최",
     createdDate: new Date("2025-01-15").getTime(),
-  },
-  {
-    id: 6,
-    title: "제목2",
-    content: "내용2",
-    writer: "박박박",
-    createdDate: new Date("2025-02-23").getTime(),
-  },
-  {
-    id: 7,
-    title: "제목2",
-    content: "내용2",
-    writer: "박박박",
-    createdDate: new Date("2025-02-24").getTime(),
-  },
-  {
-    id: 8,
-    title: "제목2",
-    content: "내용2",
-    writer: "박박박",
-    createdDate: new Date("2025-02-25").getTime(),
-  },
-  {
-    id: 9,
-    title: "제목2",
-    content: "내용2",
-    writer: "박박박",
-    createdDate: new Date("2025-02-26").getTime(),
-  },
-  {
-    id: 10,
-    title: "제목2",
-    content: "내용2",
-    writer: "박박박",
-    createdDate: new Date("2025-02-27").getTime(),
-  },
-  {
-    id: 11,
-    title: "제목2",
-    content: "내용2",
-    writer: "박박박",
-    createdDate: new Date("2025-02-28").getTime(),
-  },
-  {
-    id: 12,
-    title: "제목2",
-    content: "내용2",
-    writer: "박박박",
-    createdDate: new Date("2025-02-29").getTime(),
   },
 ];
 
@@ -130,55 +81,67 @@ const Freeboard = () => {
   );
 
   return (
-    <div className="list">
-      <header className="header">
+    <div className="notice-list">
+      <header className="notice-header">
         <div className="title">자유 게시판</div>
+        <button
+          className="notice-write-button"
+          onClick={() => nav("/board/notice/new")}
+        >
+          글쓰기
+        </button>
       </header>
-      <div className="listBar">
-        <select onChange={onChangeSortType}>
-          <option value="latest">최신순</option>
-          <option value="oldest">오래된순</option>
-        </select>
-        <div>
-          <select onChange={onChangeSearchOpt}>
-            <option value="title">제목</option>
-            <option value="writer">작성자</option>
-          </select>
-          <input
-            type="text"
-            placeholder="검색"
-            value={search}
-            onChange={onChangeSearch}
-          />
+
+      <div className="notice-listTopWrapper">
+        <div className="notice-listTop">
+          <div className="notice-sortSelect">
+            <select onChange={onChangeSortType}>
+              <option value="latest">최신순</option>
+              <option value="oldest">오래된순</option>
+            </select>
+          </div>
+          <div className="notice-searchBar">
+            <select onChange={onChangeSearchOpt}>
+              <option value="title">제목</option>
+              <option value="writer">작성자</option>
+            </select>
+            <input
+              type="text"
+              placeholder="검색"
+              value={search}
+              onChange={onChangeSearch}
+            />
+          </div>
         </div>
-      </div>
-      <div className="listTop">
-        <table>
+
+        <table className="notice-list-header">
           <tbody>
             <tr>
-              <td className="board-title">글제목</td>
-              <td className="board-writer">작성자</td>
-              <td className="board-date">작성일</td>
+              <td className="notice-board-title">글제목</td>
+              <td className="notice-board-writer">작성자</td>
+              <td className="notice-board-date">작성일</td>
             </tr>
           </tbody>
         </table>
       </div>
+
       <div>
         {currentPosts.map((item) => (
           <div
             key={item.id}
-            className="listItem"
-            onClick={() => nav(`/view/${item.id}`)}
+            className="notice-board-item"
+            onClick={() => nav(`/board/notice/${item.id}`)} // 클릭 시 해당 글로 이동
           >
-            <span className="board-title">{item.title}</span>
-            <span className="board-writer">{item.writer}</span>
-            <span className="board-date">
+            <span className="notice-board-title">{item.title}</span>
+            <span className="notice-board-writer">{item.writer}</span>
+            <span className="notice-board-date">
               {new Date(item.createdDate).toLocaleDateString()}
             </span>
           </div>
         ))}
       </div>
-      <div className="pagination">
+
+      <div className="notice-pagination">
         <button
           onClick={goToPrevPage}
           disabled={currentPage === 1}

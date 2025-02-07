@@ -90,10 +90,10 @@ const NoticeEditor = ({ title }) => {
 
   return (
     <div className="notice-editor">
-      <header className="header">
+      <header className="notice-header">
         <div>{title}</div>
       </header>
-      <div className="input">
+      <div className="notice-input">
         <input
           type="text"
           name="title"
@@ -108,16 +108,16 @@ const NoticeEditor = ({ title }) => {
           onChange={onChangeInput}
           value={input.writer}
         />
-        <div className="file-upload">
+        <div className="notice-file-upload">
           <input type="file" multiple onChange={handleFileChange} />
-          <div className="image-preview">
+          <div className="notice-image-preview">
             {files.length > 0 &&
               files.map((file, index) => (
                 <img
                   key={index}
                   src={URL.createObjectURL(file)}
                   alt={`preview-${index}`}
-                  className="preview-image"
+                  className="notice-preview-image"
                 />
               ))}
           </div>
@@ -129,7 +129,7 @@ const NoticeEditor = ({ title }) => {
           onChange={onChangeInput}
           value={input.content}
         />
-        <div className="button">
+        <div className="notice-button">
           <Button text={"취소하기"} onClick={() => nav(-1)} />
           <Button text={"등록하기"} onClick={onClickSubmit} />
         </div>

@@ -1,8 +1,6 @@
-import { useContext, useEffect, useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import { BoardStateContext, BoardDispatchContext } from "../App";
-import { getStringedDate } from "../util/get-stringed-date";
-import "@/css/member/board/BoardView.css";
+import "@/css/member/board/NoticeboardView.css";
 
 // 버튼 컴포넌트
 const Button = ({ text, onClick }) => {
@@ -26,13 +24,49 @@ const Header = ({ title }) => {
 const NoticeboardView = () => {
   const params = useParams();
   const nav = useNavigate();
-  const data = useContext(BoardStateContext);
-  const { onDelete } = useContext(BoardDispatchContext);
+
+  const mockData = [
+    {
+      id: 1,
+      title: "제목1",
+      content: "내용1",
+      writer: "김김김",
+      createdDate: new Date("2025-01-01").getTime(),
+    },
+    {
+      id: 2,
+      title: "제목2",
+      content: "내용2",
+      writer: "박박박",
+      createdDate: new Date("2025-01-09").getTime(),
+    },
+    {
+      id: 3,
+      title: "제목3",
+      content: "내용3",
+      writer: "이이이",
+      createdDate: new Date("2025-01-13").getTime(),
+    },
+    {
+      id: 4,
+      title: "제목4",
+      content: "내용4",
+      writer: "홍홍홍",
+      createdDate: new Date("2025-01-14").getTime(),
+    },
+    {
+      id: 5,
+      title: "제목5",
+      content: "내용5",
+      writer: "최최최",
+      createdDate: new Date("2025-01-15").getTime(),
+    },
+  ];
 
   const [curBoardItem, setCurBoardItem] = useState(null);
 
   useEffect(() => {
-    const currentBoardItem = data.find(
+    const currentBoardItem = mockData.find(
       (item) => String(item.id) === String(params.id)
     );
 
@@ -42,11 +76,11 @@ const NoticeboardView = () => {
       return;
     }
     setCurBoardItem(currentBoardItem);
-  }, [params.id, data, nav]);
+  }, [params.id, nav]);
 
   const onClickDelete = () => {
     if (window.confirm("정말 삭제하시겠습니까?")) {
-      onDelete(params.id);
+      // 데이터 삭제 로직을 여기에 추가 (현재는 mockData라서 삭제를 구현하지 않음)
       nav("/", { replace: true });
     }
   };
@@ -55,11 +89,18 @@ const NoticeboardView = () => {
     return <div>데이터 로딩중...!</div>;
   }
 
+  // 날짜 포맷: YYYY-MM-DD
+  const formattedDate = new Date(curBoardItem.createdDate);
+  const year = formattedDate.getFullYear();
+  const month = String(formattedDate.getMonth() + 1).padStart(2, "0");
+  const day = String(formattedDate.getDate()).padStart(2, "0");
+  const formattedCreatedDate = `${year}-${month}-${day}`;
+
   return (
     <div className="board">
       <Header title="글 보기" />
       <div className="boardView">
-        <div className="table">
+        <div className="notice-table">
           <table>
             <tbody>
               <tr height="60px">
@@ -70,31 +111,14 @@ const NoticeboardView = () => {
               <tr>
                 <td colSpan={2}>{curBoardItem.content}</td>
               </tr>
-              {curBoardItem.image && (
-                <tr>
-                  <td colSpan={2}>
-                    <img
-                      src={curBoardItem.image}
-                      alt="Uploaded"
-                      style={{
-                        width: "100%",
-                        height: "auto",
-                        marginTop: "20px",
-                      }}
-                    />
-                  </td>
-                </tr>
-              )}
               <tr height="80px">
                 <td>작성자 : {curBoardItem.writer}</td>
-                <td>
-                  작성일 : {getStringedDate(new Date(curBoardItem.createdDate))}
-                </td>
+                <td>작성일 : {formattedCreatedDate}</td>
               </tr>
             </tbody>
           </table>
         </div>
-        <div className="button">
+        <div className="notice-button">
           <Button
             text="글 수정하기"
             onClick={() => nav(`/edit/${curBoardItem.id}`)}
