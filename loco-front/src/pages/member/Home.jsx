@@ -10,8 +10,6 @@ import Five from "/src/assets/images/slide-5.jpg";
 export default function Home() {
   return (
     <>
-      <Category />
-      {/* <Circles /> */}
       <Carousel>
         <img key={0} src={One} alt="Slide 1" />
         <img key={1} src={Two} alt="Slide 2" />
@@ -19,6 +17,8 @@ export default function Home() {
         <img key={3} src={Four} alt="Slide 4" />
         <img key={4} src={Five} alt="Slide 5" />
       </Carousel>
+      <Category />
+      <Circles />
     </>
   );
 }

@@ -1,77 +1,38 @@
-/* 전체 컨테이너 */
-.circles-container {
+.circles-layout {
+  display: flex;
+  gap: 20px;
+  align-items: flex-start;
   max-width: 1200px;
   margin: 40px auto;
   padding: 0 20px;
 }
 
-/* 제목 */
-.circles-title {
-  font-size: 24px;
-  font-weight: bold;
-  margin-bottom: 20px;
-  text-align: center;
+.map-section {
+  flex: 1;
+  max-width: 400px;
 }
 
-/* 그리드 배치 */
+.circles-container {
+  flex: 2;
+}
+
 .circles-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
   gap: 20px;
 }
 
-/* 개별 모임방 카드 */
-.circle-card {
-  background: #fff;
-  border-radius: 10px;
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-  padding: 15px;
-  text-align: center;
-  transition: transform 0.2s ease-in-out;
-}
+@media (max-width: 768px) {
+  .circles-layout {
+    flex-direction: column;
+    align-items: center;
+  }
 
-.circle-card:hover {
-  transform: translateY(-5px);
-}
+  .map-section {
+    max-width: 100%;
+  }
 
-/* 모임방 이미지 */
-.circle-image {
-  width: 100%;
-  border-radius: 10px;
-  height: 160px;
-  object-fit: cover;
-}
-
-/* 모임방 이름 */
-.circle-name {
-  font-size: 18px;
-  margin-top: 10px;
-  font-weight: bold;
-}
-
-/* 모임방 카테고리 */
-.circle-category {
-  font-size: 14px;
-  color: #777;
-  margin-top: 5px;
-}
-
-/* 더보기 버튼 */
-.view-more {
-  display: block;
-  width: 120px;
-  margin: 30px auto 0;
-  padding: 10px 15px;
-  background: #ff7b54;
-  color: #fff;
-  font-size: 16px;
-  border-radius: 5px;
-  text-align: center;
-  cursor: pointer;
-  border: none;
-  transition: background 0.2s ease-in-out;
-}
-
-.view-more:hover {
-  background: #ff5a33;
+  .circles-container {
+    width: 100%;
+  }
 }
