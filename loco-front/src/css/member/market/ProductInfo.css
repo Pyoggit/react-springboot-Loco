@@ -1,0 +1,98 @@
+.board {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 20px;
+}
+
+h1 {
+  font-size: 32px;
+  font-weight: bold;
+  margin-bottom: 20px;
+}
+
+.boardView {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+  max-width: 800px;
+  font-size: 18px;
+}
+
+.table {
+  width: 100%;
+  border-radius: 10px;
+  box-shadow: rgba(0, 0, 0, 0.16) 0px 1px 4px;
+  background: white;
+  overflow: hidden;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+thead tr {
+  background: #f8f9fa;
+}
+
+thead td {
+  font-size: 20px;
+  font-weight: bold;
+  padding: 15px;
+  text-align: center;
+}
+
+tbody td {
+  padding: 15px;
+  border-bottom: 1px solid #ddd;
+  text-align: center;
+}
+
+.image {
+  padding: 20px 0;
+  text-align: center;
+  height: 500px;
+}
+
+.image img {
+  max-width: 100%;
+  height: auto;
+  border-radius: 8px;
+}
+
+.button {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  margin-top: 20px;
+}
+
+.button button {
+  padding: 12px 20px;
+  font-size: 18px;
+  font-weight: bold;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background 0.3s ease;
+}
+
+.button button:first-child {
+  background: #6c757d;
+  color: white;
+}
+
+.button button:first-child:hover {
+  background: #5a6268;
+}
+
+.button button:last-child {
+  background: #28a745;
+  color: white;
+}
+
+.button button:last-child:hover {
+  background: #218838;
+}
