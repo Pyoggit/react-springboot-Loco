@@ -1,27 +1,33 @@
 import "@/css/member/common/Circles.css";
-import MapSection from "./MapSection";
+import GoogleMap from "../Circle/GoogleMap";
+import circle01 from "@/assets/images/circle01.jpg";
+import circle02 from "@/assets/images/circle02.jpg";
+import circle03 from "@/assets/images/circle03.jpg";
+import circle04 from "@/assets/images/circle04.jpg";
+import circle05 from "@/assets/images/circle05.jpg";
+import circle06 from "@/assets/images/circle06.jpg";
+
+const circles = [
+  { name: "IT 개발자 스터디", category: "스터디", image: circle01 },
+  { name: "독서 토론", category: "취미", image: circle02 },
+  { name: "친목 모임", category: "친목", image: circle03 },
+  { name: "헬스 모임", category: "스포츠", image: circle04 },
+  { name: "맛집 탐방", category: "푸드/드링크", image: circle05 },
+  { name: "여행 동행 구하기", category: "여행/동행", image: circle06 },
+];
 
 const Circles = () => {
-  const circles = [
-    { name: "서울 등산 모임", category: "운동", image: "circle01.jpg" },
-    { name: "IT 개발자 스터디", category: "스터디", image: "circle02.jpg" },
-    { name: "맛집 탐방", category: "푸드", image: "circle03.jpg" },
-    { name: "여행 동행 구하기", category: "여행", image: "circle04.jpg" },
-    { name: "야구 직관 모임", category: "스포츠", image: "circle05.jpg" },
-    { name: "독서 토론", category: "취미", image: "circle06.jpg" },
-  ];
-
   return (
     <section className="circles-layout">
-      <MapSection LATITUDE={37.5665} LONGITUDE={126.978} />
+      <GoogleMap />
 
       <div className="circles-container">
-        <h2 className="circles-title">최신 모임</h2>
+        <h2 className="circles-title">전체 모임</h2>
         <div className="circles-grid">
           {circles.map((circle, index) => (
             <div key={index} className="circle-card">
               <img
-                src={`src/assets/images/${circle.image}`}
+                src={circle.image}
                 className="circle-image"
                 alt={circle.name}
               />
