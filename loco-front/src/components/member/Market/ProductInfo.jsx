@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
+import '@/css/member/market/ProductInfo.css';
 
 const mockData = [
   {
@@ -77,16 +78,15 @@ const ProductInfo = () => {
 
   return (
     <div className="board">
-      <h1>상세보기</h1>
       <div className="boardView">
         <div className="table">
           <table>
             <thead>
-              <tr>
+              {/* <tr>
                 <td colSpan={2}>
                   <strong>{curBoardItem.name}</strong>
                 </td>
-              </tr>
+              </tr> */}
               <tr>
                 <td colSpan={2} className="image">
                   <img src={curBoardItem.image} alt={curBoardItem.name} />
@@ -95,20 +95,27 @@ const ProductInfo = () => {
             </thead>
             <tbody>
               <tr>
-                <td colSpan={2}>카테고리: {curBoardItem.category}</td>
+                <td colSpan={2}>
+                  {curBoardItem.category} {'>'} {curBoardItem.name}
+                </td>
               </tr>
               <tr>
                 <td colSpan={2}>{curBoardItem.content}</td>
               </tr>
               <tr>
-                <td>가격 : {curBoardItem.price.toLocaleString()}원</td>
+                <td>{curBoardItem.price.toLocaleString()}원</td>
               </tr>
             </tbody>
           </table>
         </div>
-        <div className="button">
-          <button onClick={() => nav(-1)}>뒤로가기</button>
-          <button onClick={() => nav(`/payment/${curBoardItem.id}`)}>
+        <div className="info-button">
+          <button className="team-button" onClick={() => nav(-1)}>
+            뒤로가기
+          </button>
+          <button
+            className="team-button"
+            onClick={() => nav(`/payment/${curBoardItem.id}`)}
+          >
             결제하기
           </button>
         </div>
