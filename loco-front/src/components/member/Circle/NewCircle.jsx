@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import '@/css/member/circle/NewCircle.css';
+import GoogleMap from './GoogleMap';
 
 const NewCircle = ({ onAddCircle }) => {
   const [title, setTitle] = useState('');
@@ -72,7 +73,10 @@ const NewCircle = ({ onAddCircle }) => {
             required
           />
         </label>
-
+        <label>
+          모임 위치:
+          <GoogleMap />
+        </label>
         <button type="button" className="submit-button">
           모임 추가
         </button>
