@@ -1,10 +1,11 @@
 /* Header 전체 스타일 */
 #header {
-  padding: 10px 0;
+  padding: 20px auto;
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
+  position: relative;
 }
 
 .header-container {
@@ -12,6 +13,7 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
+  position: relative;
 }
 
 .header-left-box {
@@ -28,12 +30,12 @@
 }
 
 .header-logo {
-  color: rgba(0, 0, 0, 1);
-  font-family: "Inter";
-  font-size: 30px;
-  font-weight: bold;
+  font-family: "Caveat", cursive;
+  font-size: 32px;
+  font-weight: 700;
   line-height: 140%;
   letter-spacing: -0.4px;
+  color: rgba(0, 0, 0, 1);
 }
 
 .header-right-box {
@@ -42,11 +44,43 @@
   gap: 15px;
 }
 
+.header-center-box {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  text-align: center;
+}
+
+/* SearchButton 스타일 */
+.header-search-box {
+  display: flex;
+  align-items: center;
+  border: 1px solid rgba(0, 0, 0, 0.2);
+  border-radius: 43px;
+  padding: 0 10px;
+  width: 320px;
+  height: 38px;
+  background: white;
+  overflow: hidden;
+}
+
+.search-category {
+  border: none;
+  background: none;
+  font-size: 14px;
+  padding: 5px;
+  cursor: pointer;
+  outline: none;
+  min-width: 85px;
+  display: flex;
+  align-items: center;
+}
+
 .header-search-input-box {
   border: 1px solid rgba(0, 0, 0, 0.2);
   border-radius: 43px;
   padding: 0 10px 0 12px;
-  width: 223px;
+  width: 280px;
   height: 30px;
 
   display: flex;
@@ -56,21 +90,19 @@
 
 .header-search-input {
   flex: 1;
-
   border: none;
   background: none;
   outline: none;
-
-  color: rgba(0, 0, 0, 1);
   font-size: 14px;
-  font-weight: 400;
-  line-height: 140%;
+  padding-left: 10px;
+  height: 100%;
 }
 
+/* DropDownMenu 스타일 */
 .header-main-menu {
+  background: linear-gradient(to left, #fbc2eb, #a6c1ee);
   width: 100%;
-  background-color: rgba(55, 55, 55, 1);
-  padding: 1px 0;
+  padding: 5px 0;
   text-align: center;
   margin-top: 10px;
 }
@@ -92,7 +124,7 @@
 
 .header-main-menu .menu > li > a {
   text-decoration: none;
-  color: white;
+  color: #fff;
   font-size: 16px;
   padding: 10px 20px;
   display: inline-block;
@@ -100,7 +132,8 @@
 }
 
 .header-main-menu .menu > li:hover > a {
-  background-color: #444;
+  background-color: rgba(0, 0, 0, 0.15);
+  color: #fff;
   border-radius: 5px;
 }
 

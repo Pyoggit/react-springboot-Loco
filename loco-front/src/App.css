@@ -1,3 +1,27 @@
+.team-button {
+  border-radius: 46px;
+  width: 95px;
+  height: 30px;
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  background-color: rgba(0, 0, 0, 1);
+
+  color: rgba(255, 255, 255, 1);
+
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 140%;
+
+  cursor: pointer;
+}
+
+.team-button:hover {
+  background-color: rgba(177, 121, 241, 0.6);
+}
+
 .black-button {
   border-radius: 46px;
   width: 95px;

@@ -1,16 +1,16 @@
 .carousel-wrapper {
-  background-color: rgba(224, 231, 255, 0.9);
+  background-color: #f8f9fa;
   display: flex;
   justify-content: center;
   align-items: center;
   min-height: 55vh;
+  padding: 30px;
 }
 
 .carousel {
   position: relative;
-  width: 60%;
-  max-width: 1000px;
-  height: 50vh;
+  width: 1200px;
+  height: 55vh;
   overflow: hidden;
   background: #f8f8f8;
   border-radius: 20px;

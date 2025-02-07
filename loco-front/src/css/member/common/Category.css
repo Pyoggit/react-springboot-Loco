@@ -1,0 +1,32 @@
+.main-category {
+  width: 100%;
+  padding: 10px 0;
+  background-color: #f8f9fa;
+  display: flex;
+  justify-content: center;
+  flex-direction: column;
+  align-items: center;
+}
+
+.main-category-container {
+  display: flex;
+  gap: 15px;
+}
+
+.main-category-item {
+  font-size: 16px;
+  font-weight: bold;
+  color: #333;
+  padding: 8px 15px;
+  border: 1px solid #ddd;
+  border-radius: 20px;
+  background-color: white;
+  cursor: pointer;
+  transition: all 0.3s ease-in-out;
+}
+
+.main-category-item:hover {
+  background-color: rgba(177, 121, 241, 0.6);
+  color: white;
+  border-color: rgba(177, 121, 241, 0.6);
+}
