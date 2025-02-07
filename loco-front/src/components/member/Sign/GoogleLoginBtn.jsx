@@ -45,7 +45,7 @@ import React from "react";
 import { GoogleOAuthProvider, GoogleLogin } from "@react-oauth/google";
 import { useNavigate } from "react-router-dom";
 import "@/css/member/sign/GoogleLoginBtn.css";
-import dotenv from "dotenv";
+// import dotenv from "dotenv";
 
 const client_id = import.meta.env.VITE_GOOGLE_CLIENT_ID;
 // const clientId =
