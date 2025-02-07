@@ -159,7 +159,7 @@ export default function Header() {
       <div className="header-main-menu">
         <ul className="menu">
           <li>
-            <Link to="#">페이지소개</Link>
+            <Link to="/">페이지소개</Link>
             <ul className="dropdown">
               <li>
                 <Link to="#">인사말</Link>
@@ -176,10 +176,10 @@ export default function Header() {
             <Link to="/circle">모임/참여</Link>
             <ul className="dropdown">
               <li>
-                <Link to="#">모임 보기</Link>
+                <Link to="/circle">모임 보기</Link>
               </li>
               <li>
-                <Link to="#">모임 개설하기</Link>
+                <Link to="/circle/new">모임 개설하기</Link>
               </li>
               <li>
                 <Link to="#">지역별 활동량</Link>
@@ -187,7 +187,7 @@ export default function Header() {
             </ul>
           </li>
           <li>
-            <Link to="/board">커뮤니티</Link>
+            <Link to="/board/freeboard">커뮤니티</Link>
             <ul className="dropdown">
               <li>
                 <Link to="/board/freeboard">자유게시판</Link>
@@ -201,13 +201,10 @@ export default function Header() {
             <Link to="/market">중고거래</Link>
             <ul className="dropdown">
               <li>
-                <Link to="/">상품 보기</Link>
+                <Link to="/market">상품 보기</Link>
               </li>
               <li>
-                <Link to="#">상품 등록하기</Link>
-              </li>
-              <li>
-                <Link to="#">장바구니</Link>
+                <Link to="/market/insert">상품 등록하기</Link>
               </li>
             </ul>
           </li>
