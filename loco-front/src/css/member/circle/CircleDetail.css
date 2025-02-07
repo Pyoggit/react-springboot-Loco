@@ -1,0 +1,117 @@
+/* CircleDetail.css */
+
+.circle-detail-page {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 2rem;
+  background-color: #f9f9f9;
+  border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.image-banner img {
+  width: 100%;
+  height: auto;
+  max-height: 300px;
+  object-fit: cover;
+  border-radius: 10px;
+}
+
+.detail-content {
+  margin-top: 1.5rem;
+  color: #333;
+}
+
+.title {
+  font-size: 2rem;
+  font-weight: 600;
+  text-align: center;
+  color: #333;
+}
+
+.info-section {
+  margin-top: 1rem;
+  font-size: 1rem;
+  line-height: 1.6;
+  color: #555;
+}
+
+.info-section p {
+  display: flex;
+  align-items: center;
+  margin-bottom: 0.8rem;
+}
+
+.match-points {
+  margin-top: 2rem;
+  padding: 1.5rem;
+  background-color: #ffffff;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.08);
+}
+
+.match-points h2 {
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: #444;
+}
+
+.match-points ul {
+  list-style: none;
+  padding: 0;
+}
+
+.match-points li {
+  background-color: #f0f8ff;
+  padding: 0.6rem 1rem;
+  margin-bottom: 0.6rem;
+  border-radius: 5px;
+  color: #333;
+}
+
+.apply-section {
+  margin-top: 2rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.price {
+  font-size: 1.2rem;
+  font-weight: bold;
+  color: #333;
+}
+
+.apply-button {
+  background-color: #ff6b6b;
+  color: white;
+  padding: 0.8rem 2rem;
+  border: none;
+  border-radius: 8px;
+  font-size: 1rem;
+  cursor: pointer;
+  margin: 1rem 0;
+  transition: background-color 0.3s;
+}
+.googleMap {
+  margin-top: 2rem;
+  margin-left: 210px;
+}
+.apply-button:hover {
+  background-color: #ff4b4b;
+}
+
+.back-button {
+  background-color: #888;
+  color: white;
+  padding: 0.8rem 2rem;
+  border: none;
+  border-radius: 8px;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.back-button:hover {
+  background-color: #555;
+}
