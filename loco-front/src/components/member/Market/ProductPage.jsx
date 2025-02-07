@@ -2,7 +2,10 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import '@/css/member/market/ProductPage.css';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faPlus } from '@fortawesome/free-solid-svg-icons';
+import { faHeart, faPlus } from '@fortawesome/free-solid-svg-icons';
+// import { faHeart as regularHeart } from '@fortawesome/free-regular-svg-icons';
+import emptyLike from '../../../assets/images/favorite-light.png';
+import like from '../../../assets/images/favorite-fill.png';
 
 const mockData = [
   {
@@ -60,7 +63,7 @@ const ListItem = ({ id, name, image, category, price }) => {
 
   const handleDetailClick = (e) => {
     e.stopPropagation();
-    navigate(`/product/info/${id}`);
+    navigate(`/market/info/${id}`);
   };
 
   const handleCartClick = (e) => {
@@ -69,20 +72,45 @@ const ListItem = ({ id, name, image, category, price }) => {
     navigate('/cart');
   };
 
+  const [isLikeClick, setIsLikeClick] = useState(false);
+
   return (
     <div className="listItem">
-      <img src={image} alt={name} className="item-image" />
-      <div className="item-info">
-        <p className="item-name">상품명: {name}</p>
-        <p className="item-category">카테고리: {category}</p>
-        <p className="item-price">가격: {price.toLocaleString()}원</p>
-        <div className="item-buttons">
-          <button onClick={handleDetailClick} className="detail-button">
-            상세보기
-          </button>
-          <button onClick={handleCartClick} className="cart-button">
-            장바구니
-          </button>
+      <div className="like-button">
+        <button
+          className="like-button"
+          onClick={() => setIsLikeClick(!isLikeClick)}
+        >
+          {isLikeClick ? (
+            <img src={emptyLike} className="emptyLike" />
+          ) : (
+            <img src={like} className="like" />
+          )}
+        </button>
+        {/* <button
+          className="like-button"
+          onClick={() => setIsLikeClick((prev) => !prev)}
+        >
+          <FontAwesomeIcon
+            icon={isLikeClick ? faHeart : ['far', 'heart']}
+            className="like-icon"
+          />
+        </button> */}
+      </div>
+      <div className="product-list">
+        <img src={image} alt={name} className="item-image" />
+        <div className="item-info">
+          <p className="item-name">상품명: {name}</p>
+          <p className="item-category">카테고리: {category}</p>
+          <p className="item-price">가격: {price.toLocaleString()}원</p>
+          <div className="item-buttons">
+            <button onClick={handleDetailClick} className="team-button">
+              상세보기
+            </button>
+            <button onClick={handleCartClick} className="team-button">
+              장바구니
+            </button>
+          </div>
         </div>
       </div>
     </div>

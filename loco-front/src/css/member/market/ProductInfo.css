@@ -53,7 +53,7 @@ tbody td {
 .image {
   padding: 20px 0;
   text-align: center;
-  height: 500px;
+  height: 300px;
 }
 
 .image img {
@@ -62,14 +62,18 @@ tbody td {
   border-radius: 8px;
 }
 
-.button {
+.info-button {
   display: flex;
   justify-content: center;
   gap: 10px;
   margin-top: 20px;
 }
 
-.button button {
+.info-button button:hover {
+  border: none;
+}
+
+/* .info-button button {
   padding: 12px 20px;
   font-size: 18px;
   font-weight: bold;
@@ -77,22 +81,22 @@ tbody td {
   border-radius: 5px;
   cursor: pointer;
   transition: background 0.3s ease;
-}
+} */
 
-.button button:first-child {
+/* .button button:first-child {
   background: #6c757d;
   color: white;
-}
+} */
 
-.button button:first-child:hover {
+/* .button button:first-child:hover {
   background: #5a6268;
-}
+} */
 
-.button button:last-child {
+/* .button button:last-child {
   background: #28a745;
   color: white;
-}
+} */
 
-.button button:last-child:hover {
+/* .button button:last-child:hover {
   background: #218838;
-}
+} */

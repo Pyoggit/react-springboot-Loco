@@ -1,5 +1,5 @@
 .productPage {
-  max-width: 1200px;
+  max-width: 1300px;
   margin: 0 auto;
 }
 .list {
@@ -22,6 +22,24 @@
   margin: 0 auto;
   margin-top: 20px;
   margin-bottom: 10px;
+}
+
+.like-button {
+  border: none;
+
+  display: flex;
+}
+
+.like-icon {
+  color: red; /* 클릭 시 색상 변경 */
+  font-size: 24px;
+}
+
+.emptyLike,
+.like {
+  filter: invert(25%) sepia(43%) saturate(3750%) hue-rotate(347deg)
+    brightness(98%) contrast(91%);
+  font-size: large;
 }
 
 .register-button {
@@ -81,14 +99,20 @@
   height: 300px;
   display: flex;
   flex-direction: column;
-  justify-content: space-around;
-  align-items: center;
+  justify-content: space-between;
   padding: 14px;
   border: 1px solid #e0e0e0;
   border-radius: 8px;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   cursor: pointer;
   transition: background-color 0.2s;
+}
+
+.product-list {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-around;
+  align-items: center;
 }
 
 .listItem:hover {
