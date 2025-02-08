@@ -1,65 +1,59 @@
 .admin-container {
-    display: flex;
-    width: 100%;
-    max-width: 1200px;
-    margin: 50px auto;
-    gap: 20px;
+  display: flex;
+  width: 100%;
+  max-width: 1400px;
+  margin: 50px auto;
+  gap: 20px;
+  background: white;
+  border-radius: 10px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+  padding: 20px;
 }
 
+/* 좌측 네비게이션 */
 .admin-aside {
-    width: 250px;
-    padding: 20px;
-    border: 1px solid #ddd;
-    border-radius: 10px;
-    background-color: #f9f9f9;
-}
-
-.admin-aside h2 {
-    font-size: 20px;
-    margin-bottom: 15px;
-    text-align: center;
+  width: 250px;
+  padding: 20px;
+  border-radius: 10px;
+  background: linear-gradient(135deg, #6a11cb, #2575fc);
+  color: white;
 }
 
 .admin-aside ul {
-    list-style: none;
-    padding: 0;
+  padding: 0;
+  list-style: none;
 }
 
 .admin-aside li {
-    padding: 10px;
-    text-align: center;
-    border-radius: 5px;
-}
-
-.admin-aside li a {
-    text-decoration: none;
-    color: #333;
-    font-weight: bold;
+  padding: 10px;
+  cursor: pointer;
+  transition: 0.3s;
 }
 
 .admin-aside li:hover {
-    background-color: #ddd;
+  background: rgba(255, 255, 255, 0.2);
 }
 
+/* 메인 콘텐츠 영역 */
 .admin-content {
-    flex-grow: 1;
-    padding: 20px;
-    border: 1px solid #ddd;
-    border-radius: 10px;
-    background-color: #fff;
-    min-height: 300px;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
+  flex-grow: 1;
+  padding: 30px;
+  border-radius: 10px;
+  background: #fff;
+  min-height: 600px;
+  display: flex;
+  flex-direction: column;
 }
 
-.admin-content h2 {
-    font-size: 22px;
-    margin-bottom: 10px;
+.dashboard {
+  text-align: center;
 }
 
-.admin-content p {
-    font-size: 16px;
-    color: #666;
+.dashboard h2 {
+  font-size: 24px;
+  margin-bottom: 10px;
+}
+
+.dashboard p {
+  color: #666;
 }
