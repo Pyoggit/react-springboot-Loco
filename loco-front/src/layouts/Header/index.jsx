@@ -193,7 +193,7 @@ export default function Header() {
                 <Link to="/board/freeboard">자유게시판</Link>
               </li>
               <li>
-                <Link to="/board/aanonymous">익명게시판</Link>
+                <Link to="/board/anonymous">익명게시판</Link>
               </li>
             </ul>
           </li>
