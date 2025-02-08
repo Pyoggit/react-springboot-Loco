@@ -1,7 +1,7 @@
 import { Route, Routes } from "react-router-dom";
 import "./App.css";
 import Member from "./pages/member/Member";
-import AdminLoginMain from "./components/admin/AdminLogin/AdminLoginMain";
+import AdminLoginMain from "./components/admin/AdminLoginMain";
 import LoginMain from "./components/member/Sign/LoginForm";
 import FindEmailForm from "./components/member/Sign/FindEmailForm";
 import FindPwForm from "./components/member/Sign/FindPwForm";
