@@ -1,0 +1,89 @@
+.admin-member-container {
+  width: 100%;
+  background: white;
+  border-radius: 10px;
+  padding: 20px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+}
+
+.admin-member-header {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 15px;
+}
+
+.admin-member-search-input {
+  padding: 8px;
+  border-radius: 5px;
+  border: 1px solid #ccc;
+  width: 200px;
+}
+
+.admin-member-delete-btn {
+  background: red;
+  color: white;
+  border: none;
+  padding: 8px 12px;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.admin-member-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.admin-member-table th,
+.admin-member-table td {
+  padding: 12px;
+  border: 1px solid #ddd;
+}
+
+.admin-member-table th {
+  background: #667eea;
+  color: white;
+  cursor: pointer;
+}
+
+.admin-member-table th:hover {
+  background: #5568c0;
+}
+
+.admin-member-table input[type="checkbox"] {
+  transform: scale(1.2);
+}
+
+.pagination {
+  display: flex;
+  justify-content: center;
+  margin-top: 15px;
+}
+
+.pagination button {
+  padding: 5px 10px;
+  margin: 0 5px;
+  border: 1px solid #ddd;
+  cursor: pointer;
+}
+
+/* 반응형 */
+@media (max-width: 768px) {
+  .admin-member-header {
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .admin-member-search-input {
+    width: 100%;
+  }
+
+  .admin-member-delete-btn {
+    width: 100%;
+  }
+
+  .admin-member-table th,
+  .admin-member-table td {
+    font-size: 14px;
+    padding: 10px;
+  }
+}
