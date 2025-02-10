@@ -1,9 +1,6 @@
-import React, { useState, useContext } from "react";
+import React, { useState } from "react";
 import "@/css/member/board/FreeView.css";
-import Button from "./Button";
-import { getStringedDate } from "../util/get-stringed-date";
 import { useNavigate, useParams } from "react-router-dom";
-import { BoardDispatchContext } from "../App";
 
 const FreeView = () => {
   const [comments, setComments] = useState([
@@ -31,7 +28,21 @@ const FreeView = () => {
 
   const params = useParams();
   const nav = useNavigate();
-  const { onDelete } = useContext(BoardDispatchContext);
+
+  // `getStringedDate` 자체 구현: 날짜를 "YYYY-MM-DD" 형식으로 반환
+  const getStringedDate = (date) => {
+    const options = { year: "numeric", month: "2-digit", day: "2-digit" };
+    return new Date(date).toLocaleDateString("ko-KR", options);
+  };
+
+  // 게시글 삭제 기능 자체 구현
+  const onClickDelete = () => {
+    if (window.confirm("정말 삭제하시겠습니까?")) {
+      // 실제 삭제 작업은 여기서 처리되도록 하며, 예를 들어 상태나 API 호출 등을 사용할 수 있습니다.
+      console.log(`게시글 ${params.id} 삭제`);
+      nav("/", { replace: true });
+    }
+  };
 
   const curBoardItem = {
     id: 1,
@@ -42,36 +53,25 @@ const FreeView = () => {
     image: "https://via.placeholder.com/150",
   };
 
-  const onClickDelete = () => {
-    if (window.confirm("정말 삭제하시겠습니까?")) {
-      onDelete(params.id);
-      nav("/", { replace: true });
-    }
-  };
-
   return (
-    <div className="freeBoardView">
-      <header className="header">
-        <div className="title">글 보기</div>
+    <div className="freeview-freeBoardView">
+      <header className="freeview-header">
+        <div className="freeview-title">글 보기</div>
       </header>
 
-      <div className="boardView">
-        <div
-          className="top-buttons"
-          style={{
-            display: "flex",
-            justifyContent: "space-between",
-            width: "100%",
-          }}
-        >
-          <Button
-            text="수정"
+      <div className="freeview-boardView">
+        <div className="freeview-top-buttons">
+          <button
             onClick={() => nav(`/edit/${curBoardItem.id}`)}
-            small
-          />
-          <Button text="삭제" onClick={onClickDelete} small />
+            className="freeview-editButton"
+          >
+            수정
+          </button>
+          <button onClick={onClickDelete} className="freeview-deleteButton">
+            삭제
+          </button>
         </div>
-        <div className="table">
+        <div className="freeview-table">
           <table>
             <tr height="60px">
               <td colSpan={2}>
@@ -87,7 +87,7 @@ const FreeView = () => {
                   <img
                     src={curBoardItem.image}
                     alt="Uploaded"
-                    style={{ width: "100%", height: "auto", marginTop: "20px" }}
+                    className="freeview-image"
                   />
                 </td>
               </tr>
@@ -102,7 +102,7 @@ const FreeView = () => {
         </div>
       </div>
 
-      <div className="comments">
+      <div className="freeview-comments">
         <h3>댓글달기</h3>
         <ul>
           {comments.map((comment) => (
@@ -111,21 +111,16 @@ const FreeView = () => {
             </li>
           ))}
         </ul>
-        <div
-          className="commentInput"
-          style={{
-            display: "flex",
-            justifyContent: "space-between",
-            width: "100%",
-          }}
-        >
+        <div className="freeview-commentInput">
           <textarea
             value={newComment}
             onChange={handleCommentChange}
             placeholder="댓글을 입력하세요..."
-            style={{ flex: 1, marginRight: "10px" }}
+            className="freeview-textarea"
           />
-          <Button text="댓글 달기" onClick={handleAddComment} />
+          <button onClick={handleAddComment} className="freeview-commentButton">
+            댓글 달기
+          </button>
         </div>
       </div>
     </div>

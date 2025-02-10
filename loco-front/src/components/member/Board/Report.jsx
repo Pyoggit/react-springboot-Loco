@@ -38,55 +38,6 @@ const mockData = [
     writer: "최최최",
     createdDate: new Date("2025-01-15").getTime(),
   },
-  {
-    id: 6,
-    title: "제목6",
-    content: "내용6",
-    writer: "양양양",
-    createdDate: new Date("2025-02-23").getTime(),
-  },
-  {
-    id: 7,
-    title: "제목7",
-    content: "내용7",
-    writer: "김김김",
-    createdDate: new Date("2025-02-24").getTime(),
-  },
-  {
-    id: 8,
-    title: "제목8",
-    content: "내용8",
-    writer: "박박박",
-    createdDate: new Date("2025-02-25").getTime(),
-  },
-  {
-    id: 9,
-    title: "제목9",
-    content: "내용9",
-    writer: "이이이",
-    createdDate: new Date("2025-02-26").getTime(),
-  },
-  {
-    id: 10,
-    title: "제목10",
-    content: "내용10",
-    writer: "최최최",
-    createdDate: new Date("2025-02-27").getTime(),
-  },
-  {
-    id: 11,
-    title: "제목11",
-    content: "내용11",
-    writer: "홍홍홍",
-    createdDate: new Date("2025-02-28").getTime(),
-  },
-  {
-    id: 12,
-    title: "제목12",
-    content: "내용12",
-    writer: "양양양",
-    createdDate: new Date("2025-02-29").getTime(),
-  },
 ];
 
 const Report = () => {
@@ -131,18 +82,16 @@ const Report = () => {
 
   return (
     <div className="notice-list">
-      {/* 🔹 공지사항 제목 & 글쓰기 버튼 */}
       <header className="notice-header">
-        <div className="title">신고 게시판</div>
+        <div className="notice-title">신고 게시판</div>
         <button
           className="notice-write-button"
           onClick={() => nav("/board/notice/new")}
         >
-          신고하기
+          글쓰기
         </button>
       </header>
 
-      {/* 🔹 검색 & 정렬 */}
       <div className="notice-listTopWrapper">
         <div className="notice-listTop">
           <div className="notice-sortSelect">
@@ -165,11 +114,10 @@ const Report = () => {
           </div>
         </div>
 
-        {/* 🔹 리스트 헤더 */}
         <table className="notice-list-header">
           <tbody>
             <tr>
-              <td className="notice-board-title">신고글</td>
+              <td className="notice-board-title">글제목</td>
               <td className="notice-board-writer">작성자</td>
               <td className="notice-board-date">작성일</td>
             </tr>
@@ -177,13 +125,12 @@ const Report = () => {
         </table>
       </div>
 
-      {/* 🔹 게시글 리스트 */}
       <div>
         {currentPosts.map((item) => (
           <div
             key={item.id}
             className="notice-board-item"
-            onClick={() => nav(`/board/notice/NoticeboardView${item.id}`)}
+            onClick={() => nav(`/board/notice/noticeboardview/${item.id}`)} // 클릭 시 해당 글로 이동
           >
             <span className="notice-board-title">{item.title}</span>
             <span className="notice-board-writer">{item.writer}</span>
@@ -194,7 +141,6 @@ const Report = () => {
         ))}
       </div>
 
-      {/* 🔹 페이징 버튼 */}
       <div className="notice-pagination">
         <button
           onClick={goToPrevPage}

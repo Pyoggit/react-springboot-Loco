@@ -1,43 +1,91 @@
-.boardView {
+/* NoticeboardView.css */
+.noticeview-board {
+  padding: 30px;
+  min-height: 100vh; /* 화면이 비어보이지 않도록 최소 높이 설정 */
+}
+
+.noticeview-boardView {
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
   font-size: 18px;
+  max-width: 1000px;
+  margin: 0 auto; /* 가운데 정렬 */
 }
 
-.boardView > .table {
-  border-radius: 10px;
-  box-shadow: rgba(0, 0, 0, 0.16) 0px 1px 4px;
-}
-
-.boardView table {
-  width: 800px;
-  min-height: 400px;
-}
-
-.boardView table tr,
-.boardView table td {
-  border-bottom: 1px solid rgb(207, 207, 207);
-  padding: 10px;
-}
-
-.boardView > .button {
-  width: 800px;
+.noticeview-header {
   display: flex;
-  justify-content: space-between;
-  gap: 2px;
-}
-
-.boardView > notice-button {
-  flex: 1;
-}
-
-.notice-header {
-  display: flex;
-  justify-content: space-between;
+  justify-content: center;
   align-items: center;
-  font-size: 35px;
+  font-size: 23px;
   font-weight: bold;
-  padding: 30px 10px;
+  padding: 40px 10px; /* 글 보기 위 간격을 늘림 */
+  border-bottom: 2px solid #e0e0e0; /* 헤더 아래에 구분선 추가 */
+  width: 100%;
+}
+
+.noticeview-table {
+  width: 100%;
+  background-color: white;
+  border-radius: 12px;
+  box-shadow: rgba(0, 0, 0, 0.15) 0px 4px 8px;
+  padding: 20px;
+  margin-top: 20px;
+  margin-bottom: 15px; /* 버튼 아래 간격을 줄임 */
+}
+
+.noticeview-table table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.noticeview-table td {
+  padding: 38px;
+  border-bottom: 1px solid #e0e0e0;
+  color: #555; /* 텍스트 색을 조금 더 부드럽게 */
+}
+
+.noticeview-table tr:last-child td {
+  border-bottom: none; /* 마지막 행의 테두리 제거 */
+}
+
+.noticeview-table td strong {
+  font-size: 20px;
+  color: #2d2d2d; /* 제목 색상 */
+}
+
+.noticeview-button-container {
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+  max-width: 900px;
+  margin-top: 20px;
+  gap: 15px; /* 버튼들 간 간격 */
+}
+
+.noticeview-custom-button {
+  padding: 20px 30px;
+  font-size: 16px;
+  font-weight: bold;
+  border: none;
+  border-radius: 8px; /* 버튼 둥글게 */
+  cursor: pointer;
+  background-color: #d7c5d4;
+  color: white;
+  transition: background-color 0.3s ease, transform 0.2s ease;
+  width: 80%; /* 버튼 크기 일정하게 유지 */
+}
+
+.noticeview-custom-button:hover {
+  background-color: #b8a8b6;
+  transform: translateY(-3px); /* 마우스 오버 시 버튼 살짝 올려주기 */
+}
+
+.noticeview-custom-button:focus {
+  outline: none;
+}
+
+.noticeview-custom-button:active {
+  transform: translateY(1px); /* 클릭 시 눌리는 효과 */
 }

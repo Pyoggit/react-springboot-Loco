@@ -83,7 +83,7 @@ const Notice = () => {
   return (
     <div className="notice-list">
       <header className="notice-header">
-        <div className="title">공지사항</div>
+        <div className="notice-title">공지사항</div>
         <button
           className="notice-write-button"
           onClick={() => nav("/board/notice/new")}
@@ -130,7 +130,7 @@ const Notice = () => {
           <div
             key={item.id}
             className="notice-board-item"
-            onClick={() => nav(`/board/notice/${item.id}`)} // 클릭 시 해당 글로 이동
+            onClick={() => nav(`/board/notice/noticeboardview/${item.id}`)} // 클릭 시 해당 글로 이동
           >
             <span className="notice-board-title">{item.title}</span>
             <span className="notice-board-writer">{item.writer}</span>

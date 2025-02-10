@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom"; // useNavigate를 import 해야 합니다
 import "@/css/member/board/Qna.css";
 
 const mockData = [
@@ -188,8 +189,10 @@ const Faq = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [isWriting, setIsWriting] = useState(false); // 글쓰기 폼을 열고 닫을 상태
 
-  const postsPerPage = 10;
+  const navigate = useNavigate();
 
+  const postsPerPage = 10;
+  const onChangeSortType = (e) => setSortType(e.target.value);
   const toggleReply = (id) => {
     setExpandedId(expandedId === id ? null : id);
   };
@@ -227,14 +230,17 @@ const Faq = () => {
     <div className="qna-list">
       <header className="qna-header">
         FAQ
-        <button className="qna-write-button" onClick={openWritePost}>
+        <button
+          className="qna-write-button"
+          onClick={() => navigate("/board/qna/qnanew")} // navigate 함수로 변경
+        >
           글쓰기
         </button>
       </header>
       <div className="qna-listTop">
         <div className="qna-list-header">
-          <div className="qna-sort">
-            <select onChange={(e) => setSortType(e.target.value)}>
+          <div>
+            <select onChange={onChangeSortType} className="qna-sort">
               <option value="latest">최신순</option>
               <option value="oldest">오래된순</option>
             </select>
