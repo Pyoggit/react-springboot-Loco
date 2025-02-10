@@ -17,9 +17,9 @@ import com.loco.aroundme.mapper.UsersMapper;
 @RequestMapping("/api/adminpage")
 public class AdminAuthController {
 
-    private final UsersMapper usersMapper;
-    private final JwtUtil jwtUtil;
-    private final BCryptPasswordEncoder passwordEncoder;
+    private UsersMapper usersMapper;
+    private JwtUtil jwtUtil;
+    private BCryptPasswordEncoder passwordEncoder;
 
     public AdminAuthController(UsersMapper usersMapper, JwtUtil jwtUtil, BCryptPasswordEncoder passwordEncoder) {
         this.usersMapper = usersMapper;
@@ -30,7 +30,7 @@ public class AdminAuthController {
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody Map<String, String> loginRequest) {
        
-    	 System.out.println("로그인 요청"); 
+    	 System.out.println("어드민 로그인 요청"); 
     	    System.out.println("요청 데이터: " + loginRequest); // 유저가 보낸 요청 데이터
     	    
     	String userEmail = loginRequest.get("email");
@@ -40,23 +40,28 @@ public class AdminAuthController {
         if (user == null || !passwordEncoder.matches(password, user.getPassword())) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(Map.of("error", "Invalid credentials"));
         }
+        
+        System.out.println("*user=" + user);
 
         // roleId 가져오기
         Long roleId = user.getRoleId();
         System.out.println("roleId : " + roleId);
 
-        String roleName = (roleId == 1) ? "ROLE_ADMIN" : "ROLE_USER";
-        System.out.println("roleName 변환 결과: " + roleName);
+        String role = (roleId == 1) ? "ROLE_ADMIN" : "ROLE_USER";
+        System.out.println("role 변환 결과: " + role);
         
 
         // 관리자만 로그인 가능 (roleId가 1이 아닐 경우 차단)
-        if (!roleName.equals("ROLE_ADMIN")) {
+        if (!role.equals("ROLE_ADMIN")) {
             System.out.println("관리자 권한이 아님 roleId: " + roleId);
             return ResponseEntity.status(HttpStatus.FORBIDDEN).body(Map.of("error", "Access denied"));
         }
         // JWT 토큰 생성
         String accessToken = jwtUtil.generateAccessToken(userEmail, roleId);
         String refreshToken = jwtUtil.generateRefreshToken(userEmail);
+        
+        System.out.println("accessToken:" + accessToken);
+        System.out.println("refreshToken:" + refreshToken);
 
         return ResponseEntity.ok()
                 .header("Refresh-Token", refreshToken)

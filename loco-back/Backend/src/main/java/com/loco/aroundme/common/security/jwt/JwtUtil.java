@@ -50,11 +50,12 @@ public class JwtUtil {
 	 * 액세스 토큰 생성 (role을 "ROLE_1" 또는 "ROLE_2" 그대로 사용)
 	 */
 	public String generateAccessToken(String userEmail, Long roleId) {
-        String roleName = (roleId == 1) ? "ROLE_ADMIN" : "ROLE_USER"; // roleId -> "ROLE_ADMIN" 또는 "ROLE_USER"
+        String role = (roleId == 1) ? "ROLE_ADMIN" : "ROLE_USER"; // roleId -> "ROLE_ADMIN" 또는 "ROLE_USER"
+        System.out.println("토큰의 roleID" + roleId);
         
         return Jwts.builder()
                 .setSubject(userEmail) // subject에 userEmail 저장
-                .claim("role", roleName) // roleId 대신 roleName 저장
+                .claim("role", role) // roleId 대신 roleName 저장
                 .setIssuedAt(new Date())
                 .setExpiration(new Date(System.currentTimeMillis() + ACCESS_TOKEN_EXPIRATION))
                 .signWith(getSigningKey(), SignatureAlgorithm.HS256)

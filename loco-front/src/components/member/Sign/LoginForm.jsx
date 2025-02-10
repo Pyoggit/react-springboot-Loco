@@ -18,15 +18,21 @@ const LoginForm = () => {
 
     try {
       const response = await axios.post(
-        "http://localhost:8080/api/auth/login",
+        "http://localhost:8080/api/users/login",
         {
           email,
           password,
         }
       );
 
-      // JWT 액세스 토큰 저장
-      localStorage.setItem("accessToken", response.data.accessToken);
+      const accessToken = response.data.accessToken;
+      localStorage.setItem("accessToken", accessToken);
+
+      console.log("로그인 성공!");
+      console.log("받은 accessToken:", accessToken);
+
+      // // JWT 액세스 토큰 저장
+      // localStorage.setItem("accessToken", response.data.accessToken);
 
       // 로그인 성공 후 메인 페이지 또는 대시보드로 이동
       alert("로그인 성공!");

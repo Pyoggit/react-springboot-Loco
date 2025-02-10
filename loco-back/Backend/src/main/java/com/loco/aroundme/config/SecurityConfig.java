@@ -33,7 +33,7 @@ public class SecurityConfig {
 		http.csrf(csrf -> csrf.disable()) // CSRF 비활성화
 				.cors(cors -> cors.configurationSource(corsConfigurationSource())) // CORS 설정
 				.authorizeHttpRequests(auth -> auth
-						.requestMatchers("/api/users/signup", "/api/users/check-email", "/api/auth/login", "/api/auth/kakao/**",
+						.requestMatchers("/api/users/signup", "/api/users/check-email", "/api/users/login", "/api/auth/kakao/**",
 								"/api/auth/google/**")
 						.permitAll() // 일반 로그인 및 회원가입 허용
 						.requestMatchers("/api/adminpage/login").permitAll() // 관리자 로그인은 모두 접근 가능

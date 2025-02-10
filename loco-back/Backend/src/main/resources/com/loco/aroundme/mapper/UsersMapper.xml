@@ -8,7 +8,7 @@
 	<!-- 회원 조회 (이메일로 검색) -->
 	<select id="read" parameterType="String"
 		resultType="com.loco.aroundme.domain.Users">
-		SELECT * FROM USERS WHERE USER_EMAIL = #{email}
+		SELECT * FROM USERS WHERE USER_EMAIL = #{userEmail}
 	</select>
 
 	<!-- 회원가입 -->

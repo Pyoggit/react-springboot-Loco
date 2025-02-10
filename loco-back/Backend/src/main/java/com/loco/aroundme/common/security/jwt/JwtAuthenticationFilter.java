@@ -50,10 +50,11 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         else if (refreshToken != null && jwtUtil.validateToken(refreshToken)) {
             Claims claims = jwtUtil.getClaims(refreshToken);
             String userEmail = claims.getSubject();
-            String roleName = claims.get("role", String.class);  // "ROLE_ADMIN" or "ROLE_USER"
+//            String roleName = claims.get("role", String.class);  // "ROLE_ADMIN" or "ROLE_USER"
+            String role = claims.get("role", String.class);  // "ROLE_ADMIN" or "ROLE_USER"
 
             // roleName을 roleId로 변환 (ROLE_ADMIN -> 1, ROLE_USER -> 2)
-            Long roleId = roleName.equals("ROLE_ADMIN") ? 1L : 2L;
+            Long roleId = role.equals("ROLE_ADMIN") ? 1L : 2L;
 
             // 새 액세스 토큰 발급
             String newAccessToken = jwtUtil.generateAccessToken(userEmail, roleId);
