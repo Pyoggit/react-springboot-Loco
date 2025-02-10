@@ -2,16 +2,38 @@ import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import KakaoLoginBtn from "./KakaoLoginBtn";
 import GoogleLoginBtn from "./GoogleLoginBtn";
+import axios from "axios";
 import "@/css/member/sign/LoginForm.css";
 
 const LoginForm = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [error, setError] = useState("");
   const navigate = useNavigate();
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     console.log("Login Attempt:", { email, password });
+    setError("");
+
+    try {
+      const response = await axios.post(
+        "http://localhost:8080/api/auth/login",
+        {
+          email,
+          password,
+        }
+      );
+
+      // JWT 액세스 토큰 저장
+      localStorage.setItem("accessToken", response.data.accessToken);
+
+      // 로그인 성공 후 메인 페이지 또는 대시보드로 이동
+      alert("로그인 성공!");
+      navigate("/");
+    } catch (error) {
+      setError("로그인 실패: 이메일 또는 비밀번호를 확인하세요.");
+    }
   };
 
   const onSignUpClick = () => {

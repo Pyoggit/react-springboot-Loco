@@ -154,7 +154,7 @@ const SignUpForm = () => {
 
     try {
       const response = await axios.post(
-        "http://localhost:8080/users/signup",
+        "http://localhost:8080/api/users/signup",
         formData,
         {
           headers: { "Content-Type": "multipart/form-data" },

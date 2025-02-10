@@ -10,7 +10,8 @@ import com.loco.aroundme.service.UsersService;
 import lombok.RequiredArgsConstructor;
 
 @RestController
-@RequestMapping("/users") // 프론트와 URL 맞춤
+//@RequestMapping("/users") // 프론트와 URL 맞춤
+@RequestMapping("/api/users") // 모든 유저 관련 API는 /api/users 경로로.. 리액트도 수정함
 @RequiredArgsConstructor
 public class UsersController {
 
