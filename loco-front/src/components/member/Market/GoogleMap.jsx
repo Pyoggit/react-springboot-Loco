@@ -46,7 +46,7 @@ export default function GoogleMap({ address, lat, lng }) {
   return (
     <>
       {/* <p>Address: {address}</p> */}
-      <div id="map" style={{ width: '800px', height: '400px' }}></div>
+      <div id="map" style={{ width: '600px', height: '300px' }}></div>
     </>
   );
 }

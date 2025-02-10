@@ -10,10 +10,13 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@fortawesome/free-regular-svg-icons": "^6.7.2",
     "@fortawesome/free-solid-svg-icons": "^6.7.2",
     "@fortawesome/react-fontawesome": "^0.2.2",
     "@googlemaps/react-wrapper": "^1.1.42",
     "@react-oauth/google": "^0.12.1",
+    "@tosspayments/payment-sdk": "^1.9.1",
+    "@tosspayments/payment-widget-sdk": "^0.12.0",
     "axios": "^1.7.9",
     "dotenv": "^16.4.7",
     "emailjs-com": "^3.2.0",
