@@ -5,15 +5,16 @@
   margin-top: 10px;
 }
 .menubar > select {
+  width: 132px;
   padding: 10px 20px;
   font-size: 16px;
   font-weight: 900;
-  border: none;
-  background-color: #a5a5a5;
+  border: 1px solid;
+  background-color: white;
   border-radius: 5px;
 }
 
-.menubar > Button {
+.new-button {
   font-size: 16px;
   font-weight: 900;
   border: none;
