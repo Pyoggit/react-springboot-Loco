@@ -15,8 +15,8 @@ export default function GoogleMap({ address, lat, lng }) {
       .load()
       .then(() => {
         // API가 로드된 후에 google 객체 사용 가능
-        const mapLat = parseFloat(lat) || 37.5007861; // lat 값이 없다면 기본 서울 위도
-        const mapLng = parseFloat(lng) || 127.0368861; // lng 값이 없다면 기본 서울 경도
+        const mapLat = parseFloat(lat) || 51.48183765776875; // lat 값이 없다면 기본 서울 위도
+        const mapLng = parseFloat(lng) || -0.19093637376834385; // lng 값이 없다면 기본 서울 경도
 
         // google 객체를 사용하려면 window.google로 접근
         const map = new window.google.maps.Map(document.getElementById('map'), {

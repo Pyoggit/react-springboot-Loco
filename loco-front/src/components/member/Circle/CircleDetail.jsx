@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import '@/css/member/circle/CircleDetail.css';
+import GoogleMapSearch from './GoogleMapSearch';
+import GoogleMapEX from './GoogleMap';
 import GoogleMap from './GoogleMap';
 
 const CircleDetail = () => {
