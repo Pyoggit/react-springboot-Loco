@@ -1,92 +1,122 @@
-import { useNavigate, useParams } from "react-router-dom";
-import { useContext, useEffect, useState } from "react";
-import { BoardDispatchContext, BoardStateContext } from "../App";
+import { useState, useEffect } from "react";
+import { useNavigate, useLocation } from "react-router-dom";
 import "@/css/member/board/NoticeEditor.css";
-import Button from "./Button";
 
-// 목업 데이터 추가
-const mockData = [
-  {
-    id: 1,
-    title: "공지사항 1",
-    content: "내용 1",
-    writer: "관리자",
-    createdDate: "2025-02-05",
-  },
-  {
-    id: 2,
-    title: "공지사항 2",
-    content: "내용 2",
-    writer: "관리자",
-    createdDate: "2025-02-04",
-  },
-];
+// 버튼 컴포넌트
+const Button = ({ text, onClick, style }) => {
+  return (
+    <button
+      onClick={onClick}
+      className="noticeview-custom-button"
+      style={style}
+    >
+      {text}
+    </button>
+  );
+};
 
 const NoticeEditor = ({ title }) => {
-  const [editOn, setEditOn] = useState(false);
-  const { onUpdate } = useContext(BoardDispatchContext);
-  const params = useParams();
+  const { state } = useLocation(); // state에서 boardItem을 가져옵니다.
   const nav = useNavigate();
-  const contextData = useContext(BoardStateContext);
-  const data = contextData && contextData.length > 0 ? contextData : mockData;
-  const [curBoardItem, setCurBoardItem] = useState();
-  const [input, setInput] = useState({ title: "", content: "", writer: "" });
-  const [files, setFiles] = useState([]);
 
+  // 현재 게시글 상태와 입력값을 위한 state
+  const [curBoardItem, setCurBoardItem] = useState(
+    state ? state.boardItem : null
+  );
+  const [input, setInput] = useState({
+    title: "",
+    content: "",
+    writer: "",
+  });
+
+  // curBoardItem이 바뀔 때마다 폼을 갱신합니다.
   useEffect(() => {
-    console.log("BoardStateContext data:", data);
-    console.log("params.id:", params.id);
-
-    let currentBoardItem = data.find(
-      (item) => String(item.id) === String(params.id)
-    );
-
-    if (!currentBoardItem) {
-      console.warn("게시글을 찾을 수 없음, mockData 확인");
-      currentBoardItem = mockData.find(
-        (item) => String(item.id) === String(params.id)
-      );
-    }
-
-    if (!currentBoardItem) {
-      window.alert("존재하지 않는 글입니다.");
-      nav("/", { replace: true });
-    } else {
-      setEditOn(true);
-      setCurBoardItem(currentBoardItem);
+    if (curBoardItem) {
       setInput({
-        title: currentBoardItem.title,
-        content: currentBoardItem.content,
-        writer: currentBoardItem.writer,
-        createdDate: currentBoardItem.createdDate,
+        title: curBoardItem.title,
+        content: curBoardItem.content,
+        writer: curBoardItem.writer,
       });
     }
-  }, [params.id, data]);
+  }, [curBoardItem]);
 
-  if (!curBoardItem) {
-    return <div>데이터 로딩중...!</div>;
-  }
-
+  // 입력값 변경 처리
   const onChangeInput = (e) => {
     const { name, value } = e.target;
-    setInput({ ...input, [name]: value });
+    setInput((prevInput) => ({ ...prevInput, [name]: value }));
   };
 
-  const handleFileChange = (e) => {
-    const fileList = e.target.files;
-    setFiles(Array.from(fileList));
+  // 수정 버튼 클릭 시 처리
+  const onClickSubmit = async () => {
+    // 제목, 내용, 작성자가 비어있으면 경고
+    if (!input.title || !input.content || !input.writer) {
+      window.alert("모든 필드를 입력해주세요.");
+      return;
+    }
+
+    console.log("수정된 게시글 내용:", input);
+
+    try {
+      // 실제 API 호출을 예시로 작성한 부분입니다.
+      // const response = await fetch(`/api/board/${curBoardItem.id}`, {
+      //   method: "PUT",
+      //   headers: {
+      //     "Content-Type": "application/json",
+      //   },
+      //   body: JSON.stringify(input),
+      // });
+
+      // if (response.ok) {
+      //   console.log("게시글 수정 성공!");
+      //   nav("/notice"); // 수정 후 목록 페이지로 이동
+      // } else {
+      //   console.error("수정 실패");
+      // }
+
+      console.log("게시글 수정 성공!");
+
+      // 수정 후 목록 페이지로 리디렉션
+      nav("/notice");
+    } catch (error) {
+      console.error("수정 실패:", error);
+    }
   };
 
-  const onClickSubmit = () => {
-    onUpdate(
-      params.id,
-      input.createdDate,
-      input.title,
-      input.content,
-      input.writer
-    );
-    nav("/", { replace: true });
+  // 삭제 버튼 클릭 시 처리
+  const onClickDelete = async () => {
+    const confirmDelete = window.confirm("정말로 이 글을 삭제하시겠습니까?");
+
+    if (confirmDelete) {
+      console.log("삭제 요청:", curBoardItem);
+
+      // 게시글 ID가 없으면 오류 처리
+      if (!curBoardItem || !curBoardItem.id) {
+        console.error("삭제할 게시글 ID가 없습니다.");
+        return;
+      }
+
+      try {
+        // 삭제 요청 (실제 API URL에 맞춰 수정 필요)
+        const response = await fetch(`/api/board/${curBoardItem.id}`, {
+          method: "DELETE",
+        });
+
+        if (response.ok) {
+          console.log("게시글 삭제 성공!");
+          nav("/notice"); // 삭제 후 목록 페이지로 이동
+        } else {
+          console.error("삭제 실패:", response.statusText);
+        }
+      } catch (error) {
+        console.error("삭제 요청 실패:", error);
+      }
+    }
   };
+
+  // 게시글 데이터가 없으면 로딩 중 표시
+  if (!curBoardItem) {
+    return <div>로딩 중...</div>;
+  }
 
   return (
     <div className="notice-editor">
@@ -108,20 +138,6 @@ const NoticeEditor = ({ title }) => {
           onChange={onChangeInput}
           value={input.writer}
         />
-        <div className="notice-file-upload">
-          <input type="file" multiple onChange={handleFileChange} />
-          <div className="notice-image-preview">
-            {files.length > 0 &&
-              files.map((file, index) => (
-                <img
-                  key={index}
-                  src={URL.createObjectURL(file)}
-                  alt={`preview-${index}`}
-                  className="notice-preview-image"
-                />
-              ))}
-          </div>
-        </div>
         <textarea
           name="content"
           placeholder="내용"
@@ -130,8 +146,19 @@ const NoticeEditor = ({ title }) => {
           value={input.content}
         />
         <div className="notice-button">
-          <Button text={"취소하기"} onClick={() => nav(-1)} />
-          <Button text={"등록하기"} onClick={onClickSubmit} />
+          <Button
+            text={"취소하기"}
+            onClick={() => nav(-1)} // 이전 페이지로 돌아가기
+            style={{ backgroundColor: "#e0e0e0" }}
+          />
+          <Button
+            text={"수정하기"}
+            onClick={onClickSubmit} // 수정된 내용을 제출
+          />
+          <Button
+            text={"삭제하기"}
+            onClick={onClickDelete} // 게시글 삭제
+          />
         </div>
       </div>
     </div>

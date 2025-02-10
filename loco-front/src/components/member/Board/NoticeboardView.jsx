@@ -5,7 +5,7 @@ import "@/css/member/board/NoticeboardView.css";
 // 버튼 컴포넌트
 const Button = ({ text, onClick }) => {
   return (
-    <button onClick={onClick} className="custom-button">
+    <button onClick={onClick} className="noticeview-custom-button">
       {text}
     </button>
   );
@@ -14,8 +14,8 @@ const Button = ({ text, onClick }) => {
 // 헤더 컴포넌트
 const Header = ({ title }) => {
   return (
-    <header className="header">
-      <h1 className="header-title">{title}</h1>
+    <header className="noticeview-header">
+      <h1 className="noticeview-header-title">{title}</h1>
     </header>
   );
 };
@@ -78,11 +78,27 @@ const NoticeboardView = () => {
     setCurBoardItem(currentBoardItem);
   }, [params.id, nav]);
 
+  // 삭제 버튼 클릭 시 동작
   const onClickDelete = () => {
-    if (window.confirm("정말 삭제하시겠습니까?")) {
-      // 데이터 삭제 로직을 여기에 추가 (현재는 mockData라서 삭제를 구현하지 않음)
-      nav("/", { replace: true });
+    const confirmDelete = window.confirm("정말로 이 글을 삭제하시겠습니까?");
+    if (confirmDelete) {
+      // 실제 삭제 기능을 구현 (여기서는 mock으로 처리)
+      window.alert("삭제되었습니다.");
+      nav("/"); // 삭제 후 홈으로 리디렉션
     }
+  };
+
+  // 수정 버튼 클릭 시 동작
+  const onClickEdit = () => {
+    // 수정 페이지로 이동 (글 수정 페이지 URL에 해당 글 ID를 포함)
+    nav(`/board/notice/editor/${curBoardItem.id}`, {
+      state: { boardItem: curBoardItem }, // 상태로 게시글 정보를 넘겨줌
+    });
+  };
+
+  // 취소 버튼 클릭 시 동작 (이전 페이지로 돌아가기)
+  const onClickCancel = () => {
+    nav(-1); // 이전 페이지로 돌아가기
   };
 
   if (!curBoardItem) {
@@ -97,10 +113,10 @@ const NoticeboardView = () => {
   const formattedCreatedDate = `${year}-${month}-${day}`;
 
   return (
-    <div className="board">
+    <div className="noticeview-board">
       <Header title="글 보기" />
-      <div className="boardView">
-        <div className="notice-table">
+      <div className="noticeview-boardView">
+        <div className="noticeview-table">
           <table>
             <tbody>
               <tr height="60px">
@@ -118,12 +134,10 @@ const NoticeboardView = () => {
             </tbody>
           </table>
         </div>
-        <div className="notice-button">
-          <Button
-            text="글 수정하기"
-            onClick={() => nav(`/edit/${curBoardItem.id}`)}
-          />
+        <div className="noticeview-button-container">
+          <Button text="글 수정하기" onClick={onClickEdit} />
           <Button text="글 삭제하기" onClick={onClickDelete} />
+          <Button text="취소하기" onClick={onClickCancel} />
         </div>
       </div>
     </div>

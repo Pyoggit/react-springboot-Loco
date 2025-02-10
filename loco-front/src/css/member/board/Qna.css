@@ -38,10 +38,6 @@
   margin-left: 15px; /* 작성자 드롭다운과 디자인 맞추기 위해 여백 추가 */
 }
 
-.qna-listTop .qna-sort:hover {
-  background-color: #f1f1f1; /* 호버 시 색상 변화 */
-}
-
 .qna-listBar {
   display: flex;
   justify-content: flex-end;
