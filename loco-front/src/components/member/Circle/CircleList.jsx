@@ -16,7 +16,7 @@ const CircleList = () => {
           <option value={'oldest'}>오래된순</option>
         </select>
         <button
-          className=".black-button"
+          className="new-button"
           onClick={() => {
             nav(`/circle/new`);
           }}

@@ -8,6 +8,7 @@ import CircleListDetail from './CircleListDetail';
 import NewCircle from './NewCircle';
 import CircleDetail from './CircleDetail';
 import CircleList from './CircleList';
+import Category from '../Common/Category';
 
 const CircleMain = () => {
   const navigate = useNavigate();
@@ -136,6 +137,7 @@ const CircleMain = () => {
         selectedDate={selectedDate}
         onDateChange={setSelectedDate}
       />
+      <Category />
       <CircleList />
       {/* ✅ 항상 렌더링되도록 Routes 바깥으로 이동 */}
       <CircleListDetail
@@ -143,10 +145,6 @@ const CircleMain = () => {
         selectedDate={selectedDate}
         onPostClick={handleNavigateToDetail}
       />
-
-      <aside className="category-section">
-        <CircleCategory />
-      </aside>
 
       <main className="main-layout">
         <Routes>

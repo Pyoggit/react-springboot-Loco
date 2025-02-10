@@ -52,8 +52,8 @@ const NoticeNew = ({ curBoardItem, editOn }) => {
       alert("제목, 내용, 작성자를 모두 입력해주세요.");
       return;
     }
-
-    nav("/", { replace: true });
+    // 이전 페이지로 돌아가기
+    nav(-1);
   };
 
   return (

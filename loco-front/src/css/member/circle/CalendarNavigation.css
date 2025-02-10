@@ -31,12 +31,12 @@
 }
 
 .selected {
-  background-color: #007bff;
+  background-color: rgba(194, 145, 249, 0.6);
   color: white;
 }
 
 .today {
-  border: 2px solid green;
+  border: 2px solid rgba(194, 145, 249, 0.6);
 }
 
 .sunday {
