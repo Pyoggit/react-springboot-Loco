@@ -1,0 +1,52 @@
+.success-container {
+  max-width: 400px;
+  margin: 50px auto;
+  padding: 20px;
+  text-align: center;
+  border-radius: 10px;
+  background: #f0f5ff; /* 연한 블루 배경 */
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+.success-title {
+  color: #0064ff; /* 토스페이먼트 대표 색상 */
+  font-size: 24px;
+  font-weight: bold;
+  margin-bottom: 15px;
+}
+
+.success-content {
+  font-size: 18px;
+  color: #333;
+  background: white;
+  padding: 15px;
+  border-radius: 8px;
+  margin-bottom: 20px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+}
+
+.success-content p {
+  margin: 8px 0;
+}
+
+.success-button {
+  padding: 12px 20px;
+  font-size: 16px;
+  font-weight: bold;
+  background: #0064ff; /* 토스 블루 */
+  color: white;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: 0.3s ease-in-out;
+}
+
+.success-button:hover {
+  background: #0052cc; /* 어두운 블루 */
+}
+
+.success-icon {
+  font-size: 40px;
+  color: #0064ff;
+  margin-bottom: 10px;
+}
