@@ -18,5 +18,5 @@ public interface UsersMapper {
 
 //	void delete(Long userId);
 
-	 Users read(String username);
+	 Users read(String userEmail);
 }

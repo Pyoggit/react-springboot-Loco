@@ -10,6 +10,9 @@ import com.loco.aroundme.common.security.jwt.JwtUtil;
 import com.loco.aroundme.domain.Users;
 import com.loco.aroundme.mapper.UsersMapper;
 
+/**
+ * 인증 컨트롤러 (로그인 API)
+ */
 @RestController
 @RequestMapping("/auth")
 public class AuthController {
@@ -24,7 +27,9 @@ public class AuthController {
         this.passwordEncoder = passwordEncoder;
     }
 
-    // 로그인 API (CORS 허용)
+    /**
+     * 로그인 API
+     */
     @CrossOrigin(origins = "http://localhost:5173")
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody Map<String, String> loginRequest) {
@@ -32,20 +37,19 @@ public class AuthController {
         String password = loginRequest.get("password");
 
         Users users = usersMapper.read(email);
-        if (users == null) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(Map.of("error", "Invalid email"));
-        }
-        if (!passwordEncoder.matches(password, users.getPassword())) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(Map.of("error", "Invalid password"));
+        if (users == null || !passwordEncoder.matches(password, users.getPassword())) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(Map.of("error", "Invalid credentials"));
         }
 
-        // 액세스 토큰 & 리프레시 토큰 생성
-        String accessToken = jwtUtil.generateAccessToken(email);
+        Long roleId = users.getRoleId();
+        String role = "ROLE_" + roleId; 
+
+        String accessToken = jwtUtil.generateAccessToken(email, roleId);
+//        String accessToken = jwtUtil.generateAccessToken(email, role);
         String refreshToken = jwtUtil.generateRefreshToken(email);
 
-        // 응답 헤더에 리프레시 토큰 추가 
         return ResponseEntity.ok()
-                .header("Refresh-Token", refreshToken) // HTTP 헤더에 리프레시 토큰 추가
+                .header("Refresh-Token", refreshToken)
                 .body(Map.of("accessToken", accessToken));
     }
 }

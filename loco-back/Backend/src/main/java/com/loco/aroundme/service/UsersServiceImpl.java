@@ -30,7 +30,10 @@ public class UsersServiceImpl implements UsersService {
 	@Transactional
 	public void registerUser(Users user, MultipartFile profileImage) throws Exception {
 		user.setPassword(passwordEncoder.encode(user.getPassword()));
-		user.setRoleId(2L);
+//		user.setRoleId(2L);
+		if(user.getRoleId() == null) {
+			user.setRoleId(2L);
+		}
 		user.setUserRegDate(new Date());
 
 		// 입력하지 않은 값은 null 처리
