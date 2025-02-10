@@ -1,8 +1,9 @@
 .productPage {
-  max-width: 1300px;
+  max-width: 1000px;
   margin: 0 auto;
+  overflow: visible;
 }
-.list {
+.marketList {
   padding: 10px;
 }
 
@@ -16,7 +17,8 @@
 }
 
 .topBar {
-  width: 950px;
+  max-width: 950px; /* 반응형 지원 */
+  width: 100%;
   display: flex;
   justify-content: space-between;
   margin: 0 auto;
@@ -25,27 +27,29 @@
 }
 
 .like-button {
+  padding: 5px; /* 클릭 영역 증가 */
+  border-radius: 50%; /* 동그랗게 */
   border: none;
-
+  background-color: transparent; /* 기본 배경 투명 */
   display: flex;
+  transition: background-color 0.2s;
 }
 
 .like-icon {
   color: red; /* 클릭 시 색상 변경 */
+  transition: background-color 0.2s;
   font-size: 24px;
 }
 
-.emptyLike,
-.like {
-  filter: invert(25%) sepia(43%) saturate(3750%) hue-rotate(347deg)
-    brightness(98%) contrast(91%);
-  font-size: large;
+.productList-Item:hover .like-button {
+  background-color: #f9f9f9;
 }
 
 .register-button {
   position: fixed;
   bottom: 50px;
   right: 150px;
+  z-index: 1000; /* 다른 요소 위로 배치 */
 
   font-size: x-large;
   padding: 10px 16px;
@@ -61,6 +65,8 @@
   display: flex;
   align-items: center;
   justify-content: center;
+
+  margin-left: auto;
 }
 
 .register-button:hover {
@@ -77,25 +83,61 @@
 
 /* 검색 바 (검색어 입력 및 검색 옵션 선택) */
 .searchBar {
-  display: flex;
+  /* display: flex;
   gap: 5px;
+  justify-content: flex-start; */
+
+  display: flex;
+  gap: 10px;
   justify-content: flex-start;
+  align-items: center;
+
+  padding: 8px;
+
+  transition: background-color 0.3s ease, border-color 0.3s ease; /* 배경색과 테두리 색상 부드럽게 변환 */
 }
 
 .searchBar select,
 .searchBar input {
+  /* padding: 10px;
+  border: 1px solid #d4d3d3;
+  border-radius: 5px; */
+
   padding: 10px;
   border: 1px solid #d4d3d3;
   border-radius: 5px;
+  font-size: 14px;
+  outline: none;
+  transition: border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+/* 검색창 포커스 시 스타일 */
+.searchBar input:focus,
+.searchBar select:focus {
+  border-color: #007bff;
+  box-shadow: 0 0 5px rgba(0, 123, 255, 0.3);
+  background-color: #fff;
+}
+
+.searchBar input::placeholder {
+  color: #999;
+  font-style: italic;
+}
+
+.searchBar select {
+  background-color: #fff;
+  cursor: pointer;
 }
 
 .searchBar input {
-  width: 300px;
+  width: 250px;
+
+  background-color: #f9f9f9;
 }
 
 /* 개별 상품 카드 */
-.listItem {
-  width: calc(22% - 10px);
+.productList-Item {
+  width: calc(22% - 12px);
   height: 300px;
   display: flex;
   flex-direction: column;
@@ -105,7 +147,25 @@
   border-radius: 8px;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   cursor: pointer;
-  transition: background-color 0.2s;
+  transition: background-color 0.2s, box-shadow 0.2s;
+}
+
+@media (max-width: 1024px) {
+  .productList-Item {
+    width: calc(33.33% - 12px); /* 태블릿: 3개씩 */
+  }
+}
+
+@media (max-width: 768px) {
+  .productList-Item {
+    width: calc(50% - 12px); /* 모바일: 2개씩 */
+  }
+}
+
+@media (max-width: 480px) {
+  .productList-Item {
+    width: 100%; /* 작은 화면: 1개씩 */
+  }
 }
 
 .product-list {
@@ -115,8 +175,9 @@
   align-items: center;
 }
 
-.listItem:hover {
+.productList-Item:hover {
   background-color: #f9f9f9;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15); /* Hover 시 그림자 효과 추가 */
 }
 
 /* 이미지 스타일 */
@@ -149,34 +210,53 @@
 }
 
 /* 버튼 스타일 */
-.item-buttons {
+.product-item-button {
   display: flex;
   gap: 6px;
   margin-top: 8px;
 }
 
-.detail-button,
-.cart-button {
-  padding: 6px 12px;
+.product-item-button button:hover {
   border: none;
-  border-radius: 4px;
-  color: white;
+}
+
+.market-category {
+  width: 100%;
+  padding: 10px 0;
+  background-color: transparent;
+  display: flex;
+  justify-content: center;
+  flex-direction: column;
+  align-items: center;
+}
+
+.market-category-container {
+  display: flex;
+  gap: 15px;
+
+  flex-wrap: wrap;
+}
+
+.market-category-item {
+  font-size: 16px;
+  font-weight: bold;
+  color: #333;
+  padding: 8px 15px;
+  border: 1px solid #ddd;
+  border-radius: 20px;
+  background-color: white;
   cursor: pointer;
-  transition: background-color 0.2s;
+  transition: all 0.3s ease-in-out;
 }
 
-.detail-button {
-  background-color: #007bff;
+.market-category-item:hover {
+  background-color: rgba(177, 121, 241, 0.6);
+  color: white;
+  border-color: rgba(177, 121, 241, 0.6);
 }
 
-.detail-button:hover {
-  background-color: #0056b3;
-}
-
-.cart-button {
-  background-color: #28a745;
-}
-
-.cart-button:hover {
-  background-color: #218838;
+.market-category-item.active {
+  background-color: rgba(177, 121, 241, 0.6);
+  color: white;
+  font-weight: bold;
 }

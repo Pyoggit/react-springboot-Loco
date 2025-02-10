@@ -1,13 +1,14 @@
 import { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import '@/css/member/market/ProductInfo.css';
+import Payment from './Payment';
 
 const mockData = [
   {
     id: 1,
     name: '상품1',
     image: '이미지1',
-    category: '카테고리a',
+    category: '스포츠용품',
     content: '설명1',
     price: 1000,
   },
@@ -15,7 +16,7 @@ const mockData = [
     id: 2,
     name: '상품2',
     image: '이미지2',
-    category: '카테고리b',
+    category: '도서',
     content: '설명2',
     price: 2000,
   },
@@ -23,7 +24,7 @@ const mockData = [
     id: 3,
     name: '상품3',
     image: '이미지3',
-    category: '카테고리c',
+    category: '의류',
     content: '설명3',
     price: 3000,
   },
@@ -31,7 +32,7 @@ const mockData = [
     id: 4,
     name: '상품4',
     image: '이미지4',
-    category: '카테고리d',
+    category: '필기도구',
     content: '설명4',
     price: 4000,
   },
@@ -39,7 +40,7 @@ const mockData = [
     id: 5,
     name: '상품5',
     image: '이미지5',
-    category: '카테고리e',
+    category: '여행용품',
     content: '설명5',
     price: 5000,
   },
@@ -47,7 +48,7 @@ const mockData = [
     id: 6,
     name: '상품6',
     image: '이미지6',
-    category: '카테고리f',
+    category: '가전제품',
     content: '설명6',
     price: 6000,
   },
@@ -77,47 +78,47 @@ const ProductInfo = () => {
   }
 
   return (
-    <div className="board">
-      <div className="boardView">
-        <div className="table">
+    <div className="productInfo">
+      <div className="productInfo-View">
+        <div className="productInfo-table">
           <table>
             <thead>
-              {/* <tr>
-                <td colSpan={2}>
-                  <strong>{curBoardItem.name}</strong>
-                </td>
-              </tr> */}
               <tr>
-                <td colSpan={2} className="image">
+                <td colSpan={2} className="productInfo-image">
                   <img src={curBoardItem.image} alt={curBoardItem.name} />
                 </td>
               </tr>
             </thead>
             <tbody>
               <tr>
-                <td colSpan={2}>
+                <td colSpan={2} className="productInfo-category">
                   {curBoardItem.category} {'>'} {curBoardItem.name}
                 </td>
               </tr>
               <tr>
-                <td colSpan={2}>{curBoardItem.content}</td>
+                <td colSpan={2} className="productInfo-desc">
+                  {curBoardItem.content}
+                </td>
               </tr>
               <tr>
-                <td>{curBoardItem.price.toLocaleString()}원</td>
+                <td colSpan={2} className="productInfo-price">
+                  {curBoardItem.price.toLocaleString()}원
+                </td>
               </tr>
             </tbody>
           </table>
         </div>
-        <div className="info-button">
+        <div className="productInfo-button">
           <button className="team-button" onClick={() => nav(-1)}>
             뒤로가기
           </button>
           <button
             className="team-button"
-            onClick={() => nav(`/payment/${curBoardItem.id}`)}
+            onClick={() => nav(`/market/update/${curBoardItem.id}`)}
           >
-            결제하기
+            수정하기
           </button>
+          <Payment amount={curBoardItem.price} orderName={curBoardItem.name} />
         </div>
       </div>
     </div>

@@ -1,78 +1,84 @@
 .product-insert {
-  max-width: 900px;
+  max-width: 600px;
   margin: 20px auto;
   padding: 20px;
   border: 1px solid #ddd;
   border-radius: 8px;
+  background: white;
   box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
 }
 
-.input-container {
-  /* display: flex;
-  flex-direction: column;
-  gap: 10px; */
+.product-input-container {
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
-}
-.input-container * {
-  width: 800px;
-  font-size: 20px;
+  gap: 5px;
 }
 
-.input-container input {
-  min-height: 30px;
-}
-.input-container textarea {
-  min-height: 250px;
-}
-
-.input-container textarea,
-.input-container input,
-.input-container select {
-  border: 1px solid rgb(203, 203, 203);
-  border-radius: 5px;
-  padding: 10px;
-  margin: 5px;
+.product-input-container input,
+.product-input-container textarea,
+.product-input-container select {
+  width: 100%;
+  max-width: 600px;
+  font-size: 18px;
+  padding: 12px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  box-sizing: border-box;
+  transition: border-color 0.3s ease-in-out;
 }
 
-.input-container textarea:focus,
-.input-container input:focus,
-.input-container select:focus {
+.product-input-container input:focus,
+.product-input-container textarea:focus,
+.product-input-container select:focus {
+  border-color: #007bff;
+  box-shadow: 0 0 5px rgba(0, 123, 255, 0.3);
   outline: none;
 }
 
-.preview-image {
-  width: 100px;
-  height: 100px;
+.product-input-container textarea {
+  min-height: 150px;
+  resize: vertical;
+}
+
+.product-preview-image {
+  width: 150px;
+  height: 150px;
   object-fit: cover;
+  border-radius: 8px;
+  border: 1px solid #ddd;
   margin-top: 10px;
 }
 
-.button-container {
-  /* display: flex;
-  justify-content: space-between;
-  margin-top: 10px; */
-  width: 800px;
+.product-insert-button {
+  margin-top: 10px;
+  width: 50%;
+  max-width: 600px;
   display: flex;
   justify-content: space-between;
-  gap: 2px;
+  gap: 5px;
 }
 
-.cancel-button,
-.submit-button {
-  padding: 8px 12px;
+.product-insert-button button:hover {
   border: none;
-  cursor: pointer;
-  flex: 1;
 }
 
-.submit-button {
-  background-color: #007bff;
-  color: white;
-}
+/* 반응형 스타일 */
+@media (max-width: 600px) {
+  .product-input-container input,
+  .product-input-container textarea,
+  .product-input-container select,
+  .product-insert-button {
+    width: 100%;
+  }
 
-.submit-button:hover {
-  background-color: #0056b3;
+  .product-insert-button {
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .product-insert-button button {
+    width: 100%;
+  }
 }

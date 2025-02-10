@@ -1,17 +1,13 @@
-.board {
+.productInfo {
   display: flex;
   flex-direction: column;
   align-items: center;
   padding: 20px;
+  max-width: 800px;
+  margin: 0 auto;
 }
 
-h1 {
-  font-size: 32px;
-  font-weight: bold;
-  margin-bottom: 20px;
-}
-
-.boardView {
+.productInfo-View {
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -20,7 +16,7 @@ h1 {
   font-size: 18px;
 }
 
-.table {
+.productInfo-table {
   width: 100%;
   border-radius: 10px;
   box-shadow: rgba(0, 0, 0, 0.16) 0px 1px 4px;
@@ -28,75 +24,80 @@ h1 {
   overflow: hidden;
 }
 
-table {
+.productInfo-table table {
   width: 100%;
   border-collapse: collapse;
 }
 
-thead tr {
-  background: #f8f9fa;
+.productInfo-table tr,
+.productInfo-table td {
+  padding: 15px;
+  text-align: center;
+  border-bottom: 1px solid #eee;
 }
 
-thead td {
-  font-size: 20px;
+.productInfo-table tr {
+  background: #fcfcfc;
   font-weight: bold;
+  color: #333;
+}
+
+.productInfo-table tr:last-child td {
+  border-bottom: none;
+}
+
+.productInfo-table img {
+  width: 100%;
+  max-height: 300px;
+  object-fit: cover;
+}
+
+.productInfo-category {
+  font-size: 18px;
+  font-weight: bold;
+  color: #555;
+}
+
+.productInfo-desc {
+  text-align: left;
   padding: 15px;
-  text-align: center;
+  font-size: 16px;
+  color: #666;
+  line-height: 1.5;
+  background: #fcfcfc;
 }
 
-tbody td {
+.productInfo-price {
+  font-size: 22px;
+  font-weight: bold;
+  color: #ff5722;
+  text-align: center;
   padding: 15px;
-  border-bottom: 1px solid #ddd;
-  text-align: center;
 }
 
-.image {
-  padding: 20px 0;
-  text-align: center;
-  height: 300px;
-}
-
-.image img {
-  max-width: 100%;
-  height: auto;
-  border-radius: 8px;
-}
-
-.info-button {
+.productInfo-button {
   display: flex;
   justify-content: center;
   gap: 10px;
   margin-top: 20px;
 }
 
-.info-button button:hover {
+.productInfo-button button:hover {
   border: none;
 }
 
-/* .info-button button {
-  padding: 12px 20px;
-  font-size: 18px;
-  font-weight: bold;
-  border: none;
-  border-radius: 5px;
-  cursor: pointer;
-  transition: background 0.3s ease;
-} */
+/* 반응형 스타일 */
+@media (max-width: 600px) {
+  .productInfo {
+    padding: 10px;
+  }
 
-/* .button button:first-child {
-  background: #6c757d;
-  color: white;
-} */
+  .productInfo-table {
+    width: 95%;
+  }
 
-/* .button button:first-child:hover {
-  background: #5a6268;
-} */
-
-/* .button button:last-child {
-  background: #28a745;
-  color: white;
-} */
-
-/* .button button:last-child:hover {
-  background: #218838;
-} */
+  .productInfo-button {
+    flex-direction: column;
+    gap: 10px;
+  }
+}

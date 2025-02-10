@@ -1,13 +1,16 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import GoogleMap from './GoogleMap';
 import '@/css/member/market/ProductInsert.css';
 
 const ProductInsert = () => {
-  const [products, setProducts] = useState([]);
+  const navigate = useNavigate();
+  // const [products, setProducts] = useState([]);
   const [input, setInput] = useState({
     name: '',
     image: '',
     content: '',
+    category: '',
     price: '',
   });
 
@@ -24,6 +27,9 @@ const ProductInsert = () => {
   const onChangeFile = (e) => {
     const file = e.target.files[0];
     if (file) {
+      if (input.image) {
+        URL.revokeObjectURL(input.image); // 기존 URL 해제
+      }
       const imageUrl = URL.createObjectURL(file);
       setInput((prev) => ({
         ...prev,
@@ -32,26 +38,43 @@ const ProductInsert = () => {
     }
   };
 
+  // 입력값 초기화
+  const resetInput = () => {
+    if (input.image) {
+      URL.revokeObjectURL(input.image);
+    }
+    setInput({ name: '', image: '', content: '', category: '', price: '' });
+  };
+
   // 상품 등록 핸들러
   const onSubmit = () => {
-    if (!input.name || !input.price || !input.content || !input.image) {
+    if (
+      !input.name ||
+      !input.image ||
+      !input.content ||
+      !input.category ||
+      !input.price
+    ) {
       alert('모든 항목을 입력해주세요.');
       return;
     }
 
-    const newProduct = {
-      id: products.length + 1,
-      ...input,
-    };
+    alert('상품이 등록되었습니다!');
+    resetInput(); // 입력 초기화
 
-    setProducts((prev) => [...prev, newProduct]); // 상품 리스트 추가
-    setInput({ name: '', image: '', content: '', price: '' }); // 입력값 초기화
+    // const newProduct = {
+    //   id: products.length + 1,
+    //   ...input,
+    // };
+
+    // setProducts((prev) => [...prev, newProduct]); // 상품 리스트 추가
+    // setInput({ name: '', image: '', content: '', category: '', price: '' }); // 입력값 초기화
   };
 
   return (
     <div className="product-insert">
       <h2>상품 등록</h2>
-      <div className="input-container">
+      <div className="product-input-container">
         <input
           type="text"
           name="name"
@@ -61,7 +84,11 @@ const ProductInsert = () => {
         />
         <input type="file" name="image" onChange={onChangeFile} />
         {input.image && (
-          <img src={input.image} alt="미리보기" className="preview-image" />
+          <img
+            src={input.image}
+            alt="미리보기"
+            className="product-preview-image"
+          />
         )}
         <textarea
           name="content"
@@ -69,16 +96,14 @@ const ProductInsert = () => {
           value={input.content}
           onChange={onChangeInput}
         />
-        <select>
-          <option value="스포츠" name="스포츠">
-            스포츠
-          </option>
-          <option value="도서" name="도서">
-            도서
-          </option>
-          <option value="의류" name="의류">
-            의류
-          </option>
+        <select name="category" value={input.category} onChange={onChangeInput}>
+          <option value="">카테고리 선택</option>
+          <option value="스포츠용품">스포츠용품</option>
+          <option value="도서">도서</option>
+          <option value="의류">의류</option>
+          <option value="필기도구">필기도구</option>
+          <option value="여행용품">여행용품</option>
+          <option value="가전제품">가전제품</option>
         </select>
         <input
           type="text"
@@ -88,16 +113,14 @@ const ProductInsert = () => {
           onChange={onChangeInput}
         />
         <GoogleMap />
-        <div className="button-container">
-          <button
-            className="cancel-button"
-            onClick={() =>
-              setInput({ name: '', image: '', content: '', price: '' })
-            }
-          >
+        <div className="product-insert-button">
+          <button className="team-button" onClick={() => navigate(-1)}>
             취소하기
           </button>
-          <button className="submit-button" onClick={onSubmit}>
+          <button className="team-button" onClick={resetInput}>
+            다시입력
+          </button>
+          <button className="team-button" onClick={onSubmit}>
             등록하기
           </button>
         </div>
