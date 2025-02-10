@@ -1,0 +1,35 @@
+/* 사이드바 디자인 */
+.admin-aside {
+  width: 250px;
+  padding: 20px;
+  border-radius: 10px;
+  background: linear-gradient(to right, #667eea, #764ba2);
+  color: white;
+  text-align: center;
+}
+
+.admin-aside h2 {
+  font-size: 22px;
+  margin-bottom: 15px;
+}
+
+.admin-aside ul {
+  list-style: none;
+  padding: 0;
+}
+
+.admin-aside li {
+  padding: 12px;
+  border-radius: 5px;
+  transition: background 0.3s ease-in-out;
+}
+
+.admin-aside li a {
+  text-decoration: none;
+  color: white;
+  font-weight: bold;
+}
+
+.admin-aside li:hover {
+  background-color: rgba(255, 255, 255, 0.2);
+}
