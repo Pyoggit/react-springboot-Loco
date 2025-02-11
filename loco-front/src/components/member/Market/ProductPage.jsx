@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import '@/css/member/market/ProductPage.css';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faPlus } from '@fortawesome/free-solid-svg-icons';
+import { faMinus, faPlus } from '@fortawesome/free-solid-svg-icons';
 import { faHeart as solidHeart } from '@fortawesome/free-solid-svg-icons'; // 꽉 찬 하트
 import { faHeart as regularHeart } from '@fortawesome/free-regular-svg-icons'; // 빈 하트
 import Payment from './Payment';
@@ -164,7 +164,14 @@ export default function ProductPage() {
           <FontAwesomeIcon icon={faPlus} />
         </button>
       </div>
-
+      <div className="product-delete-button">
+        <button
+          className="delete-button"
+          onClick={() => navigate('/market/remove')}
+        >
+          <FontAwesomeIcon icon={faMinus} />
+        </button>
+      </div>
       <div className="marketList">
         <div className="productList">
           {filteredItems.length > 0 ? (
