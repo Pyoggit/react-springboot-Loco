@@ -2,19 +2,18 @@ package com.loco.aroundme.common.security.jwt;
 
 import java.io.IOException;
 import java.util.Collections;
-
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.filter.OncePerRequestFilter;
-
 import io.jsonwebtoken.Claims;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import com.loco.aroundme.domain.Users;
 
 /**
  * JWT 인증 필터 (Spring Security 연동)
@@ -48,22 +47,33 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         }
         // 액세스 토큰이 만료되었지만 리프레시 토큰이 유효하면 새로운 액세스 토큰 발급
         else if (refreshToken != null && jwtUtil.validateToken(refreshToken)) {
-            Claims claims = jwtUtil.getClaims(refreshToken);
-            String userEmail = claims.getSubject();
-//            String roleName = claims.get("role", String.class);  // "ROLE_ADMIN" or "ROLE_USER"
-            String role = claims.get("role", String.class);  // "ROLE_ADMIN" or "ROLE_USER"
-
-            // roleName을 roleId로 변환 (ROLE_ADMIN -> 1, ROLE_USER -> 2)
-            Long roleId = role.equals("ROLE_ADMIN") ? 1L : 2L;
-
-            // 새 액세스 토큰 발급
-            String newAccessToken = jwtUtil.generateAccessToken(userEmail, roleId);
-            response.setHeader("Authorization", "Bearer " + newAccessToken);
-
-            authenticateUser(newAccessToken);
+            refreshAccessToken(refreshToken, response);
         }
 
         chain.doFilter(request, response);
+    }
+
+    /**
+     * 새 액세스 토큰을 발급하고 사용자 인증을 수행
+     */
+    private void refreshAccessToken(String refreshToken, HttpServletResponse response) {
+        Claims claims = jwtUtil.getClaims(refreshToken);
+        Long userId = Long.valueOf(claims.getSubject());
+        String userEmail = claims.get("email", String.class);
+        String role = claims.get("role", String.class);
+        Long roleId = role.equals("ROLE_ADMIN") ? 1L : 2L;
+
+        // Users 객체 생성 후 AccessToken 발급
+        Users user = Users.builder()
+                .userId(userId)
+                .userEmail(userEmail)
+                .roleId(roleId)
+                .build();
+
+        String newAccessToken = jwtUtil.generateAccessToken(user);
+        response.setHeader("Authorization", "Bearer " + newAccessToken);
+
+        authenticateUser(newAccessToken);
     }
 
     /**
@@ -71,13 +81,10 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
      */
     private void authenticateUser(String token) {
         Claims claims = jwtUtil.getClaims(token);
-        String username = claims.getSubject();
-        String role = claims.get("role", String.class);  // "ROLE_1" or "ROLE_2"
-//        String role = jwtUtil.getUserRole(token);
+        String userEmail = claims.get("email", String.class);
+        String role = claims.get("role", String.class);
 
-        System.out.println("ㄴ사용자 인증 처리 - username: " + username + ", role: " + role);
-
-        UserDetails userDetails = new User(username, "", Collections.singletonList(new SimpleGrantedAuthority(role)));
+        UserDetails userDetails = new User(userEmail, "", Collections.singletonList(new SimpleGrantedAuthority(role)));
         UsernamePasswordAuthenticationToken authentication =
                 new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
 
@@ -91,7 +98,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         String bearerToken = request.getHeader("Authorization");
         return (bearerToken != null && bearerToken.startsWith("Bearer ")) ? bearerToken.substring(7) : null;
     }
-    
+
     /**
      * HTTP 요청에서 리프레시 토큰 추출
      */
