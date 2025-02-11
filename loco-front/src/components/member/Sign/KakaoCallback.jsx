@@ -1,5 +1,6 @@
 import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import axios from "@/utils/AxiosConfig";
 
 const KakaoCallback = () => {
   const navigate = useNavigate();
@@ -11,31 +12,37 @@ const KakaoCallback = () => {
     if (code) {
       console.log("카카오 로그인 코드:", code);
 
-      fetch("http://localhost:8080/auth/kakao/callback", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/x-www-form-urlencoded", // JSON이 아니고 `x-www-form-urlencoded` 사용
-        },
-        body: new URLSearchParams({ code }), // JSON 아니고 Form Data 형식으로 보냄
-      })
-        .then((response) => response.json())
-        .then((data) => {
-          if (data.accessToken) {
-            console.log("카카오 로그인 성공! AccessToken:", data.accessToken);
-            localStorage.setItem("token", data.accessToken); // 토큰 저장
-            navigate("/"); // 로그인 성공 후 메인 페이지로 이동
+      axios
+        .post("/api/auth/kakao/callback", { code }) // JSON 형식으로 전달
+        .then((response) => {
+          const { accessToken, refreshToken } = response.data;
+
+          if (accessToken) {
+            console.log("카카오 로그인 성공! AccessToken:", accessToken);
+            localStorage.setItem("kakao_accessToken", accessToken);
+            localStorage.setItem("kakao_refreshToken", refreshToken);
+
+            // Axios 기본 헤더에 Authorization 추가
+            axios.defaults.headers.common[
+              "Authorization"
+            ] = `Bearer ${accessToken}`;
+
+            navigate("/");
           } else {
-            console.error(" 카카오 로그인 실패:", data);
-            navigate("/member/Sign/LoginMain"); // 로그인 실패 시 로그인 페이지로 이동
+            console.error("카카오 로그인 실패:", response.data);
+            navigate("/login");
           }
         })
         .catch((error) => {
-          console.error("카카오 로그인 에러:", error);
-          navigate("/member/Sign/LoginMain"); // 에러 발생 시 로그인 페이지로 이동
+          console.error(
+            "카카오 로그인 에러:",
+            error.response?.data || error.message
+          );
+          navigate("/login");
         });
     } else {
       console.error("카카오 로그인 코드 없음");
-      navigate("/member/Sign/LoginMain"); // 코드가 없으면 로그인 페이지로 이동
+      navigate("/login");
     }
   }, [navigate]);
 

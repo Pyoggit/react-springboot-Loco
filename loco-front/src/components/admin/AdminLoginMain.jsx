@@ -32,7 +32,7 @@ const AdminLoginMain = () => {
       );
 
       const accessToken = response.data.accessToken;
-      localStorage.setItem("accessToken", accessToken);
+      localStorage.setItem("admin_accessToken", accessToken);
       // console.data("관리자 로그인성공토큰" + response.data);
 
       // JWT 액세스 토큰 저장
@@ -40,8 +40,11 @@ const AdminLoginMain = () => {
 
       // // Authorization 헤더를 사용하여 인증 요청 테스트
       // const testResponse = await axios.get(
-      //   "http://localhost:8080/api/adminpage/test",
+      //   "http://localhost:8080/api/adminpage",
       //   {
+      // 권한 필요한url로 가는 과정에서 헤더에 넣어야됨
+
+      // 이거 써야됨!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
       //     headers: { Authorization: `Bearer ${response.data.accessToken}` },
       //   }
       // );
