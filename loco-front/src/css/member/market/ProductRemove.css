@@ -1,0 +1,325 @@
+.productPage {
+  max-width: 1000px;
+  margin: 0 auto;
+  overflow: visible;
+}
+.marketList {
+  padding: 10px;
+}
+
+.product-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  justify-content: flex-start;
+  list-style: none;
+  padding: 0;
+}
+
+.topBar {
+  max-width: 950px; /* 반응형 지원 */
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  margin: 0 auto;
+  margin-top: 20px;
+  margin-bottom: 10px;
+}
+
+.like-button {
+  padding: 5px; /* 클릭 영역 증가 */
+  border-radius: 50%; /* 동그랗게 */
+  border: none;
+  background-color: transparent; /* 기본 배경 투명 */
+  display: flex;
+  transition: background-color 0.2s;
+}
+
+.like-icon {
+  color: red; /* 클릭 시 색상 변경 */
+  transition: background-color 0.2s;
+  font-size: 24px;
+}
+
+.productList-Item:hover .like-button {
+  background-color: #f9f9f9;
+}
+
+.register-button {
+  position: fixed;
+  bottom: 50px;
+  right: 150px;
+  z-index: 1000; /* 다른 요소 위로 배치 */
+
+  font-size: x-large;
+  padding: 10px 16px;
+  width: 50px;
+  height: 50px;
+  background-color: #007bff;
+  color: white;
+  border: none;
+  border-radius: 50%;
+  cursor: pointer;
+  transition: background-color 0.2s;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  margin-left: auto;
+}
+
+.register-button:hover {
+  background-color: #0056b3;
+  transform: scale(1.1);
+}
+
+.remove-button {
+  position: fixed;
+  bottom: 50px;
+  right: 150px;
+  z-index: 1000; /* 다른 요소 위로 배치 */
+
+  font-size: x-large;
+  padding: 10px 16px;
+  width: 50px;
+  height: 50px;
+  background-color: #dc3545;
+  color: white;
+  border: none;
+  border-radius: 50%;
+  cursor: pointer;
+  transition: background-color 0.2s;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  margin-left: auto;
+}
+
+.remove-button:hover {
+  background-color: #b02a37; /* 더 어두운 빨간색 */
+  transform: scale(1.1);
+}
+
+/* 체크박스 스타일 */
+.product-checkbox {
+  width: 18px;
+  height: 18px;
+  cursor: pointer;
+  accent-color: #007bff; /* 체크박스 색상 */
+  transition: all 0.2s ease-in-out;
+}
+
+.product-checkbox:hover {
+  transform: scale(1.1);
+}
+
+/* 전체 선택 버튼 */
+.select-all {
+  font-size: 14px;
+  padding: 8px 12px;
+  background-color: rgba(177, 121, 241, 0.6);
+  color: white;
+  border: none;
+  border-radius: 20px;
+  cursor: pointer;
+  transition: background-color 0.2s, transform 0.2s;
+  max-width: 80px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.select-all-button:hover {
+  background-color: #5a6268;
+  transform: scale(1.05);
+}
+
+.remove-checkBox {
+  margin: 0 auto;
+  display: flex;
+  justify-content: flex-start;
+  max-width: 950px;
+}
+
+/* 검색 기능 컨테이너 */
+.listBar {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-bottom: 20px;
+}
+
+/* 검색 바 (검색어 입력 및 검색 옵션 선택) */
+.searchBar {
+  display: flex;
+  gap: 10px;
+  justify-content: flex-start;
+  align-items: center;
+
+  padding: 8px;
+
+  transition: background-color 0.3s ease, border-color 0.3s ease; /* 배경색과 테두리 색상 부드럽게 변환 */
+}
+
+.searchBar select,
+.searchBar input {
+  padding: 10px;
+  border: 1px solid #d4d3d3;
+  border-radius: 5px;
+  font-size: 14px;
+  outline: none;
+  transition: border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+/* 검색창 포커스 시 스타일 */
+.searchBar input:focus,
+.searchBar select:focus {
+  border-color: #007bff;
+  box-shadow: 0 0 5px rgba(0, 123, 255, 0.3);
+  background-color: #fff;
+}
+
+.searchBar input::placeholder {
+  color: #999;
+  font-style: italic;
+}
+
+.searchBar select {
+  background-color: #fff;
+  cursor: pointer;
+}
+
+.searchBar input {
+  width: 250px;
+
+  background-color: #f9f9f9;
+}
+
+/* 개별 상품 카드 */
+.productList-Item {
+  width: calc(22% - 12px);
+  height: 300px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  padding: 14px;
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  cursor: pointer;
+  transition: background-color 0.2s, box-shadow 0.2s;
+}
+
+@media (max-width: 1024px) {
+  .productList-Item {
+    width: calc(33.33% - 12px); /* 태블릿: 3개씩 */
+  }
+}
+
+@media (max-width: 768px) {
+  .productList-Item {
+    width: calc(50% - 12px); /* 모바일: 2개씩 */
+  }
+}
+
+@media (max-width: 480px) {
+  .productList-Item {
+    width: 100%; /* 작은 화면: 1개씩 */
+  }
+}
+
+.product-list {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-around;
+  align-items: center;
+}
+
+.productList-Item:hover {
+  background-color: #f9f9f9;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15); /* Hover 시 그림자 효과 추가 */
+}
+
+/* 이미지 스타일 */
+.item-image {
+  width: 100px;
+  height: 100px;
+  object-fit: cover;
+  border-radius: 8px;
+  margin-bottom: 8px;
+}
+
+/* 정보 섹션 스타일 */
+.item-info {
+  text-align: center;
+}
+
+.item-info p {
+  margin: 3px 0;
+}
+
+.item-name {
+  font-size: 15px;
+  font-weight: bold;
+}
+
+.item-category,
+.item-price {
+  font-size: 14px;
+  color: #333;
+}
+
+/* 버튼 스타일 */
+.product-item-button {
+  display: flex;
+  gap: 6px;
+  margin-top: 8px;
+}
+
+.product-item-button button:hover {
+  border: none;
+}
+
+.market-category {
+  width: 100%;
+  padding: 10px 0;
+  background-color: transparent;
+  display: flex;
+  justify-content: center;
+  flex-direction: column;
+  align-items: center;
+}
+
+.market-category-container {
+  display: flex;
+  gap: 15px;
+
+  flex-wrap: wrap;
+}
+
+.market-category-item {
+  font-size: 16px;
+  font-weight: bold;
+  color: #333;
+  padding: 8px 15px;
+  border: 1px solid #ddd;
+  border-radius: 20px;
+  background-color: white;
+  cursor: pointer;
+  transition: all 0.3s ease-in-out;
+}
+
+.market-category-item:hover {
+  background-color: rgba(177, 121, 241, 0.6);
+  color: white;
+  border-color: rgba(177, 121, 241, 0.6);
+}
+
+.market-category-item.active {
+  background-color: rgba(177, 121, 241, 0.6);
+  color: white;
+  font-weight: bold;
+}
