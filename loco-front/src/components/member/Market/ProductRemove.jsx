@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import '@/css/member/market/ProductPage.css';
+import '@/css/member/market/ProductRemove.css';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faMinus, faPlus } from '@fortawesome/free-solid-svg-icons';
 import { faHeart as solidHeart } from '@fortawesome/free-solid-svg-icons'; // 꽉 찬 하트
@@ -58,29 +58,17 @@ const mockData = [
   },
 ];
 
-const ListItem = ({ id, name, image, category, price }) => {
+const ListItem = ({ id, name, image, category, price, isChecked, onCheck }) => {
   const navigate = useNavigate();
-
-  const handleDetailClick = (e) => {
-    e.stopPropagation();
-    navigate(`/market/info/${id}`);
-  };
-
-  const [isLikeClick, setIsLikeClick] = useState(false);
 
   return (
     <div className="productList-Item">
-      <div className="like-button">
-        <button
-          className="like-button"
-          onClick={() => setIsLikeClick((prev) => !prev)}
-        >
-          <FontAwesomeIcon
-            icon={isLikeClick ? solidHeart : regularHeart}
-            className="like-icon"
-          />
-        </button>
-      </div>
+      <input
+        type="checkbox"
+        checked={isChecked}
+        onChange={() => onCheck(id)}
+        className="product-checkbox"
+      />
       <div className="product-list">
         <img src={image} alt={name} className="item-image" />
         <div className="item-info">
@@ -88,10 +76,12 @@ const ListItem = ({ id, name, image, category, price }) => {
           <p className="item-category">카테고리: {category}</p>
           <p className="item-price">가격: {price.toLocaleString()}원</p>
           <div className="product-item-button">
-            <button onClick={handleDetailClick} className="team-button">
+            <button
+              onClick={() => navigate(`/market/info/${id}`)}
+              className="team-button"
+            >
               상세보기
             </button>
-            <Payment amount={price} orderName={name} />
           </div>
         </div>
       </div>
@@ -99,11 +89,13 @@ const ListItem = ({ id, name, image, category, price }) => {
   );
 };
 
-export default function ProductPage() {
+export default function ProductRemove() {
   const navigate = useNavigate();
   const [search, setSearch] = useState('');
   const [searchOpt, setSearchOpt] = useState('name');
   const [selectedCategory, setSelectedCategory] = useState('전체');
+  const [selectedItems, setSelectedItems] = useState([]);
+  const [items, setItems] = useState(mockData);
 
   const categories = [
     '전체',
@@ -115,7 +107,26 @@ export default function ProductPage() {
     '가전제품',
   ];
 
-  const filteredItems = mockData.filter((item) => {
+  const handleCheck = (id) => {
+    setSelectedItems((prev) =>
+      prev.includes(id) ? prev.filter((item) => item !== id) : [...prev, id]
+    );
+  };
+
+  const handleRemoveSelected = () => {
+    setItems(items.filter((item) => !selectedItems.includes(item.id)));
+    setSelectedItems([]);
+  };
+
+  const handleSelectAll = () => {
+    if (selectedItems.length === items.length) {
+      setSelectedItems([]);
+    } else {
+      setSelectedItems(items.map((item) => item.id));
+    }
+  };
+
+  const filteredItems = items.filter((item) => {
     const matchesCategory =
       selectedCategory === '전체' || item.category === selectedCategory;
     const matchesSearch =
@@ -149,35 +160,39 @@ export default function ProductPage() {
               className={`market-category-item ${
                 selectedCategory === category ? 'active' : ''
               }`}
-              onClick={() => setSelectedCategory(category)} // 클릭 시 카테고리 선택
+              onClick={() => setSelectedCategory(category)}
             >
               {category}
             </span>
           ))}
         </div>
       </section>
-      <div className="product-register-button">
-        <button
-          className="register-button"
-          onClick={() => navigate('/market/insert')}
-        >
-          <FontAwesomeIcon icon={faPlus} />
-        </button>
-      </div>
-      <div className="product-delete-button">
-        <button
-          className="delete-button"
-          onClick={() => navigate('/market/remove')}
-        >
+      <div className="product-remove-button">
+        <button className="remove-button" onClick={handleRemoveSelected}>
           <FontAwesomeIcon icon={faMinus} />
         </button>
+      </div>
+      <div className="remove-checkBox">
+        <div className="select-all" onClick={handleSelectAll}>
+          <input
+            type="checkbox"
+            checked={selectedItems.length === items.length}
+            onChange={handleSelectAll}
+          />{' '}
+          전체 선택
+        </div>
       </div>
       <div className="marketList">
         <div className="productList">
           {filteredItems.length > 0 ? (
             <ul className="product-grid">
               {filteredItems.map((item) => (
-                <ListItem key={item.id} {...item} />
+                <ListItem
+                  key={item.id}
+                  {...item}
+                  isChecked={selectedItems.includes(item.id)}
+                  onCheck={handleCheck}
+                />
               ))}
             </ul>
           ) : (

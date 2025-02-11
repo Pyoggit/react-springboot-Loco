@@ -60,6 +60,7 @@ const ProductInsert = () => {
     }
 
     alert('상품이 등록되었습니다!');
+    navigate('/market');
     resetInput(); // 입력 초기화
 
     // const newProduct = {

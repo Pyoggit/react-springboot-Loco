@@ -74,11 +74,11 @@
   transform: scale(1.1);
 }
 
-.delete-button {
+.remove-button {
   position: fixed;
   bottom: 50px;
-  right: 80px;
-  z-index: 1000;
+  right: 150px;
+  z-index: 1000; /* 다른 요소 위로 배치 */
 
   font-size: x-large;
   padding: 10px 16px;
@@ -98,9 +98,50 @@
   margin-left: auto;
 }
 
-.delete-button:hover {
-  background-color: #b02a37;
+.remove-button:hover {
+  background-color: #b02a37; /* 더 어두운 빨간색 */
   transform: scale(1.1);
+}
+
+/* 체크박스 스타일 */
+.product-checkbox {
+  width: 18px;
+  height: 18px;
+  cursor: pointer;
+  accent-color: #007bff; /* 체크박스 색상 */
+  transition: all 0.2s ease-in-out;
+}
+
+.product-checkbox:hover {
+  transform: scale(1.1);
+}
+
+/* 전체 선택 버튼 */
+.select-all {
+  font-size: 14px;
+  padding: 8px 12px;
+  background-color: rgba(177, 121, 241, 0.6);
+  color: white;
+  border: none;
+  border-radius: 20px;
+  cursor: pointer;
+  transition: background-color 0.2s, transform 0.2s;
+  max-width: 80px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.select-all-button:hover {
+  background-color: #5a6268;
+  transform: scale(1.05);
+}
+
+.remove-checkBox {
+  margin: 0 auto;
+  display: flex;
+  justify-content: flex-start;
+  max-width: 950px;
 }
 
 /* 검색 기능 컨테이너 */
@@ -113,10 +154,6 @@
 
 /* 검색 바 (검색어 입력 및 검색 옵션 선택) */
 .searchBar {
-  /* display: flex;
-  gap: 5px;
-  justify-content: flex-start; */
-
   display: flex;
   gap: 10px;
   justify-content: flex-start;
@@ -129,10 +166,6 @@
 
 .searchBar select,
 .searchBar input {
-  /* padding: 10px;
-  border: 1px solid #d4d3d3;
-  border-radius: 5px; */
-
   padding: 10px;
   border: 1px solid #d4d3d3;
   border-radius: 5px;
