@@ -20,7 +20,7 @@
 }
 
 .admin-member-delete-btn {
-  background: red;
+  background: rgb(197, 59, 59);
   color: white;
   border: none;
   padding: 8px 12px;
@@ -37,16 +37,19 @@
 .admin-member-table td {
   padding: 12px;
   border: 1px solid #ddd;
+  text-align: center; /* 내용 중앙 정렬 */
+  vertical-align: middle; /* 세로 정렬 중앙 */
+  width: auto; /* 자동 조정 */
 }
 
 .admin-member-table th {
-  background: #667eea;
+  background: rgba(177, 121, 241, 0.6);
   color: white;
   cursor: pointer;
 }
 
 .admin-member-table th:hover {
-  background: #5568c0;
+  background: rgba(177, 121, 241, 0.6);
 }
 
 .admin-member-table input[type="checkbox"] {
