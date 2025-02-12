@@ -6,10 +6,15 @@
 		* FROM Users ORDER BY USER_ID DESC </select> -->
 
 	<!-- 회원 조회 (이메일로 검색) -->
-	<select id="read" parameterType="String"
-		resultType="com.loco.aroundme.domain.Users">
-		SELECT * FROM USERS WHERE USER_EMAIL = #{userEmail}
-	</select>
+    <select id="read" parameterType="String"
+        resultType="com.loco.aroundme.domain.Users">
+        SELECT 
+            USER_ID, USER_EMAIL, PASSWORD, ROLE_ID, USER_NAME, GENDER,
+            MOBILE1, MOBILE2, MOBILE3, PHONE1, PHONE2, PHONE3,
+            BIRTH, ZIPCODE, ADDRESS1, ADDRESS2, USER_REGDATE, ORIGIN_USER, SYS_USER
+        FROM USERS 
+        WHERE USER_EMAIL = #{userEmail}
+    </select>
 
 	<!-- 회원가입 -->
 	<insert id="insertUser"

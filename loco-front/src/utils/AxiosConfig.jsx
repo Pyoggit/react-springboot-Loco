@@ -6,10 +6,12 @@ axios.defaults.baseURL = "http://localhost:8080";
 // 모든 요청에 JWT 토큰 자동 추가
 axios.interceptors.request.use(
   (config) => {
-    const token = localStorage.getItem("accessToken");
+    // 관리자 토큰(admin_accessToken)이 있으면 우선 사용, 없으면 일반 토큰(accessToken) 사용
+    const token =
+      localStorage.getItem("admin_accessToken") ||
+      localStorage.getItem("accessToken");
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;
-      console.log("📌 요청에 포함된 토큰:", token);
     }
     return config;
   },
