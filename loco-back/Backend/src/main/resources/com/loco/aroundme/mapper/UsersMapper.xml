@@ -2,7 +2,8 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.loco.aroundme.mapper.UsersMapper">
 
-	<!-- 회원 조회 (이메일로 검색) <select id="read" parameterType="String" resultType="com.loco.aroundme.domain.Users"> 
+	<!-- 회원 조회 (이메일로 검색) -->
+<!-- 	<select id="read" parameterType="String" resultType="com.loco.aroundme.domain.Users"> 
 		SELECT * FROM USERS WHERE USER_EMAIL = #{userEmail} FETCH FIRST 1 ROWS ONLY 
 		</select> -->
 
@@ -14,7 +15,7 @@
 		</select> -->
 
 	<!-- 회원 조회 (이메일로 검색) -->
-	<select id="read" parameterType="String"
+ 	<select id="read" parameterType="String"
 		resultType="com.loco.aroundme.domain.Users">
 		SELECT
 		USER_ID, PROVIDER, PROVIDER_ID, USER_EMAIL, PASSWORD,
@@ -28,7 +29,7 @@
 		FROM
 		USERS
 		WHERE USER_EMAIL = #{userEmail}
-	</select>
+	</select> 
 
 
 	<!-- 일반 회원가입 (카카오, 구글 포함) -->

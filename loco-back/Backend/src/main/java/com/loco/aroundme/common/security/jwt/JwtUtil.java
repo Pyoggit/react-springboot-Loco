@@ -62,7 +62,7 @@ public class JwtUtil {
 
     /** ✅ 구글 사용자(GoogleUsers)용 액세스 토큰 생성 */
     public String generateAccessToken(GoogleUsers user) {
-    	String role = (user.getRoleId() == 1) ? "ROLE_ADMIN" : "ROLE_USER";
+        String role = "ROLE_USER"; // Google 로그인 사용자는 기본적으로 일반 유저
 
         return Jwts.builder()
                 .setSubject(user.getGoogleId()) // ✅ Google ID 저장
@@ -202,5 +202,4 @@ public class JwtUtil {
     private SecretKey getSigningKey() {
         return Keys.hmacShaKeyFor(secretKey.getBytes());
     }
-
 }
