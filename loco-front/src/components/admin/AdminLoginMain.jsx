@@ -1,4 +1,3 @@
-// 파일명: src/components/admin/AdminLoginMain.jsx
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
