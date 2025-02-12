@@ -142,10 +142,11 @@ public class UsersController {
         return ResponseEntity.ok("로그아웃 성공!");
     }
 
+
     /**
-     * 로그인한 사용자 정보 가져오기 (경로: /api/users/me)
+     * 로그인한 사용자 정보 가져오기 (경로: /api/users/mypage)
      */
-    @GetMapping("/me")
+    @GetMapping("/mypage")
     public ResponseEntity<?> getCurrentUser(@RequestHeader(value = "Authorization", required = false) String token) {
         if (token == null || !token.startsWith("Bearer ")) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
@@ -168,12 +169,53 @@ public class UsersController {
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
                     .body(Map.of("error", "User not found"));
         }
+        
 
-        return ResponseEntity.ok(Map.of(
-                "userId", user.getUserId(),
-                "email", user.getUserEmail(),
-                "userName", user.getUserName(),
-                "role", user.getRoleId() == 1 ? "ROLE_ADMIN" : "ROLE_USER"
+
+        // 10개 이상의 map 반환시 .ofEntries써야함
+//        return ResponseEntity.ok(Map.of(
+//        return ResponseEntity.ok(Map.ofEntries(
+//                Map.entry("userId", user.getUserId()),
+//                Map.entry("email", user.getUserEmail()),
+//                Map.entry("userName", user.getUserName()),
+////                Map.entry("role", user.getRoleId() == 1 ? "ROLE_ADMIN" : "ROLE_USER"),
+//                Map.entry("role", user.getRoleId()),
+//                Map.entry("gender", user.getGender()),
+//                Map.entry("mobile1", user.getMobile1()),
+//                Map.entry("mobile2", user.getMobile2()),
+//                Map.entry("mobile3", user.getMobile3()),
+//                Map.entry("phone1", user.getPhone1()),
+//                Map.entry("phone2", user.getPhone2()),
+//                Map.entry("phone3", user.getPhone3()),
+//                Map.entry("birthDate", user.getBirth()),       // 필요 시 포맷 변환
+//                Map.entry("zipcode", user.getZipcode()),
+//                Map.entry("address", user.getAddress1()),
+//                Map.entry("detailAddress", user.getAddress2()),
+//                Map.entry("profileImage", user.getOriginUser())  // 또는 user.getSysUser()
+//        ));
+        return ResponseEntity.ok(Map.ofEntries(
+                Map.entry("userId", user.getUserId()),
+                Map.entry("email", user.getUserEmail()),
+                Map.entry("userName", user.getUserName()),
+//                Map.entry("role", user.getRoleId() == 1 ? "ROLE_ADMIN" : "ROLE_USER"),
+              Map.entry("role", user.getRoleId()),
+                Map.entry("gender", user.getGender() == null ? "" : user.getGender()),
+                Map.entry("mobile1", user.getMobile1() == null ? "" : user.getMobile1()),
+                Map.entry("mobile2", user.getMobile2() == null ? "" : user.getMobile2()),
+                Map.entry("mobile3", user.getMobile3() == null ? "" : user.getMobile3()),
+                Map.entry("phone1", user.getPhone1() == null ? "" : user.getPhone1()),
+                Map.entry("phone2", user.getPhone2() == null ? "" : user.getPhone2()),
+                Map.entry("phone3", user.getPhone3() == null ? "" : user.getPhone3()),
+                Map.entry("birthDate", user.getBirth() == null ? "" : user.getBirth()),
+                Map.entry("zipcode", user.getZipcode() == null ? "" : user.getZipcode()),
+                Map.entry("address", user.getAddress1() == null ? "" : user.getAddress1()),
+                Map.entry("detailAddress", user.getAddress2() == null ? "" : user.getAddress2()),
+                Map.entry("profileImage", user.getOriginUser() == null ? "" : user.getOriginUser())
+                
         ));
+        
+        
     }
+    
+
 }

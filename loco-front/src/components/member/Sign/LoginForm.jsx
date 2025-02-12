@@ -46,11 +46,8 @@ const LoginForm = () => {
       // 관리자 로그인과의 충돌 방지를 위해 관리자 토큰 제거 (필요한 경우)
       localStorage.removeItem("admin_accessToken");
       // 일반 유저 토큰 저장
-      localStorage.setItem("일반로그인 accessToken", accessToken);
-      localStorage.setItem(
-        "일반로그인 refreshToken(쿠키로 가야함)",
-        refreshToken
-      );
+      localStorage.setItem("normal_accessToken", accessToken);
+      localStorage.setItem("normal_refreshToken", refreshToken);
       setCookie("loginUser", userInfo, { path: "/" });
 
       alert("로그인 성공!");

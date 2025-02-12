@@ -19,11 +19,14 @@ export default function Header() {
   const MAIN_PATH = () => "/";
   const LOGIN_PATH = () => "/login";
   const SEARCH_PATH = () => "/search";
-  const USER_PATH = (userEmail) => `/user/${userEmail}`;
+  // const USER_PATH = (userEmail) => `/user/${userEmail}`;
+  // const USER_PATH = (userEmail) => `/mypage/${userEmail}`;
+  const USER_PATH = () => "/mypage";
 
   useEffect(() => {
     const fetchUserInfo = async () => {
-      const token = localStorage.getItem("accessToken");
+      // const token = localStorage.getItem("accessToken");
+      const token = localStorage.getItem("normal_accessToken");
       if (!token) {
         removeCookie("loginUser", { path: "/" });
         setLogin(false);
@@ -33,7 +36,7 @@ export default function Header() {
       }
 
       try {
-        const response = await axios.get("/api/users/me");
+        const response = await axios.get("/api/users/mypage");
         console.log("📌 받은 유저 정보:", response.data);
 
         // ✅ 유저 정보가 다르면 업데이트, 같으면 업데이트 안 함
@@ -44,8 +47,8 @@ export default function Header() {
         }
       } catch (error) {
         console.error("유저 정보 가져오기 실패:", error);
-        localStorage.removeItem("accessToken");
-        localStorage.removeItem("refreshToken");
+        localStorage.removeItem("normal_accessToken");
+        localStorage.removeItem("normal_refreshToken");
         removeCookie("loginUser", { path: "/" });
         setLogin(false);
         setLoginUser(null);
@@ -57,7 +60,7 @@ export default function Header() {
 
   const handleLogout = async () => {
     try {
-      const token = localStorage.getItem("accessToken");
+      const token = localStorage.getItem("normal_accessToken");
       if (!token) throw new Error("로그인 상태가 아닙니다.");
 
       await axios.post(
@@ -71,8 +74,8 @@ export default function Header() {
       );
 
       // 로그아웃 성공 시 클라이언트 상태 초기화
-      localStorage.removeItem("accessToken");
-      localStorage.removeItem("refreshToken");
+      localStorage.removeItem("normal_accessToken");
+      localStorage.removeItem("normal_refreshToken");
       removeCookie("loginUser", { path: "/" });
       setLoginUser(null);
       setLogin(false);
@@ -93,7 +96,8 @@ export default function Header() {
           <span className="user-name">{loginUser?.userName}님</span>
           <div
             className="mypage-button"
-            onClick={() => navigate(USER_PATH(loginUser.email))}
+            // onClick={() => navigate(USER_PATH(loginUser.email))}
+            onClick={() => navigate(USER_PATH())}
           >
             마이페이지
           </div>

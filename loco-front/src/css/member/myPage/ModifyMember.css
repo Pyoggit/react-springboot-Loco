@@ -16,7 +16,7 @@
   font-weight: bold;
 } 
 
-.group {
+.modify-group {
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -25,14 +25,14 @@
   max-width: 400px;
 }
 
-.title {
+.modify-title {
   width: 30%;
   font-weight: bold;
   text-align: left;
   padding-right: 10px;
 }
 
-.input {
+.modify-input {
   border: 1px solid #a6a6a6;
   width: 70%;
   padding: 10px;

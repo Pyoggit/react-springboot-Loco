@@ -42,7 +42,9 @@ public class SecurityConfig {
                     "/ws-chat/**",
                     "/api/circles/**"  
                 ).permitAll() 
-                .requestMatchers("/api/users/me").authenticated()
+                .requestMatchers("/api/users/mypage/**").authenticated()
+              .requestMatchers("/api/users/mypage/**").hasAuthority("ROLE_USER")
+//                .requestMatchers("/api/users/mypage/**").hasAuthority("ROLE_USER").anyRequest().authenticated()
                 .requestMatchers("/api/users/logout").authenticated() 
                 .requestMatchers("/api/adminpage/login").permitAll() 
                 .requestMatchers("/api/adminpage/**").hasAuthority("ROLE_ADMIN") 
