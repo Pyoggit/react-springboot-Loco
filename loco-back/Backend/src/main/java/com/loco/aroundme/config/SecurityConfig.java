@@ -39,9 +39,9 @@ public class SecurityConfig {
                     "/api/users/login", 
                     "/api/auth/kakao/**", 
                     "/api/auth/google/**",
-                    "/ws-chat/**"
+                    "/ws-chat/**",
+                    "/api/circles/**"  
                 ).permitAll() 
-                //유저 로그인 정보 불러오기,로그아웃 기능
                 .requestMatchers("/api/users/me").authenticated()
                 .requestMatchers("/api/users/logout").authenticated() 
                 .requestMatchers("/api/adminpage/login").permitAll() 
@@ -49,24 +49,21 @@ public class SecurityConfig {
                 .anyRequest().authenticated() 
             )
             .exceptionHandling(ex -> ex
-                .accessDeniedPage("/error/403")) // 🔹 권한 없으면 403 Forbidden 페이지로 리디렉트
-            
+                .accessDeniedPage("/error/403")) 
             .logout(logout -> logout
-                    .logoutUrl("/api/users/logout")  // ✅ 여기서 Spring Security 로그아웃 방식 사용 ❌ (대신 컨트롤러에서 직접 처리)
+                    .logoutUrl("/api/users/logout")  
                     .logoutSuccessHandler((request, response, authentication) -> {
                         response.setStatus(200);
                         response.getWriter().write("로그아웃 성공!");
                         response.getWriter().flush();
                     })
                     .invalidateHttpSession(true)) 
-            
             .formLogin(form -> form.disable()) 
             .httpBasic(basic -> basic.disable()) 
             .addFilterBefore(new JwtAuthenticationFilter(jwtUtil), UsernamePasswordAuthenticationFilter.class); 
 
         return http.build();
     }
-
     @Bean
     public BCryptPasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
@@ -100,4 +97,6 @@ public class SecurityConfig {
             }
         };
     }
+    
+    
 }
