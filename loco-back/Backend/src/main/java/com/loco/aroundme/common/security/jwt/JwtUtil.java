@@ -41,6 +41,7 @@ public class JwtUtil {
                 .setExpiration(new Date(System.currentTimeMillis() + ACCESS_TOKEN_EXPIRATION)) // 만료 시간
                 .signWith(getSigningKey(), SignatureAlgorithm.HS256) // 서명 설정
                 .compact();
+        
     }
 
     /** ✅ 카카오 사용자(KakaoUsers)용 액세스 토큰 생성 */
@@ -120,6 +121,7 @@ public class JwtUtil {
             log.warn("❌ 지원되지 않는 JWT 형식: {}", e.getMessage());
         } catch (MalformedJwtException e) {
             log.warn("⚠️ JWT가 손상됨: {}", e.getMessage());
+            log.warn("📌 문제 발생한 토큰: {}", token);// 🚨 문제 발생 시 토큰 출력
         } catch (SignatureException e) {
             log.warn("🔑 서명 검증 실패: {}", e.getMessage());
         } catch (IllegalArgumentException e) {
@@ -127,6 +129,18 @@ public class JwtUtil {
         }
         return false;
     }
+    
+    /** ✅ JWT 토큰에서 이메일 추출 */
+    public String getEmailFromToken(String token) {
+        try {
+            Claims claims = Jwts.parserBuilder().setSigningKey(getSigningKey()).build().parseClaimsJws(token).getBody();
+            return claims.get("email", String.class);
+        } catch (Exception e) {
+            log.warn("🚨 JWT에서 이메일 추출 실패: {}", e.getMessage());
+            return null;
+        }
+    }
+    
 
     /** ✅ 토큰 블랙리스트 추가 (로그아웃 시 사용) */
     public void addToBlacklist(String token) {
@@ -146,8 +160,28 @@ public class JwtUtil {
 
     /** ✅ 토큰에서 사용자 이메일 가져오기 */
     public String getUserEmail(String token) {
-        return getClaims(token).get("email", String.class);
+        try {
+            Claims claims = Jwts.parserBuilder()
+                                .setSigningKey(getSigningKey())
+                                .build()
+                                .parseClaimsJws(token)
+                                .getBody();
+            return claims.get("email", String.class);
+        } catch (ExpiredJwtException e) {
+            log.warn("⏳ JWT 만료됨: {}", e.getMessage());
+        } catch (UnsupportedJwtException e) {
+            log.warn("❌ 지원되지 않는 JWT 형식: {}", e.getMessage());
+        } catch (MalformedJwtException e) {
+            log.warn("⚠️ JWT가 손상됨: {}", e.getMessage());
+            log.warn("📌 문제가 발생한 토큰: {}", token); // 🚨 문제 발생 시 토큰 출력
+        } catch (SignatureException e) {
+            log.warn("🔑 서명 검증 실패: {}", e.getMessage());
+        } catch (IllegalArgumentException e) {
+            log.warn("🚨 JWT 처리 오류: {}", e.getMessage());
+        }
+        return null; // 오류 발생 시 null 반환
     }
+
 
     /** ✅ 토큰에서 사용자 이름 가져오기 */
     public String getUserName(String token) {

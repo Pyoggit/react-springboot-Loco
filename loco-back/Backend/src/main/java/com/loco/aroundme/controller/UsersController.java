@@ -5,7 +5,14 @@ import java.util.Map;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RequestPart;
+import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.loco.aroundme.common.security.jwt.JwtUtil;
@@ -71,7 +78,6 @@ public class UsersController {
         String role = (roleId == 1) ? "ROLE_ADMIN" : "ROLE_USER";
         System.out.println("roleId: " + roleId + ", 변환된 role: " + role);
 
-        // 일반 유저만 로그인 가능 (ROLE_ADMIN 차단)
         if (!role.equals("ROLE_USER")) {
             System.out.println("일반 유저 권한이 아님! roleId: " + roleId);
             return ResponseEntity.status(HttpStatus.FORBIDDEN).body(Map.of("error", "Access denied"));
@@ -84,11 +90,67 @@ public class UsersController {
         System.out.println("Access Token 발급: " + accessToken);
         System.out.println("Refresh Token 발급: " + refreshToken);
 
-        // `Authorization` 헤더 추가!
+        // ✅ `user` 객체를 응답에 포함
         return ResponseEntity.ok()
-                .header("Authorization", "Bearer " + accessToken)  // 액세스 토큰을 헤더에 추가
-                .header("Refresh-Token", refreshToken) // 리프레시 토큰도 헤더에 추가
-                .body(Map.of("accessToken", accessToken, "refreshToken", refreshToken)); // 프론트에서 사용할 수 있도록 바디에도 추가
+                .header("Authorization", "Bearer " + accessToken)
+                .header("Refresh-Token", refreshToken)
+                .body(Map.of(
+                    "accessToken", accessToken,
+                    "refreshToken", refreshToken,
+                    "user", Map.of(
+                        "userId", user.getUserId(),
+                        "email", user.getUserEmail(),
+                        "userName", user.getUserName(),
+                        "role", role
+                    )
+                ));
     }
+    /**
+     * 일반 사용자 로그아웃 API (경로: /api/users/logout)
+     */
+    @PostMapping("/logout")
+    public ResponseEntity<String> logout(@RequestHeader("Authorization") String token) {
+        if (token.startsWith("Bearer ")) {
+            token = token.substring(7); // "Bearer " 제거
+        }
+
+        jwtUtil.addToBlacklist(token); // 🔴 JWT를 블랙리스트에 추가
+        return ResponseEntity.ok("로그아웃 성공!");
+    }
+    /**
+     * 로그인한 사용자 정보 가져오기 (경로: /api/users/me)
+     */
+    @GetMapping("/me")
+    public ResponseEntity<?> getCurrentUser(@RequestHeader(value = "Authorization", required = false) String token) {
+        if (token == null || !token.startsWith("Bearer ")) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(Map.of("error", "Missing or invalid token format"));
+        }
+
+        // "Bearer " 제거 후 순수한 토큰만 추출
+        token = token.substring(7);
+
+        // 로그 추가 (디버깅용)
+        System.out.println("🔍 받은 JWT 토큰: " + token);
+
+        if (!jwtUtil.validateToken(token)) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(Map.of("error", "Invalid token"));
+        }
+
+        String userEmail = jwtUtil.getUserEmail(token);
+        System.out.println("📌 토큰에서 추출한 이메일: " + userEmail);
+
+        Users user = usersMapper.read(userEmail);
+        if (user == null) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(Map.of("error", "User not found"));
+        }
+
+        return ResponseEntity.ok(Map.of(
+            "userId", user.getUserId(),
+            "email", user.getUserEmail(),
+            "userName", user.getUserName(),
+            "role", user.getRoleId() == 1 ? "ROLE_ADMIN" : "ROLE_USER"
+        ));
+    }
+
 
 }

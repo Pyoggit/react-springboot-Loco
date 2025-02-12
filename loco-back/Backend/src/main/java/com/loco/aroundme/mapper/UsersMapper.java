@@ -1,22 +1,13 @@
 package com.loco.aroundme.mapper;
 
-import java.util.Map;
-
-import org.apache.ibatis.annotations.Mapper;
-
 import com.loco.aroundme.domain.Users;
+import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Param;
+import java.util.List;
 
 @Mapper
 public interface UsersMapper {
-//	List<Users> list();
-
-	void insertUser(Users user) throws Exception;
-
-//	Users detail(Long userId);
-
-//	void update(Users user);
-
-//	void delete(Long userId);
-
-	 Users read(String userEmail);
+    Users read(@Param("userEmail") String userEmail); // 이메일로 사용자 조회
+    void insertUser(Users user); // 사용자 추가
+    List<Users> findAllUsers(); // 모든 사용자 조회
 }
