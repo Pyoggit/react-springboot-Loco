@@ -17,6 +17,7 @@ const Member = () => {
         <Route element={<Container />}>
           <Route path="/" element={<Home />} />
           <Route path="/chat" element={<ChatRoom />} />
+          <Route path="/chat/:roomId" element={<ChatRoom />} />
           <Route path="/search" element={<SerchPage />} />
           <Route path="/circle" element={<CirclePage />} />
           <Route path="/board/*" element={<BoardPage />} />

@@ -10,46 +10,47 @@ const LoginForm = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
   const emailInputRef = useRef(null);
   const passwordInputRef = useRef(null);
   const navigate = useNavigate();
-  const [cookies, setCookie] = useCookies(["loginUser", "accessToken"]);
+  const [cookies, setCookie] = useCookies(["loginUser"]);
 
-  /** 로그인 처리 */
+  /** 로그인 처리 함수 */
   const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log("Login Attempt:", { email, password });
     setError("");
+    setIsLoading(true);
+
+    // 입력값 다듬기
+    const trimmedEmail = email.trim();
+    const trimmedPassword = password.trim();
 
     try {
+      // 로그인 API 호출 (일반 유저용)
       const response = await axios.post("/api/users/login", {
-        email,
-        password,
+        email: trimmedEmail,
+        password: trimmedPassword,
       });
 
-      // 🔹 응답 데이터 전체 확인
-      console.log("📌 서버 응답 데이터:", response.data);
-
-      // ✅ 헤더에서 JWT 토큰 추출
+      // 응답 데이터 및 헤더에서 토큰, 유저 정보 추출
       const accessToken = response.headers["authorization"]?.split(" ")[1];
       const refreshToken = response.headers["refresh-token"];
-
-      // ✅ 응답 바디에서 user 정보 확인
       const userInfo = response.data;
 
-      console.log("응답 헤더 확인:", response.headers);
-      console.log("받은 일반로그인_AccessToken:", accessToken);
-      console.log("받은 일반로그인_RefreshToken:", refreshToken);
-      console.log("받은 유저 정보:", userInfo);
-
-      // 🔥 유저 정보가 없으면 에러 발생
+      // 유효한 토큰과 사용자 정보가 없는 경우 예외 처리
       if (!accessToken || !userInfo) {
         throw new Error("JWT 토큰 또는 유저 정보를 가져오지 못했습니다!");
       }
 
-      // ✅ localStorage 및 쿠키 저장
-      localStorage.setItem("accessToken", accessToken);
-      localStorage.setItem("refreshToken", refreshToken);
+      // 관리자 로그인과의 충돌 방지를 위해 관리자 토큰 제거 (필요한 경우)
+      localStorage.removeItem("admin_accessToken");
+      // 일반 유저 토큰 저장
+      localStorage.setItem("일반로그인 accessToken", accessToken);
+      localStorage.setItem(
+        "일반로그인 refreshToken(쿠키로 가야함)",
+        refreshToken
+      );
       setCookie("loginUser", userInfo, { path: "/" });
 
       alert("로그인 성공!");
@@ -64,6 +65,8 @@ const LoginForm = () => {
       } else {
         setError("로그인 중 오류가 발생했습니다. 다시 시도해주세요.");
       }
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -101,8 +104,8 @@ const LoginForm = () => {
 
             {error && <p className="error-message">{error}</p>}
 
-            <button type="submit" className="login-btn">
-              로그인
+            <button type="submit" className="login-btn" disabled={isLoading}>
+              {isLoading ? "로그인 중..." : "로그인"}
             </button>
           </div>
         </form>

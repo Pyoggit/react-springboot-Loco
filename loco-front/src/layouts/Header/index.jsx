@@ -2,6 +2,9 @@ import { Link, useNavigate, useParams, useLocation } from "react-router-dom";
 import { useState, useEffect, useRef } from "react";
 import { useCookies } from "react-cookie";
 import axios from "@/utils/AxiosConfig";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faComments } from "@fortawesome/free-solid-svg-icons";
+import ChatRoom from "@/components/member/Common/ChatRoom";
 import "./style.css";
 
 export default function Header() {
@@ -11,6 +14,7 @@ export default function Header() {
   const [isLogin, setLogin] = useState(false);
   const [isSearchPage, setSearchPage] = useState(false);
   const [loginUser, setLoginUser] = useState(null);
+  const [showChat, setShowChat] = useState(false);
 
   const MAIN_PATH = () => "/";
   const LOGIN_PATH = () => "/login";
@@ -167,98 +171,121 @@ export default function Header() {
   }
 
   return (
-    <div id="header">
-      <div className="header-container">
-        <div className="header-left-box" onClick={() => navigate(MAIN_PATH())}>
-          <div className="icon-box">
-            <div className="icon logo-main-icon"></div>
-          </div>
+    <>
+      <div id="header">
+        <div className="header-container">
           <div
-            className="header-center-box"
+            className="header-left-box"
             onClick={() => navigate(MAIN_PATH())}
           >
-            <div className="header-logo">{"AroundMe"}</div>
+            <div className="icon-box">
+              <div className="icon logo-main-icon"></div>
+            </div>
+            <div
+              className="header-center-box"
+              onClick={() => navigate(MAIN_PATH())}
+            >
+              <div className="header-logo">{"AroundMe"}</div>
+            </div>
           </div>
-        </div>
-        <div className="header-right-box">
-          <SearchButton navigate={navigate} />
-          {/* {(isAuthPage || isMainPage || isSearchPage) && (
+          <div className="header-right-box">
+            <SearchButton navigate={navigate} />
+            {/* {(isAuthPage || isMainPage || isSearchPage) && (
             <SearchButton navigate={navigate} />
           )} */}
-          <MyPageButton />
+            <MyPageButton />
+          </div>
+        </div>
+        <div className="header-main-menu">
+          <ul className="menu">
+            <li>
+              <Link to="/">페이지소개</Link>
+              <ul className="dropdown">
+                <li>
+                  <Link to="#">인사말</Link>
+                </li>
+                <li>
+                  <Link to="#">사용가이드</Link>
+                </li>
+                <li>
+                  <Link to="/board/notice">공지사항</Link>
+                </li>
+              </ul>
+            </li>
+            <li>
+              <Link to="/circle">모임/참여</Link>
+              <ul className="dropdown">
+                <li>
+                  <Link to="/circle">모임 보기</Link>
+                </li>
+                <li>
+                  <Link to="/circle/new">모임 개설하기</Link>
+                </li>
+                <li>
+                  <Link to="#">지역별 활동량</Link>
+                </li>
+              </ul>
+            </li>
+            <li>
+              <Link to="/board/freeboard">커뮤니티</Link>
+              <ul className="dropdown">
+                <li>
+                  <Link to="/board/freeboard">자유게시판</Link>
+                </li>
+                <li>
+                  <Link to="/board/anonymous">익명게시판</Link>
+                </li>
+              </ul>
+            </li>
+            <li>
+              <Link to="/market">중고거래</Link>
+              <ul className="dropdown">
+                <li>
+                  <Link to="/market">상품 보기</Link>
+                </li>
+                <li>
+                  <Link to="/market/insert">상품 등록하기</Link>
+                </li>
+              </ul>
+            </li>
+            <li>
+              <Link to="/service">고객센터</Link>
+              <ul className="dropdown">
+                <li>
+                  <Link to="/board/faq">FAQ</Link>
+                </li>
+                <li>
+                  <Link to="/board/qna">문의하기</Link>
+                </li>
+                <li>
+                  <Link to="/board/improvement">사이트 불편&개선사항</Link>
+                </li>
+                <li>
+                  <Link to="/board/report">신고하기</Link>
+                </li>
+              </ul>
+            </li>
+          </ul>
         </div>
       </div>
-      <div className="header-main-menu">
-        <ul className="menu">
-          <li>
-            <Link to="/">페이지소개</Link>
-            <ul className="dropdown">
-              <li>
-                <Link to="#">인사말</Link>
-              </li>
-              <li>
-                <Link to="#">사용가이드</Link>
-              </li>
-              <li>
-                <Link to="/board/notice">공지사항</Link>
-              </li>
-            </ul>
-          </li>
-          <li>
-            <Link to="/circle">모임/참여</Link>
-            <ul className="dropdown">
-              <li>
-                <Link to="/circle">모임 보기</Link>
-              </li>
-              <li>
-                <Link to="/circle/new">모임 개설하기</Link>
-              </li>
-              <li>
-                <Link to="#">지역별 활동량</Link>
-              </li>
-            </ul>
-          </li>
-          <li>
-            <Link to="/board/freeboard">커뮤니티</Link>
-            <ul className="dropdown">
-              <li>
-                <Link to="/board/freeboard">자유게시판</Link>
-              </li>
-              <li>
-                <Link to="/board/anonymous">익명게시판</Link>
-              </li>
-            </ul>
-          </li>
-          <li>
-            <Link to="/market">중고거래</Link>
-            <ul className="dropdown">
-              <li>
-                <Link to="/market">상품 보기</Link>
-              </li>
-              <li>
-                <Link to="/market/insert">상품 등록하기</Link>
-              </li>
-            </ul>
-          </li>
-          <li>
-            <Link to="/service">고객센터</Link>
-            <ul className="dropdown">
-              <li>
-                <Link to="/board/faq">FAQ</Link>
-              </li>
-              <li>
-                <Link to="/board/qna">문의하기</Link>
-              </li>
-              <li>
-                <Link to="/board/improvement">사이트 불편&개선사항</Link>
-              </li>
-              <li>
-                <Link to="/board/report">신고하기</Link>
-              </li>
-            </ul>
-          </li>
-        </ul>
-      </div>
-    </div>
+      {/* 로그인한 경우에만 헤더에 채팅 아이콘 표시 */}
+      {isLogin && (
+        <div className="chat-icon" onClick={() => setShowChat(!showChat)}>
+          <FontAwesomeIcon icon={faComments} size="2x" />
+        </div>
+      )}
+      {/* 채팅 팝업창: showChat이 true일 때 작게 띄움 */}
+      {isLogin && showChat && (
+        <div className="chat-popup">
+          <div className="chat-popup-header">
+            <span>채팅</span>
+            <button onClick={() => setShowChat(false)}>X</button>
+          </div>
+          <div className="chat-popup-body">
+            <ChatRoom />
+          </div>
+        </div>
+      )}
+    </>
   );
 }
