@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.loco.aroundme.mapper.CircleMapper">
+
+    <!-- 모임 등록 -->
+    <!-- id 시퀀스, userId, maxmember, member, circleStatus 넣어주세용 -->
+   <insert id="insertCircle" parameterType="com.loco.aroundme.domain.Circle">
+    INSERT INTO CIRCLE (
+        CIRCLE_ID, CIRCLE_NAME, CIRCLE_DATE, CIRCLE_CATEGORY, CIRCLE_DETAIL, 
+        CIRCLE_REGDATE, CIRCLE_ADDRESS, CIRCLE_LAT, CIRCLE_LNG, CIRCLE_PLACE_ID
+    ) VALUES (
+        CIRCLE_SEQ.NEXTVAL, 
+        #{circleName}, 
+        #{circleDate, jdbcType=TIMESTAMP}, 
+        #{circleCategory}, 
+        #{circleDetail}, 
+        CURRENT_TIMESTAMP,
+        #{circleAddress}, 
+        #{circleLat}, 
+        #{circleLng}, 
+        #{circlePlaceId}
+    )
+</insert>
+
+
+    <!-- 모임 조회 -->
+    <select id="findCircleById" resultType="com.loco.aroundme.domain.Circle">
+        SELECT * FROM CIRCLE
+    </select>
+
+</mapper>
