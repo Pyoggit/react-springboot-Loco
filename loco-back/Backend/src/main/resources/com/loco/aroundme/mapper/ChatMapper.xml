@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.loco.aroundme.mapper.ChatMapper">
+<!-- 모든 채팅방 조회 -->
+    <select id="findAllRooms" resultType="com.loco.aroundme.domain.ChatRoom">
+        SELECT * FROM Chat_Rooms ORDER BY ROOM_ID DESC
+    </select>
+
+    <!-- 특정 채팅방 조회 -->
+    <select id="findRoomById" parameterType="int" resultType="com.loco.aroundme.domain.ChatRoom">
+        SELECT * FROM Chat_Rooms WHERE ROOM_ID = #{roomId}
+    </select>
+
+    <!-- 채팅방 생성 -->
+    <insert id="createChatRoom">
+        INSERT INTO Chat_Rooms (ROOM_ID, ROOM_NAME, CREATED_BY, CREATED_AT)
+        VALUES (CHAT_ROOMS_SEQ.NEXTVAL, #{roomName}, #{createdBy}, SYSTIMESTAMP)
+    </insert>
+
+    <!-- 특정 채팅방의 모든 메시지 조회 -->
+    <select id="findMessagesByRoomId" parameterType="int" resultType="com.loco.aroundme.domain.ChatMessage">
+        SELECT * FROM Chat_Messages WHERE ROOM_ID = #{roomId} ORDER BY CREATED_AT ASC
+    </select>
+
+    <!-- 채팅 메시지 저장 -->
+    <insert id="saveMessage">
+        INSERT INTO Chat_Messages (MESSAGE_ID, ROOM_ID, SENDER_ID, MESSAGE_CONTENT, MESSAGE_TYPE, CREATED_AT)
+        VALUES (CHAT_MESSAGES_SEQ.NEXTVAL, #{roomId}, #{senderId}, #{messageContent}, #{messageType}, SYSTIMESTAMP)
+    </insert>
+
+</mapper>
