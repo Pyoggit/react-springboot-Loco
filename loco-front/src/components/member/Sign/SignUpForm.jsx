@@ -6,7 +6,6 @@ import "@/css/member/sign/SignUpForm.css";
 
 const SignUpForm = () => {
   const navigate = useNavigate();
-
   const email = useRef();
   const password = useRef();
   const confirmPassword = useRef();
@@ -45,55 +44,6 @@ const SignUpForm = () => {
     setIsOpen(false);
   };
 
-  // fetch 버전
-  // const handleSubmit = async (e) => {
-  //   e.preventDefault();
-
-  //   if (password.current.value !== confirmPassword.current.value) {
-  //     alert("비밀번호가 일치하지 않습니다.");
-  //     return;
-  //   }
-
-  //   const formData = new FormData();
-  //   formData.append("email", email.current.value);
-  //   formData.append("password", password.current.value);
-  //   formData.append("name", name.current.value);
-  //   formData.append("gender", gender.current.value);
-  //   formData.append(
-  //     "mobile",
-  //     `${mobile1.current.value}-${mobile2.current.value}-${mobile3.current.value}`
-  //   );
-  //   formData.append(
-  //     "phone",
-  //     `${phone1.current.value}-${phone2.current.value}-${phone3.current.value}`
-  //   );
-  //   formData.append("birthDate", birthDate.current.value);
-  //   formData.append("zonecode", zonecode.current.value);
-  //   formData.append("address", address.current.value);
-  //   formData.append("detailAddress", detailAddress.current.value);
-
-  //   if (profileImage.current.files[0]) {
-  //     formData.append("profileImage", profileImage.current.files[0]);
-  //   }
-
-  //   try {
-  //     const response = await fetch("http://localhost:8080/signup", {
-  //       method: "POST",
-  //       body: formData,
-  //     });
-
-  //     if (response.ok) {
-  //       alert("회원가입이 완료되었습니다!");
-  //       navigate("/login"); // 로그인 페이지로 이동
-  //     } else {
-  //       throw new Error("회원가입 실패");
-  //     }
-  //   } catch (error) {
-  //     console.error("회원가입 오류:", error);
-  //     alert("회원가입에 실패했습니다.");
-  //   }
-  // };
-
   // axios 버전
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -103,26 +53,12 @@ const SignUpForm = () => {
       return;
     }
 
-    // user 객체를 JSON으로 변환
-    // const user = {
-    //   userEmail: email.current.value,
-    //   password: password.current.value,
-    //   userName: name.current.value,
-    //   gender: gender.current.value,
-    //   mobile1: mobile1.current.value,
-    //   mobile2: mobile2.current.value,
-    //   mobile3: mobile3.current.value,
-    //   phone1: phone1.current.value,
-    //   phone2: phone2.current.value,
-    //   phone3: phone3.current.value,
-    //   birth: birthDate.current.value,
-    //   zipcode: zonecode.current.value,
-    //   address1: address.current.value,
-    //   address2: detailAddress.current.value || "",
-    //   roleId: 2,
-    // };
     const user = {
       userEmail: email.current.value,
+
+      provider: "normal",
+      providerId: "none",
+
       password: password.current.value,
       userName: name.current.value,
       gender: gender.current.value,
@@ -259,7 +195,7 @@ const SignUpForm = () => {
                 className="input-phone1"
                 type="text"
                 ref={phone1}
-                defaultValue="02"
+                // defaultValue="02"
               />
               <input className="input-phone2" type="text" ref={phone2} />
               <input className="input-phone3" type="text" ref={phone3} />
