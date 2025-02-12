@@ -1,0 +1,28 @@
+.admin-freeboard-container {
+  width: 100%;
+  background: white;
+  border-radius: 10px;
+  padding: 20px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+}
+
+.admin-freeboard-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.admin-freeboard-table th,
+.admin-freeboard-table td {
+  padding: 12px;
+  border: 1px solid #ddd;
+}
+
+.admin-freeboard-table th {
+  background: rgba(177, 121, 241, 0.6);
+  color: white;
+  cursor: pointer;
+}
+
+.admin-freeboard-table th:hover {
+  background: rgba(177, 121, 241, 0.8);
+}
