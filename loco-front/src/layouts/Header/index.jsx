@@ -1,18 +1,16 @@
 import { Link, useNavigate, useParams, useLocation } from "react-router-dom";
 import { useState, useEffect, useRef } from "react";
 import { useCookies } from "react-cookie";
+import axios from "@/utils/AxiosConfig";
 import "./style.css";
 
 export default function Header() {
   const navigate = useNavigate();
   const { pathname } = useLocation();
-  const [cookies] = useCookies(["loginUser"]);
-
-  const [isAuthPage, setAuthPage] = useState(false);
-  const [isMainPage, setMainPage] = useState(false);
+  const [cookies, setCookie, removeCookie] = useCookies(["loginUser"]);
   const [isLogin, setLogin] = useState(false);
-  const [loginUser, setLoginUser] = useState(null);
   const [isSearchPage, setSearchPage] = useState(false);
+  const [loginUser, setLoginUser] = useState(null);
 
   const MAIN_PATH = () => "/";
   const LOGIN_PATH = () => "/login";
@@ -20,56 +18,90 @@ export default function Header() {
   const USER_PATH = (userEmail) => `/user/${userEmail}`;
 
   useEffect(() => {
-    setAuthPage(pathname.startsWith(LOGIN_PATH()));
-    setMainPage(pathname === MAIN_PATH());
-    setSearchPage(pathname.startsWith(SEARCH_PATH()));
+    const fetchUserInfo = async () => {
+      const token = localStorage.getItem("accessToken");
+      if (!token) {
+        removeCookie("loginUser", { path: "/" });
+        setLogin(false);
+        setLoginUser(null);
+        setSearchPage(pathname.startsWith(SEARCH_PATH()));
+        return;
+      }
 
-    // 로그인 유지 처리
-    if (cookies.loginUser) {
-      setLogin(true);
-      setLoginUser(cookies.loginUser);
+      try {
+        const response = await axios.get("/api/users/me");
+        console.log("📌 받은 유저 정보:", response.data);
+
+        // ✅ 유저 정보가 다르면 업데이트, 같으면 업데이트 안 함
+        if (!loginUser || loginUser.email !== response.data.email) {
+          setLoginUser(response.data);
+          setCookie("loginUser", response.data, { path: "/" });
+          setLogin(true);
+        }
+      } catch (error) {
+        console.error("유저 정보 가져오기 실패:", error);
+        localStorage.removeItem("accessToken");
+        localStorage.removeItem("refreshToken");
+        removeCookie("loginUser", { path: "/" });
+        setLogin(false);
+        setLoginUser(null);
+      }
+    };
+
+    fetchUserInfo();
+  }, [pathname]); // ✅ `cookies.loginUser` 제거, `pathname`만 의존성으로 사용
+
+  const handleLogout = async () => {
+    try {
+      const token = localStorage.getItem("accessToken");
+      if (!token) throw new Error("로그인 상태가 아닙니다.");
+
+      await axios.post(
+        "/api/users/logout",
+        {},
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+
+      // 로그아웃 성공 시 클라이언트 상태 초기화
+      localStorage.removeItem("accessToken");
+      localStorage.removeItem("refreshToken");
+      removeCookie("loginUser", { path: "/" });
+      setLoginUser(null);
+      setLogin(false);
+      alert("로그아웃 성공!");
+      navigate(MAIN_PATH());
+    } catch (error) {
+      console.error("로그아웃 실패:", error);
+      alert("로그아웃 중 문제가 발생했습니다.");
     }
-  }, [pathname, cookies.loginUser]);
-
-  const resetLoginUser = () => {
-    setLoginUser(null);
-    setLogin(false);
   };
 
   const MyPageButton = () => {
     const { userEmail } = useParams();
 
-    const onMyPageButtonClickHandler = () => {
-      if (!loginUser) return;
-      navigate(USER_PATH(loginUser.email));
-    };
-
-    const onSignOutButtonClickHandler = () => {
-      resetLoginUser();
-      navigate(MAIN_PATH());
-    };
-
-    const onSignInButtonClickHandler = () => {
-      navigate(LOGIN_PATH());
-    };
-
-    if (isLogin && userEmail === loginUser?.email) {
-      return (
-        <div className="team-button" onClick={onSignOutButtonClickHandler}>
-          {"로그아웃"}
-        </div>
-      );
-    }
     if (isLogin) {
       return (
-        <div className="team-button" onClick={onMyPageButtonClickHandler}>
-          {"마이페이지"}
+        <div className="user-info">
+          <span className="user-name">{loginUser?.userName}님</span>
+          <div
+            className="mypage-button"
+            onClick={() => navigate(USER_PATH(loginUser.email))}
+          >
+            마이페이지
+          </div>
+          <div className="logout-button" onClick={handleLogout}>
+            로그아웃
+          </div>
         </div>
       );
     }
     return (
-      <div className="team-button" onClick={onSignInButtonClickHandler}>
-        {"로그인"}
+      <div className="team-button" onClick={() => navigate(LOGIN_PATH())}>
+        로그인
       </div>
     );
   };

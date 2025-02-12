@@ -1,0 +1,37 @@
+.admin-faq-container {
+  width: 100%;
+  background: white;
+  border-radius: 10px;
+  padding: 20px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+}
+
+.admin-faq-container button {
+  background: #0078d7;
+  color: white;
+  border: none;
+  padding: 8px 12px;
+  border-radius: 5px;
+  cursor: pointer;
+  margin-bottom: 10px;
+}
+
+.admin-faq-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.admin-faq-table th,
+.admin-faq-table td {
+  padding: 12px;
+  border: 1px solid #ddd;
+}
+
+.admin-faq-table th {
+  background: rgba(177, 121, 241, 0.6);
+  color: white;
+}
+
+.admin-faq-table th:hover {
+  background: rgba(177, 121, 241, 0.8);
+}

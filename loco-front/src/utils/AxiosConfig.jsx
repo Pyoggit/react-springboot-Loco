@@ -9,6 +9,7 @@ axios.interceptors.request.use(
     const token = localStorage.getItem("accessToken");
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;
+      console.log("📌 요청에 포함된 토큰:", token);
     }
     return config;
   },

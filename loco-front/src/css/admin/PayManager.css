@@ -1,0 +1,58 @@
+.admin-pay-container {
+  width: 100%;
+  background: white;
+  border-radius: 10px;
+  padding: 20px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+}
+
+.admin-pay-header {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 15px;
+}
+
+.admin-pay-search-input {
+  padding: 8px;
+  border-radius: 5px;
+  border: 1px solid #ccc;
+  width: 200px;
+}
+
+.admin-pay-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.admin-pay-table th,
+.admin-pay-table td {
+  padding: 12px;
+  border: 1px solid #ddd;
+}
+
+.admin-pay-table th {
+  background: rgba(177, 121, 241, 0.6);
+  color: white;
+  cursor: pointer;
+}
+
+.admin-pay-table th:hover {
+  background: rgba(177, 121, 241, 0.8);
+}
+
+.admin-pay-table input[type="checkbox"] {
+  transform: scale(1.2);
+}
+
+.pagination {
+  display: flex;
+  justify-content: center;
+  margin-top: 15px;
+}
+
+.pagination button {
+  padding: 5px 10px;
+  margin: 0 5px;
+  border: 1px solid #ddd;
+  cursor: pointer;
+}

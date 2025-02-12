@@ -1,0 +1,45 @@
+.admin-product-container {
+  width: 100%;
+  background: white;
+  border-radius: 10px;
+  padding: 20px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+}
+
+.admin-product-header {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 15px;
+}
+
+.admin-product-search-input {
+  padding: 8px;
+  border-radius: 5px;
+  border: 1px solid #ccc;
+  width: 200px;
+}
+
+.admin-product-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.admin-product-table th,
+.admin-product-table td {
+  padding: 12px;
+  border: 1px solid #ddd;
+}
+
+.admin-product-table th {
+  background: rgba(177, 121, 241, 0.6);
+  color: white;
+  cursor: pointer;
+}
+
+.admin-product-table th:hover {
+  background: rgba(177, 121, 241, 0.8);
+}
+
+.admin-product-table input[type="checkbox"] {
+  transform: scale(1.2);
+}

@@ -80,7 +80,7 @@
   border: 1px solid rgba(0, 0, 0, 0.2);
   border-radius: 43px;
   padding: 0 10px 0 12px;
-  width: 280px;
+  width: 250px;
   height: 30px;
 
   display: flex;
@@ -181,6 +181,66 @@
 .header-main-menu .menu > li .dropdown li a:hover {
   background-color: rgba(0, 0, 0, 0.15);
   color: rgba(0, 0, 0, 1);
+}
+
+.user-info {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.user-name {
+  font-size: 16px;
+  font-weight: bold;
+  color: #333;
+}
+
+.mypage-button {
+  border-radius: 46px;
+  width: 80px;
+  height: 30px;
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  background-color: rgba(0, 0, 0, 1);
+
+  color: rgba(255, 255, 255, 1);
+
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 140%;
+
+  cursor: pointer;
+}
+
+.mypage-button:hover {
+  background-color: rgba(177, 121, 241, 0.6);
+}
+
+.logout-button {
+  border-radius: 46px;
+  width: 80px;
+  height: 30px;
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  background-color: rgb(197, 59, 59);
+
+  color: rgba(255, 255, 255, 1);
+
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 140%;
+
+  cursor: pointer;
+}
+
+.logout-button:hover {
+  background-color: rgba(197, 59, 59, 0.8);
 }
 
 @media (max-width: 768px) {
