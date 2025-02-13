@@ -23,7 +23,7 @@ const AdminpageMain = () => {
 
     if (!accessToken) {
       alert("로그인이 필요합니다.");
-      navigate("/login"); // 또는 관리자 전용 로그인 페이지로 이동
+      navigate("/adminpage/login"); // 관리자 전용 로그인 페이지로 이동
       return;
     }
 
@@ -45,7 +45,6 @@ const AdminpageMain = () => {
       <AdminAside setSelectedPage={setSelectedPage} />
       <article className="admin-content">
         {selectedPage === "dashboard" && <StatDashboard />}
-
         {selectedPage === "members" && <MemberManager />}
         {selectedPage === "notice" && <NoticeManager />}
         {selectedPage === "freeboard" && <FreeboardManager />}
