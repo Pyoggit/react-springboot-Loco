@@ -6,28 +6,36 @@
 
     <!-- 모임 등록 -->
     <!-- id 시퀀스, userId, maxmember, member, circleStatus 넣어주세용 -->
-   <insert id="insertCircle" parameterType="com.loco.aroundme.domain.Circle">
+<insert id="insertCircle" parameterType="com.loco.aroundme.domain.Circle">
     INSERT INTO CIRCLE (
-        CIRCLE_ID, CIRCLE_NAME, CIRCLE_DATE, CIRCLE_CATEGORY, CIRCLE_DETAIL, 
-        CIRCLE_REGDATE, CIRCLE_ADDRESS, CIRCLE_LAT, CIRCLE_LNG, CIRCLE_PLACE_ID
+        CIRCLE_ID, USER_ID, CIRCLE_NAME, CIRCLE_DATE, CIRCLE_CATEGORY, CIRCLE_DETAIL, 
+        CIRCLE_REGDATE, CIRCLE_ADDRESS, CIRCLE_LAT, CIRCLE_LNG, CIRCLE_PLACE_ID, 
+        CIRCLE_MAXMEMBER, PICTURE_ID, PICTURE_URL
     ) VALUES (
-        CIRCLE_SEQ.NEXTVAL, 
+        CIRCLE_SEQ.NEXTVAL, #{userId}, 
         #{circleName}, 
         #{circleDate, jdbcType=TIMESTAMP}, 
         #{circleCategory}, 
         #{circleDetail}, 
-        CURRENT_TIMESTAMP,
+        CURRENT_TIMESTAMP, 
         #{circleAddress}, 
         #{circleLat}, 
         #{circleLng}, 
-        #{circlePlaceId}
+        #{circlePlaceId}, 
+        #{circleMaxMember, jdbcType=INTEGER}, <!-- ✅ INT 타입으로 명시 -->
+        #{pictureId, jdbcType=VARCHAR}, 
+        #{pictureUrl, jdbcType=CLOB}
     )
 </insert>
 
+   <!-- ✅ 특정 날짜의 모임 조회 -->
+    <select id="findCirclesByDate" parameterType="string" resultType="com.loco.aroundme.domain.Circle">
+        SELECT * FROM CIRCLE WHERE TO_CHAR(CIRCLE_DATE, 'YYYY-MM-DD') = #{date}
+    </select>
 
-    <!-- 모임 조회 -->
-    <select id="findCircleById" resultType="com.loco.aroundme.domain.Circle">
-        SELECT * FROM CIRCLE
+    <!-- ✅ 모든 모임 조회 -->
+    <select id="findAllCircles" resultType="com.loco.aroundme.domain.Circle">
+        SELECT * FROM CIRCLE ORDER BY CIRCLE_DATE DESC
     </select>
 
 </mapper>
