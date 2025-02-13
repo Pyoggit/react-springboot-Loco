@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.loco.aroundme.mapper.ProductMapper">
+	<!-- 상품 등록 -->
+	<insert id="insertProduct"
+		parameterType="com.loco.aroundme.domain.Product">
+		INSERT INTO PRODUCT (PRODUCT_ID, USER_ID, PRODUCT_NAME, PRICE,
+		PRODUCT_CATEGORY, DESCRIPTION,
+		PRODUCT_ADDRESS, PRODUCT_LAT, PRODUCT_LNG, PRODUCT_PLACE_ID, PRODUCT_REGDATE)
+		VALUES (PRODUCT_SEQ.NEXTVAL, #{userId}, #{productName}, #{price},
+		#{productCategory}, #{description},
+		#{productAddress}, #{productLat}, #{productLng}, #{productPlaceId}, SYSTIMESTAMP)
+	</insert>
+
+
+	<!-- 특정 상품 조회 -->
+	<select id="findProductById" parameterType="long"
+		resultType="com.loco.aroundme.domain.Product">
+		SELECT * FROM PRODUCT WHERE PRODUCT_ID = #{productId}
+	</select>
+
+	<!-- 상품 이미지 등록 -->
+	<insert id="insertProductImage"
+		parameterType="com.loco.aroundme.domain.ProductImage">
+		INSERT INTO PRODUCT_PIC (PICTURE_ID, PRODUCT_ID,
+		PICTURE_URL, PICTURE_ORDER,
+		PICTURE_REGDATE)
+		VALUES
+		(PRODUCT_PIC_SEQ.NEXTVAL, PRODUCT_SEQ.CURRVAL, #{pictureUrl},
+		#{pictureOrder}, SYSTIMESTAMP)
+	</insert>
+
+	<!-- 특정 상품의 모든 이미지 조회 -->
+	<select id="getProductImages" parameterType="long"
+		resultType="com.loco.aroundme.domain.ProductImage">
+		SELECT * FROM PRODUCT_PIC WHERE PRODUCT_ID = #{productId}
+		ORDER BY
+		PICTURE_ORDER
+	</select>
+</mapper>

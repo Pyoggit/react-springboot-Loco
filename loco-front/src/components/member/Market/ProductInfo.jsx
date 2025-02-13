@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import '@/css/member/market/ProductInfo.css';
 import Payment from './Payment';
+import GoogleMap from './GoogleMap';
 
 const mockData = [
   {
@@ -103,6 +104,11 @@ const ProductInfo = () => {
               <tr>
                 <td colSpan={2} className="productInfo-price">
                   {curBoardItem.price.toLocaleString()}원
+                </td>
+              </tr>
+              <tr>
+                <td colSpan={2} className="productInfo-map">
+                  <GoogleMap />
                 </td>
               </tr>
             </tbody>
