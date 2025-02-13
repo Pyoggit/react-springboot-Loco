@@ -9,6 +9,7 @@ const mockData = [
     content: "내용1",
     writer: "김김김",
     createdDate: new Date("2025-01-01").getTime(),
+    views: 0, // 조회수 추가
   },
   {
     id: 2,
@@ -16,6 +17,7 @@ const mockData = [
     content: "내용2",
     writer: "박박박",
     createdDate: new Date("2025-01-09").getTime(),
+    views: 0, // 조회수 추가
   },
   {
     id: 3,
@@ -23,6 +25,7 @@ const mockData = [
     content: "내용3",
     writer: "이이이",
     createdDate: new Date("2025-01-13").getTime(),
+    views: 0, // 조회수 추가
   },
   {
     id: 4,
@@ -30,6 +33,7 @@ const mockData = [
     content: "내용4",
     writer: "홍홍홍",
     createdDate: new Date("2025-01-14").getTime(),
+    views: 0, // 조회수 추가
   },
   {
     id: 5,
@@ -37,6 +41,7 @@ const mockData = [
     content: "내용5",
     writer: "최최최",
     createdDate: new Date("2025-01-15").getTime(),
+    views: 0, // 조회수 추가
   },
 ];
 
@@ -80,6 +85,15 @@ const Report = () => {
     (_, i) => i + 1
   );
 
+  const handlePostClick = (item) => {
+    // 조회수 증가
+    const updatedMockData = mockData.map((post) =>
+      post.id === item.id ? { ...post, views: post.views + 1 } : post
+    );
+
+    nav(`/board/report/reportview/${item.id}`);
+  };
+
   return (
     <div className="notice-list">
       <header className="notice-header">
@@ -120,6 +134,7 @@ const Report = () => {
               <td className="notice-board-title">글제목</td>
               <td className="notice-board-writer">작성자</td>
               <td className="notice-board-date">작성일</td>
+              <td className="notice-board-views">조회수</td> {/* 조회수 추가 */}
             </tr>
           </tbody>
         </table>
@@ -130,13 +145,14 @@ const Report = () => {
           <div
             key={item.id}
             className="notice-board-item"
-            onClick={() => nav(`/board/notice/noticeboardview/${item.id}`)} // 클릭 시 해당 글로 이동
+            onClick={() => nav(`/board/report/reportview/${item.id}`)} // 클릭 시 해당 글로 이동 (경로 수정됨)
           >
             <span className="notice-board-title">{item.title}</span>
             <span className="notice-board-writer">{item.writer}</span>
             <span className="notice-board-date">
               {new Date(item.createdDate).toLocaleDateString()}
             </span>
+            <span className="notice-board-views">{item.views}</span>
           </div>
         ))}
       </div>

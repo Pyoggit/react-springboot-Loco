@@ -1,6 +1,6 @@
 import React, { useState } from "react";
+import { useNavigate, useParams, useLocation } from "react-router-dom";
 import "@/css/member/board/FreeView.css";
-import { useNavigate, useParams } from "react-router-dom";
 
 const FreeView = () => {
   const [comments, setComments] = useState([
@@ -9,23 +9,6 @@ const FreeView = () => {
   ]);
 
   const [newComment, setNewComment] = useState("");
-
-  const handleCommentChange = (e) => {
-    setNewComment(e.target.value);
-  };
-
-  const handleAddComment = () => {
-    if (newComment.trim()) {
-      const newCommentData = {
-        id: comments.length + 1,
-        writer: "currentUser", // 현재 사용자 이름으로 바꿔주세요.
-        content: newComment,
-      };
-      setComments([...comments, newCommentData]);
-      setNewComment("");
-    }
-  };
-
   const params = useParams();
   const nav = useNavigate();
 
@@ -35,13 +18,25 @@ const FreeView = () => {
     return new Date(date).toLocaleDateString("ko-KR", options);
   };
 
-  // 게시글 삭제 기능 자체 구현
   const onClickDelete = () => {
-    if (window.confirm("정말 삭제하시겠습니까?")) {
-      // 실제 삭제 작업은 여기서 처리되도록 하며, 예를 들어 상태나 API 호출 등을 사용할 수 있습니다.
-      console.log(`게시글 ${params.id} 삭제`);
-      nav("/", { replace: true });
+    const confirmDelete = window.confirm("정말로 이 글을 삭제하시겠습니까?");
+    if (confirmDelete) {
+      // 삭제 기능을 구현하기 위한 코드 (여기서는 mock으로 처리)
+      window.alert("삭제되었습니다.");
+      nav("/board/freeboard"); // 자유게시판으로 리디렉션
     }
+  };
+
+  const onClickEdit = () => {
+    // 수정 페이지로 이동 (글 수정 페이지 URL에 해당 글 ID를 포함)
+    nav(`/board/freeboard/editor/${curBoardItem.id}`, {
+      state: { boardItem: curBoardItem }, // 상태로 게시글 정보를 넘겨줌
+    });
+  };
+
+  const onClickCancel = () => {
+    // 취소 시, 자유게시판으로 돌아가기
+    nav("/board/freeboard");
   };
 
   const curBoardItem = {
@@ -61,14 +56,14 @@ const FreeView = () => {
 
       <div className="freeview-boardView">
         <div className="freeview-top-buttons">
-          <button
-            onClick={() => nav(`/edit/${curBoardItem.id}`)}
-            className="freeview-editButton"
-          >
+          <button onClick={onClickEdit} className="freeview-editButton">
             수정
           </button>
           <button onClick={onClickDelete} className="freeview-deleteButton">
             삭제
+          </button>
+          <button onClick={onClickCancel} className="freeview-cancelButton">
+            취소
           </button>
         </div>
         <div className="freeview-table">
@@ -114,11 +109,11 @@ const FreeView = () => {
         <div className="freeview-commentInput">
           <textarea
             value={newComment}
-            onChange={handleCommentChange}
+            onChange={(e) => setNewComment(e.target.value)}
             placeholder="댓글을 입력하세요..."
             className="freeview-textarea"
           />
-          <button onClick={handleAddComment} className="freeview-commentButton">
+          <button onClick={() => {}} className="freeview-commentButton">
             댓글 달기
           </button>
         </div>

@@ -2,7 +2,7 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import "@/css/member/board/NoticeNew.css";
 
-const NoticeNew = () => {
+const FreeboardNew = () => {
   const nav = useNavigate();
 
   // 게시글 입력값 상태
@@ -19,44 +19,32 @@ const NoticeNew = () => {
     setInput((prev) => ({ ...prev, [name]: value }));
   };
 
-  // 파일 업로드 핸들러
-  const onFileChange = (e) => {
-    setInput({ ...input, image: e.target.files[0] });
-  };
-
   // 글 작성 시
-  const onClickSubmit = async () => {
+  const onClickSubmit = () => {
     if (!input.title.trim() || !input.content.trim() || !input.writer.trim()) {
       alert("제목, 내용, 작성자를 모두 입력해주세요.");
       return;
     }
 
-    const formData = new FormData();
-    formData.append("title", input.title);
-    formData.append("content", input.content);
-    formData.append("writer", input.writer);
-    formData.append("image", input.image); // 이미지 추가
+    // 새 글 데이터 객체
+    const newPost = {
+      ...input,
+      id: Date.now(), // 고유한 id 생성
+      views: 0,
+      createdDate: new Date().getTime(),
+    };
 
-    try {
-      // Spring API로 POST 요청 보내기
-      const response = await fetch("http://localhost:8080/board/notice", {
-        method: "POST",
-        body: formData,
-      });
+    // 기존의 글 목록 불러오기 (없으면 빈 배열)
+    const existingPosts = JSON.parse(localStorage.getItem("posts")) || [];
 
-      if (!response.ok) {
-        throw new Error("게시글 작성 실패");
-      }
+    // 새 글 추가
+    existingPosts.push(newPost);
 
-      const data = await response.json();
+    // 글 목록을 localStorage에 저장
+    localStorage.setItem("posts", JSON.stringify(existingPosts));
 
-      // 글 작성 후 목록 페이지로 이동
-      alert("게시글이 등록되었습니다.");
-      nav("/board/notice");
-    } catch (error) {
-      console.error("글 작성 실패:", error);
-      alert("글 작성 중 오류가 발생했습니다.");
-    }
+    // 글 작성 후 목록 페이지로 이동
+    nav("/board/freeboard");
   };
 
   return (
@@ -84,8 +72,9 @@ const NoticeNew = () => {
           />
           <input
             type="file"
-            name="image"
-            onChange={onFileChange}
+            name="사진"
+            onChange={onChangeInput}
+            value={input.image}
             className="new-input-file"
           />
           <textarea
@@ -110,4 +99,4 @@ const NoticeNew = () => {
   );
 };
 
-export default NoticeNew;
+export default FreeboardNew;

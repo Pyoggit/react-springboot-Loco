@@ -71,9 +71,16 @@
   padding-left: 20px;
 }
 
-.notice-board-writer,
-.notice-board-date {
+.notice-board-writer {
   width: 200px;
+}
+.notice-board-date,
+.notice-board-views {
+  width: 200px;
+}
+.notice-board-views {
+  width: 50px;
+  padding-right: 50px;
 }
 
 /* 페이지네이션 스타일 */

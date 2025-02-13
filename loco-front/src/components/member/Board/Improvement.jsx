@@ -181,7 +181,7 @@ const mockData = [
   },
 ];
 
-const Qna = () => {
+const Improvement = () => {
   const [search, setSearch] = useState("");
   const [searchField, setSearchField] = useState("title");
   const [sortType, setSortType] = useState("latest");
@@ -232,7 +232,7 @@ const Qna = () => {
         불편&개선사항
         <button
           className="qna-write-button"
-          onClick={() => navigate("/board/qna/qnanew")} // navigate 함수로 변경
+          onClick={() => navigate("/board/improvement/Improvementnew")} // navigate 함수로 변경
         >
           글쓰기
         </button>
@@ -320,4 +320,4 @@ const Qna = () => {
   );
 };
 
-export default Qna;
+export default Improvement;
