@@ -59,8 +59,6 @@
 }
 
 .productInfo-desc {
-  text-align: left;
-  padding: 15px;
   font-size: 16px;
   color: #666;
   line-height: 1.5;
@@ -71,8 +69,11 @@
   font-size: 22px;
   font-weight: bold;
   color: #ff5722;
-  text-align: center;
-  padding: 15px;
+}
+
+.productInfo-map {
+  display: flex;
+  justify-content: center;
 }
 
 .productInfo-button {
