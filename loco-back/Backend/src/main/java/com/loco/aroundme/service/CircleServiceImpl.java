@@ -1,25 +1,35 @@
 package com.loco.aroundme.service;
 
+import java.util.List;
+
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.loco.aroundme.domain.Circle;
 import com.loco.aroundme.mapper.CircleMapper;
 
-import lombok.RequiredArgsConstructor;
-
 @Service
-@RequiredArgsConstructor
 public class CircleServiceImpl implements CircleService {
 
-    private final CircleMapper circleMapper;
+    @Autowired
+    private CircleMapper circleMapper; // ✅ `@Autowired` 사용하여 주입
 
+    /** ✅ 특정 날짜의 모임 조회 */
     @Override
-    public void createCircle(Circle circle) {
-        circleMapper.insertCircle(circle);
+    public List<Circle> getCirclesByDate(String date) {
+        return circleMapper.findCirclesByDate(date);
     }
 
+    /** ✅ 모든 모임 조회 */
     @Override
-    public Circle getCircleById(Long circleId) {
-        return circleMapper.findCircleById(circleId);
+    public List<Circle> getAllCircles() {
+        return circleMapper.findAllCircles();
+    }
+
+    /** ✅ 새로운 모임 저장 */
+    @Override
+    public Circle createCircle(Circle circle) {
+        circleMapper.insertCircle(circle);
+        return circle;
     }
 }

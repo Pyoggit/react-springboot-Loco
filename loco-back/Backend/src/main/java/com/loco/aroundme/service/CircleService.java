@@ -1,10 +1,14 @@
 package com.loco.aroundme.service;
 
 import java.util.List;
+import java.util.Map;
 
 import com.loco.aroundme.domain.Circle;
 
 public interface CircleService {
-    void createCircle(Circle circle);
-    Circle getCircleById(Long circleId);
+	List<Circle> getCirclesByDate(String date);
+
+	List<Circle> getAllCircles();
+
+	Circle createCircle(Circle circle);
 }

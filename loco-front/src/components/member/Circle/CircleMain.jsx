@@ -13,36 +13,38 @@ import Category from '../Common/Category';
 const CircleMain = () => {
   const navigate = useNavigate();
   const [selectedDate, setSelectedDate] = useState(new Date());
-  const [circles, setCircles] = useState([]); // 백엔드에서 가져온 모임 데이터
+  const [circles, setCircles] = useState([]); // ✅ 백엔드에서 가져온 모임 데이터 저장
 
-  /** ✅ 1. 백엔드에서 모임 데이터 가져오기 */
+  /** ✅ 1. 선택한 날짜의 모임 데이터 가져오기 */
   useEffect(() => {
     const fetchCircles = async () => {
       try {
-        const token = localStorage.getItem('token'); // ✅ 로컬 스토리지에서 JWT 토큰 가져오기
+        const token = localStorage.getItem('token');
+        const formattedDate = selectedDate.toISOString().split('T')[0];
+
         const response = await axios.get(
-          `${import.meta.env.VITE_API_URL}/api/circles`,
+          `${import.meta.env.VITE_API_URL}/api/circles?date=${formattedDate}`,
           {
             headers: {
               'Content-Type': 'application/json',
-              Authorization: `Bearer ${token}`, // ✅ JWT 토큰 추가
+              Authorization: `Bearer ${token}`,
             },
           }
         );
 
-        setCircles(response.data); // ✅ 백엔드에서 가져온 데이터 저장
+        console.log('📥 서버에서 받은 데이터:', response.data);
+        setCircles(response.data);
       } catch (error) {
-        console.error('모임 데이터를 불러오는 중 오류 발생:', error);
+        console.error('❌ 모임 데이터를 불러오는 중 오류 발생:', error);
       }
     };
 
     fetchCircles();
-  }, []);
+  }, [selectedDate]);
 
   /** ✅ 2. 새로운 모임 추가 시 기존 데이터와 합치기 */
   const handleAddCircle = (newCircle) => {
-    setCircles((prevCircles) => [...prevCircles, newCircle]); // 기존 모임 목록에 새 모임 추가
-    navigate('/'); // 모임 목록 페이지로 이동
+    setCircles((prevCircles) => [...prevCircles, newCircle]);
   };
 
   /** ✅ 3. 모임 상세 페이지로 이동 */
@@ -60,9 +62,9 @@ const CircleMain = () => {
       <Category />
       <CircleList />
 
-      {/* ✅ 백엔드에서 가져온 모임 데이터를 CircleListDetail에 전달 */}
+      {/* ✅ 선택한 날짜에 맞는 모임을 CircleListDetail에 전달 */}
       <CircleListDetail
-        mockPosts={circles}
+        mockPosts={circles.length > 0 ? circles : []}
         selectedDate={selectedDate}
         onPostClick={handleNavigateToDetail}
       />
