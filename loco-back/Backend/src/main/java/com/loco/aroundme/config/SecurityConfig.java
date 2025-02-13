@@ -40,7 +40,8 @@ public class SecurityConfig {
                     "/api/auth/kakao/**", 
                     "/api/auth/google/**",
                     "/ws-chat/**",
-                    "/api/circles/**"  
+                    "/api/circles/**",
+                    "/api/market/**"
                 ).permitAll() 
                 .requestMatchers("/api/users/mypage/**").authenticated()
               .requestMatchers("/api/users/mypage/**").hasAuthority("ROLE_USER")

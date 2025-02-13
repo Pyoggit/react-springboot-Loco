@@ -134,7 +134,7 @@ const ProductUpdate = () => {
           value={input.name}
           onChange={onChangeInput}
         />
-        <input type="file" name="image" onChange={onChangeFile} />
+        <input type="file" multiple name="image" onChange={onChangeFile} />
         {input.image && (
           <img
             src={input.image}
