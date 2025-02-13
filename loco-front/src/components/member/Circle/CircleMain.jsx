@@ -48,9 +48,23 @@ const CircleMain = () => {
   };
 
   /** ✅ 3. 모임 상세 페이지로 이동 */
-  const handleNavigateToDetail = (post) => {
-    localStorage.setItem('selectedPost', JSON.stringify(post));
-    navigate(`/circle/detail/${post.id}`);
+  const handleNavigateToDetail = (circle) => {
+    const selectedCircle = {
+      circleId: circle.circleId,
+      circleName: circle.circleName,
+      circleCategory: circle.circleCategory,
+      circleDate: circle.circleDate,
+      circleStatus: circle.circleStatus || '진행중', // 기본값 설정
+      circleMaxMember: circle.circleMaxMember,
+      circleMember: circle.circleMember,
+      pictureUrl: circle.pictureUrl,
+      circleAddress: circle.circleAddress,
+      circleLat: circle.circleLat,
+      circleLng: circle.circleLng,
+    };
+
+    localStorage.setItem('selectedPost', JSON.stringify(selectedCircle));
+    navigate(`/circle/detail/${circle.circleId}`);
   };
 
   return (
