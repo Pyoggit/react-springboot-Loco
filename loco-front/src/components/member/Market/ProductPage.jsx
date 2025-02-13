@@ -1,5 +1,6 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import axios from 'axios';
 import '@/css/member/market/ProductPage.css';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faMinus, faPlus } from '@fortawesome/free-solid-svg-icons';
@@ -7,66 +8,14 @@ import { faHeart as solidHeart } from '@fortawesome/free-solid-svg-icons'; // �
 import { faHeart as regularHeart } from '@fortawesome/free-regular-svg-icons'; // 빈 하트
 import Payment from './Payment';
 
-const mockData = [
-  {
-    id: 1,
-    name: '상품1',
-    image: '이미지1',
-    category: '스포츠용품',
-    content: '설명1',
-    price: 1000,
-  },
-  {
-    id: 2,
-    name: '상품2',
-    image: '이미지2',
-    category: '도서',
-    content: '설명2',
-    price: 2000,
-  },
-  {
-    id: 3,
-    name: '상품3',
-    image: '이미지3',
-    category: '의류',
-    content: '설명3',
-    price: 3000,
-  },
-  {
-    id: 4,
-    name: '상품4',
-    image: '이미지4',
-    category: '필기도구',
-    content: '설명4',
-    price: 4000,
-  },
-  {
-    id: 5,
-    name: '상품5',
-    image: '이미지5',
-    category: '여행용품',
-    content: '설명5',
-    price: 5000,
-  },
-  {
-    id: 6,
-    name: '상품6',
-    image: '이미지6',
-    category: '가전제품',
-    content: '설명6',
-    price: 6000,
-  },
-];
-
-const ListItem = ({ id, name, image, category, price }) => {
+const ListItem = ({ id, productName, image, productCategory, price }) => {
   const navigate = useNavigate();
+  const [isLikeClick, setIsLikeClick] = useState(false);
 
   const handleDetailClick = (e) => {
     e.stopPropagation();
     navigate(`/market/info/${id}`);
   };
-
-  const [isLikeClick, setIsLikeClick] = useState(false);
 
   return (
     <div className="productList-Item">
@@ -82,16 +31,16 @@ const ListItem = ({ id, name, image, category, price }) => {
         </button>
       </div>
       <div className="product-list">
-        <img src={image} alt={name} className="item-image" />
+        <img src={image} alt={productName} className="item-image" />
         <div className="item-info">
-          <p className="item-name">상품명: {name}</p>
-          <p className="item-category">카테고리: {category}</p>
+          <p className="item-name">상품명: {productName}</p>
+          <p className="item-category">카테고리: {productCategory}</p>
           <p className="item-price">가격: {price.toLocaleString()}원</p>
           <div className="product-item-button">
             <button onClick={handleDetailClick} className="team-button">
               상세보기
             </button>
-            <Payment amount={price} orderName={name} />
+            <Payment amount={price} orderName={productName} />
           </div>
         </div>
       </div>
@@ -104,6 +53,7 @@ export default function ProductPage() {
   const [search, setSearch] = useState('');
   const [searchOpt, setSearchOpt] = useState('name');
   const [selectedCategory, setSelectedCategory] = useState('전체');
+  const [products, setProducts] = useState([]);
 
   const categories = [
     '전체',
@@ -115,13 +65,29 @@ export default function ProductPage() {
     '가전제품',
   ];
 
-  const filteredItems = mockData.filter((item) => {
+  // 컴포넌트가 마운트될 때 등록된 상품들을 API로 불러오기
+  useEffect(() => {
+    const fetchProducts = async () => {
+      try {
+        const response = await axios.get(
+          `${import.meta.env.VITE_API_URL}/api/market/products`
+        );
+        // 백엔드에서 반환하는 데이터 형식에 맞게 수정하세요.
+        setProducts(response.data);
+      } catch (error) {
+        console.error('상품 목록 조회 실패:', error);
+      }
+    };
+    fetchProducts();
+  }, []);
+
+  const filteredItems = products.filter((item) => {
     const matchesCategory =
-      selectedCategory === '전체' || item.category === selectedCategory;
+      selectedCategory === '전체' || item.productCategory === selectedCategory;
     const matchesSearch =
       searchOpt === 'name'
-        ? item.name.toLowerCase().includes(search.toLowerCase())
-        : item.category.toLowerCase().includes(search.toLowerCase());
+        ? item.productName.toLowerCase().includes(search.toLowerCase())
+        : item.productCategory.toLowerCase().includes(search.toLowerCase());
     return matchesCategory && matchesSearch;
   });
 
@@ -149,7 +115,7 @@ export default function ProductPage() {
               className={`market-category-item ${
                 selectedCategory === category ? 'active' : ''
               }`}
-              onClick={() => setSelectedCategory(category)} // 클릭 시 카테고리 선택
+              onClick={() => setSelectedCategory(category)}
             >
               {category}
             </span>
@@ -177,7 +143,9 @@ export default function ProductPage() {
           {filteredItems.length > 0 ? (
             <ul className="product-grid">
               {filteredItems.map((item) => (
-                <ListItem key={item.id} {...item} />
+                <li key={item.id}>
+                  <ListItem {...item} />
+                </li>
               ))}
             </ul>
           ) : (
