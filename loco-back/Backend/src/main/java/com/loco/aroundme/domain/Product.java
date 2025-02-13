@@ -13,8 +13,8 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class Product {
-	private long productId; // 상품ID
-	private long userId; // 판매자 ID (추가)
+	private Long productId; // 상품ID
+	private Long userId; // 판매자 ID (추가)
 	private String productName; // 상품명
 	private int price; // 가격
 	private String productCategory; // 상품 카테고리
@@ -26,5 +26,5 @@ public class Product {
 	private Timestamp productRegdate; // 등록일
 
 	// 상품 이미지 리스트 (연관관계)
-	private List<ProductImage> images;
+	private List<ProductPic> images;
 }
