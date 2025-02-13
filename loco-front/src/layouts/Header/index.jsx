@@ -4,6 +4,7 @@ import { useCookies } from "react-cookie";
 import axios from "@/utils/AxiosConfig";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faComments } from "@fortawesome/free-solid-svg-icons";
+import { faSquareCaretDown } from "@fortawesome/free-regular-svg-icons";
 import ChatRoom from "@/components/member/Common/ChatRoom";
 import "./style.css";
 
@@ -88,27 +89,47 @@ export default function Header() {
   };
 
   const MyPageButton = () => {
-    const { userEmail } = useParams();
+    const [isDropdownOpen, setDropdownOpen] = useState(false);
+    //const { userEmail } = useParams();
 
-    if (isLogin) {
-      return (
-        <div className="user-info">
-          <span className="user-name">{loginUser?.userName}님</span>
-          <div
-            className="mypage-button"
-            // onClick={() => navigate(USER_PATH(loginUser.email))}
-            onClick={() => navigate(USER_PATH())}
-          >
-            마이페이지
+    return isLogin ? (
+      <div
+        className={`user-info ${isDropdownOpen ? "open" : ""}`}
+        onClick={() => setDropdownOpen(!isDropdownOpen)}
+      >
+        <span className="user-name">{loginUser?.userName}님, Welcome!</span>
+        <FontAwesomeIcon
+          icon={faSquareCaretDown}
+          className="dropdown-icon"
+        />{" "}
+        <div className="user-dropdown">
+          <div className="user-profile">
+            <div
+              className="profile-pic"
+              style={{
+                backgroundImage: `url(${
+                  loginUser?.profileImage || "/default-profile.png"
+                })`,
+              }}
+            ></div>
+            <div className="user-details">
+              <div className="user-name">{loginUser?.userName}</div>{" "}
+              {/* ✅ user.name만 폰트 변경 */}
+              <div className="user-email">{loginUser?.email}</div>
+            </div>
           </div>
-          <div className="logout-button" onClick={handleLogout}>
-            로그아웃
+          <div className="actions">
+            <div className="mypage-button" onClick={() => navigate("/mypage")}>
+              마이페이지
+            </div>
+            <div className="logout-button" onClick={handleLogout}>
+              로그아웃
+            </div>
           </div>
         </div>
-      );
-    }
-    return (
-      <div className="team-button" onClick={() => navigate(LOGIN_PATH())}>
+      </div>
+    ) : (
+      <div className="team-button" onClick={() => navigate("/login")}>
         로그인
       </div>
     );
