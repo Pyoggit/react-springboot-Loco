@@ -1,7 +1,5 @@
 import { useState, useEffect } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
-import axios from "axios"; // Axios를 사용해 API 요청
-
 import "@/css/member/board/NoticeEditor.css";
 
 // 버튼 컴포넌트
@@ -17,7 +15,7 @@ const Button = ({ text, onClick, style }) => {
   );
 };
 
-const NoticeEditor = () => {
+const ReportEditor = () => {
   const { state } = useLocation(); // state에서 boardItem을 가져옵니다.
   const nav = useNavigate();
 
@@ -54,18 +52,11 @@ const NoticeEditor = () => {
     console.log("수정된 게시글 내용:", input);
 
     try {
-      // 게시글 수정 API 호출
-      const response = await axios.put(
-        `http://localhost:8080/api/notices/${curBoardItem.id}`,
-        {
-          title: input.title,
-          content: input.content,
-          writer: input.writer,
-        }
-      );
+      // 실제 API 호출을 예시로 작성한 부분입니다.
+      console.log("게시글 수정 성공!");
 
-      console.log("게시글 수정 성공:", response.data);
-      nav("/board/notice");
+      // 수정 후 목록 페이지로 리디렉션
+      nav("/board/report");
     } catch (error) {
       console.error("수정 실패:", error);
     }
@@ -75,16 +66,7 @@ const NoticeEditor = () => {
     const confirmDelete = window.confirm("정말로 이 글을 삭제하시겠습니까?");
     if (confirmDelete) {
       console.log("삭제 요청:", curBoardItem);
-      try {
-        // 게시글 삭제 API 호출
-        const response = await axios.delete(
-          `http://localhost:8080/board/notice/${curBoardItem.id}`
-        );
-        console.log("게시글 삭제 성공:", response.data);
-        nav("/board/notice");
-      } catch (error) {
-        console.error("삭제 실패:", error);
-      }
+      nav("/board/report");
     }
   };
 
@@ -133,4 +115,4 @@ const NoticeEditor = () => {
   );
 };
 
-export default NoticeEditor;
+export default ReportEditor;

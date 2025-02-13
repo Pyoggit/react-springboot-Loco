@@ -34,7 +34,8 @@
 }
 
 .new-editor .new-input .new-input-field,
-.new-editor .new-input .new-textarea {
+.new-editor .new-input .new-textarea,
+.new-editor .new-input .new-input-file {
   padding: 10px;
   font-size: 16px;
   border: 1px solid #ddd;
@@ -44,22 +45,12 @@
 }
 
 .new-editor .new-input .new-input-field:focus,
-.new-editor .new-input .new-textarea:focus {
+.new-editor .new-input .new-textarea:focus,
+.new-editor .new-input .new-input-file:focus {
   border-color: #f2e7f3;
 }
 
-/* 파일 업로드 영역 */
-.new-editor .new-input .new-file-upload {
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-}
-
-.new-editor .new-input .new-file-upload input {
-  font-size: 16px;
-  color: #555;
-}
-
+/* 프리뷰 */
 .new-editor .new-input .new-image-preview {
   display: flex;
   gap: 10px;

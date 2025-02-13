@@ -229,10 +229,10 @@ const Faq = () => {
   return (
     <div className="qna-list">
       <header className="qna-header">
-        FAQ
+        FAQ(자주 묻는 질문)
         <button
           className="qna-write-button"
-          onClick={() => navigate("/board/qna/qnanew")} // navigate 함수로 변경
+          onClick={() => navigate("/board/faq/faqnew")}
         >
           글쓰기
         </button>
@@ -268,7 +268,7 @@ const Faq = () => {
         <table>
           <tbody>
             <tr>
-              <td className="qna-board-title">자주 묻는 질문</td>
+              <td className="qna-board-title"> 궁금한 질문</td>
               <td className="qna-board-writer">작성자</td>
               <td className="qna-board-date">작성일</td>
             </tr>

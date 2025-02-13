@@ -1,68 +1,81 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import "@/css/member/board/QnaNew.css";
+import "@/css/member/board/NoticeNew.css";
 
-const QnaNew = ({ curBoardItem, editOn }) => {
+const QnaNew = () => {
   const nav = useNavigate();
 
-  // 🛠️ 목데이터 (기본 값 설정)
-  const mockData = {
-    title: "질문 제목 예시",
-    content: "이곳에 공지사항 내용을 입력하세요.",
-  };
-
-  // 📌 입력 값 상태
+  // 게시글 입력값 상태
   const [input, setInput] = useState({
-    title: curBoardItem?.title || mockData.title,
-    content: curBoardItem?.content || mockData.content,
+    title: "",
+    content: "",
+    writer: "",
+    image: "",
   });
 
-  const [files, setFiles] = useState([]);
-
-  // 📌 수정 모드일 경우 데이터 불러오기
-  useEffect(() => {
-    if (editOn && curBoardItem) {
-      setInput({
-        title: curBoardItem.title || mockData.title,
-        content: curBoardItem.content || mockData.content,
-      });
-    }
-  }, [editOn, curBoardItem]);
-
-  // 📌 입력 값 변경 핸들러
+  // 입력값 변경 핸들러
   const onChangeInput = (e) => {
     const { name, value } = e.target;
     setInput((prev) => ({ ...prev, [name]: value }));
   };
 
-  // 📌 게시글 등록 버튼 클릭 시
+  // 글 작성 시
   const onClickSubmit = () => {
-    console.log("Submitting Data:", { ...input, files });
-
-    if (!input.title.trim() || !input.content.trim()) {
-      alert("제목과 내용을 모두 입력해주세요.");
+    if (!input.title.trim() || !input.content.trim() || !input.writer.trim()) {
+      alert("제목, 내용, 작성자를 모두 입력해주세요.");
       return;
     }
 
-    nav("/", { replace: true });
+    // 새 글 데이터 객체
+    const newPost = {
+      ...input,
+      id: Date.now(), // 고유한 id 생성
+      views: 0,
+      createdDate: new Date().getTime(),
+    };
+
+    // 기존의 글 목록 불러오기 (없으면 빈 배열)
+    const existingPosts = JSON.parse(localStorage.getItem("posts")) || [];
+
+    // 새 글 추가
+    existingPosts.push(newPost);
+
+    // 글 목록을 localStorage에 저장
+    localStorage.setItem("posts", JSON.stringify(existingPosts));
+
+    // 글 작성 후 목록 페이지로 이동
+    nav("/board/qna");
   };
 
   return (
-    <div className="qnanew-list-container">
-      <header className="qnanew-header">
-        <div className="qnanew-title">
-          {editOn ? "질문 수정하기" : "글 작성하기"}
-        </div>
+    <div className="new-list-container">
+      <header className="new-header">
+        <div className="new-title">글 작성하기</div>
       </header>
-      <div className="qnanew-editor">
-        <div className="qnanew-input">
+      <div className="new-editor">
+        <div className="new-input">
           <input
             type="text"
             name="title"
             placeholder="제목"
             onChange={onChangeInput}
             value={input.title}
-            className="qnanew-input-field"
+            className="new-input-field"
+          />
+          <input
+            type="text"
+            name="writer"
+            placeholder="작성자"
+            onChange={onChangeInput}
+            value={input.writer}
+            className="new-input-field"
+          />
+          <input
+            type="file"
+            name="사진"
+            onChange={onChangeInput}
+            value={input.image}
+            className="new-input-file"
           />
           <textarea
             name="content"
@@ -70,14 +83,14 @@ const QnaNew = ({ curBoardItem, editOn }) => {
             rows={15}
             onChange={onChangeInput}
             value={input.content}
-            className="qnanew-textarea"
+            className="new-textarea"
           />
-          <div className="qnanew-notice-button">
-            <button onClick={() => nav(-1)} className="qnanew-cancel-btn">
+          <div className="new-notice-button">
+            <button onClick={() => nav(-1)} className="new-cancel-btn">
               취소하기
             </button>
-            <button onClick={onClickSubmit} className="qnanew-submit-btn">
-              {editOn ? "수정 완료" : "등록하기"}
+            <button onClick={onClickSubmit} className="new-submit-btn">
+              등록하기
             </button>
           </div>
         </div>
