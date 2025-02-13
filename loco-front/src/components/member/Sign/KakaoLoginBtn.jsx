@@ -1,5 +1,5 @@
-import React from "react";
-import "@/css/member/sign/KakaoLoginBtn.css";
+import React from 'react';
+import '@/css/member/sign/KakaoLoginBtn.css';
 
 const KakaoLoginBtn = () => {
   const rest_api_key = import.meta.env.VITE_KAKAO_API_KEY; // REST API KEY

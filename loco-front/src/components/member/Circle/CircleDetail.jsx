@@ -1,9 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import '@/css/member/circle/CircleDetail.css';
-import GoogleMapSearch from './GoogleMapSearch';
-import GoogleMapEX from './GoogleMap';
-import GoogleMap from './GoogleMap';
 
 const CircleDetail = () => {
   const navigate = useNavigate();
@@ -24,34 +21,48 @@ const CircleDetail = () => {
 
   return (
     <div className="circle-detail-page">
+      {/* ✅ 모임 대표 이미지 표시 */}
       <div className="image-banner">
-        <img src={post.image || '/default-image.jpg'} alt={post.title} />
+        <img
+          src={post.pictureUrl || '/images/default-image.png'}
+          alt={post.circleName}
+        />
       </div>
+
       <div className="detail-content">
-        <h1 className="title">{post.title}</h1>
+        <h1 className="title">{post.circleName}</h1>
+
+        {/* ✅ 모임 상세 정보 */}
         <div className="info-section">
+          <p className="category">📌 카테고리: {post.circleCategory}</p>
           <p className="date">
-            📅 {new Date(post.createdDate).toLocaleDateString('ko-KR')}
+            📅 날짜: {new Date(post.circleDate).toLocaleDateString('ko-KR')}
           </p>
-          <p className="time">🕒 {post.time}</p>
-          <p className="location">📍 수원시 권선구 오목천로 121</p>
-          <p className="description">{post.description}</p>
+          <p className="status">🔄 상태: {post.circleStatus}</p>
+          <p className="members">
+            👥 참가자: {post.circleMember} / {post.circleMaxMember}
+          </p>
+          <p className="location">📍 장소: {post.circleAddress}</p>
         </div>
-        <div className="match-points">
-          <h2>우리 모임의 포인트❗</h2>
-          <ul>
-            <li>누구나 환영</li>
-            <li>준비물 필요 X😝</li>
-            <li>장소 확인 필수</li>
-            <li>즐겁게 시간 보내기~~</li>
-            <li>더이상 뭐라고 써야할지 모르겠어</li>
-          </ul>
-        </div>
+
+        {/* ✅ 지도에서 저장된 장소 표시 */}
         <div className="googleMap">
-          <GoogleMap />
+          <iframe
+            title="모임 위치"
+            width="100%"
+            height="250"
+            style={{ border: 0, borderRadius: '10px' }}
+            loading="lazy"
+            allowFullScreen
+            src={`https://www.google.com/maps/embed/v1/place?key=${
+              import.meta.env.VITE_GOOGLE_MAPS_API_KEY
+            }
+            &q=${encodeURIComponent(post.circleAddress)}`}
+          ></iframe>
         </div>
+
+        {/* ✅ 참여 버튼 및 뒤로 가기 */}
         <div className="apply-section">
-          <p className="price"> 1/16명</p>
           <button className="apply-button">참석하기</button>
           <button className="back-button" onClick={() => navigate(-1)}>
             뒤로 가기
