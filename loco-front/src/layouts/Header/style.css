@@ -58,7 +58,9 @@
   border: 1px solid rgba(0, 0, 0, 0.2);
   border-radius: 43px;
   padding: 0 10px;
-  width: 320px;
+  width: 100%;
+  max-width: 320px;
+  min-width: 200px;
   height: 38px;
   background: white;
   overflow: hidden;
@@ -80,9 +82,9 @@
   border: 1px solid rgba(0, 0, 0, 0.2);
   border-radius: 43px;
   padding: 0 10px 0 12px;
-  width: 250px;
+  width: 300px;
   height: 30px;
-
+  flex: 1;
   display: flex;
   align-items: center;
   gap: 5px;
@@ -94,8 +96,8 @@
   background: none;
   outline: none;
   font-size: 14px;
-  padding-left: 10px;
-  height: 100%;
+  font-weight: 400;
+  line-height: 140%;
 }
 
 /* DropDownMenu 스타일 */
@@ -183,36 +185,96 @@
   color: rgba(0, 0, 0, 1);
 }
 
+/* 유저 드롭다운 */
 .user-info {
   display: flex;
   align-items: center;
   gap: 10px;
+  position: relative;
+  cursor: pointer;
+}
+
+/* 드롭다운이 열릴 때 아이콘 회전 */
+.user-info.open .dropdown-icon {
+  transform: rotate(-180deg);
+}
+
+.user-dropdown {
+  position: absolute;
+  top: 100%;
+  right: 0;
+  width: 250px;
+  background-color: #fff;
+  border: 1px solid #ddd;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  z-index: 1000;
+  display: none;
+  flex-direction: column;
+  padding: 15px;
+}
+
+.user-info.open .user-dropdown {
+  display: flex;
+}
+
+/* 프로필 정보 */
+.user-profile {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  border-bottom: 1px solid #ddd;
+  padding-bottom: 10px;
+}
+
+.profile-pic {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  background-size: cover;
+  background-position: center;
+  border: 1px solid #ddd;
+}
+
+.user-details {
+  flex-grow: 1;
 }
 
 .user-name {
+  font-family: "Inter";
   font-size: 16px;
   font-weight: bold;
   color: #333;
 }
 
-.mypage-button {
-  border-radius: 46px;
-  width: 80px;
-  height: 30px;
+.user-email {
+  font-size: 14px;
+  color: #777;
+}
 
+.actions {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 10px;
+}
+
+.mypage-button,
+.logout-button {
+  border-radius: 46px;
+  width: 100px;
+  height: 35px;
   display: flex;
   justify-content: center;
   align-items: center;
-
-  background-color: rgba(0, 0, 0, 1);
-
-  color: rgba(255, 255, 255, 1);
-
+  cursor: pointer;
   font-size: 14px;
   font-weight: 500;
-  line-height: 140%;
+  transition: background-color 0.3s ease;
+}
 
-  cursor: pointer;
+.mypage-button {
+  background-color: rgba(0, 0, 0, 1);
+  color: white;
 }
 
 .mypage-button:hover {
@@ -220,37 +282,22 @@
 }
 
 .logout-button {
-  border-radius: 46px;
-  width: 80px;
-  height: 30px;
-
-  display: flex;
-  justify-content: center;
-  align-items: center;
-
   background-color: rgb(149, 149, 149);
-
-  color: rgba(255, 255, 255, 1);
-
-  font-size: 14px;
-  font-weight: 500;
-  line-height: 140%;
-
-  cursor: pointer;
+  color: white;
 }
 
 .logout-button:hover {
   background-color: rgba(197, 59, 59, 0.8);
 }
 
-/* 채팅 아이콘: 우측 하단에 고정 */
+/* 채팅 아이콘 */
 .chat-icon {
   position: fixed;
   bottom: 20px;
   right: 20px;
   width: 60px;
   height: 60px;
-  background-color: #3b82f6;
+  background: linear-gradient(to left, #fbc2eb, #a6c1ee);
   color: white;
   border-radius: 50%;
   display: flex;
@@ -263,16 +310,16 @@
 }
 
 .chat-icon:hover {
-  background-color: #2563eb;
+  background-color: rgba(0, 0, 0, 0.15);
 }
 
 /* 채팅 팝업창 */
 .chat-popup {
   position: fixed;
-  bottom: 90px; /* 채팅 아이콘 위에 위치 */
+  bottom: 90px;
   right: 20px;
   width: 320px;
-  height: 400px;
+  height: 500px;
   background-color: white;
   border: 1px solid #ddd;
   border-radius: 8px;
@@ -284,7 +331,7 @@
 
 .chat-popup-header {
   padding: 10px;
-  background-color: #3b82f6;
+  background: linear-gradient(to left, #fbc2eb, #a6c1ee);
   color: white;
   display: flex;
   justify-content: space-between;
@@ -308,10 +355,26 @@
   background-color: #f9f9f9;
 }
 
+/* 반응형 미디어 쿼리 */
 @media (max-width: 768px) {
+  .header-container {
+    max-width: 100%;
+    padding: 0 10px;
+  }
+  .header-logo {
+    display: none;
+  }
   .header-main-menu .menu {
-    flex-direction: column;
+    flex-direction: row;
     align-items: center;
     gap: 15px;
+    overflow-x: auto;
+  }
+  .header-main-menu .menu > li > a {
+    font-size: 14px;
+    padding: 8px 10px;
+  }
+  .header-search-input-box {
+    width: 90%;
   }
 }

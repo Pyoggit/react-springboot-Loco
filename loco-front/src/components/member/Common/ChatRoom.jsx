@@ -2,6 +2,7 @@ import React, { useEffect, useState, useRef } from "react";
 import { stompClient } from "@/utils/WebSocketClient";
 import { useParams } from "react-router-dom";
 import { useCookies } from "react-cookie";
+import "@/css/member/common/ChatRoom.css";
 
 const ChatRoom = () => {
   const { roomId } = useParams(); // 채팅방 구분(옵션)
@@ -59,31 +60,29 @@ const ChatRoom = () => {
   };
 
   return (
-    <div>
-      <h2>실시간 채팅</h2>
-      <div
-        style={{
-          border: "1px solid black",
-          height: "300px",
-          overflowY: "scroll",
-          padding: "5px",
-        }}
-      >
+    <div className="chat-room-container">
+      <h2 className="chat-room-header">실시간 채팅</h2>
+      <div className="chat-room-messages">
         {messages.map((msg, index) => (
-          <p key={index}>
+          <p key={index} className="chat-room-message">
             <strong>{msg.sender}:</strong> {msg.content}
           </p>
         ))}
         <div ref={messagesEndRef} />
       </div>
-      <input
-        type="text"
-        placeholder="메시지 입력..."
-        value={inputMessage}
-        onChange={(e) => setInputMessage(e.target.value)}
-        onKeyDown={(e) => e.key === "Enter" && sendMessage()}
-      />
-      <button onClick={sendMessage}>전송</button>
+      <div className="chat-room-input-container">
+        <input
+          type="text"
+          placeholder="메시지 입력..."
+          className="chat-room-input"
+          value={inputMessage}
+          onChange={(e) => setInputMessage(e.target.value)}
+          onKeyDown={(e) => e.key === "Enter" && sendMessage()}
+        />
+        <button className="chat-room-send-button" onClick={sendMessage}>
+          전송
+        </button>
+      </div>
     </div>
   );
 };
