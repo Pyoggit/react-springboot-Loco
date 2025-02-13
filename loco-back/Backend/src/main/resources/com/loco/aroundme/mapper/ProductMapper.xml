@@ -1,40 +1,76 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.loco.aroundme.mapper.ProductMapper">
-	<!-- 상품 등록 -->
+	<!-- ✅ Product와 연관된 ProductPic를 매핑 (resultMap 사용) -->
+	<resultMap id="productResultMap"
+		type="com.loco.aroundme.domain.Product">
+		<id property="productId" column="PRODUCT_ID" />
+		<result property="userId" column="USER_ID" />
+		<result property="productName" column="PRODUCT_NAME" />
+		<result property="price" column="PRICE" />
+		<result property="productCategory" column="PRODUCT_CATEGORY" />
+		<result property="description" column="DESCRIPTION" />
+		<result property="productAddress" column="PRODUCT_ADDRESS" />
+		<result property="productLat" column="PRODUCT_LAT" />
+		<result property="productLng" column="PRODUCT_LNG" />
+		<result property="productPlaceId" column="PRODUCT_PLACE_ID" />
+		<result property="productRegdate" column="PRODUCT_REGDATE" />
+		<collection property="images"
+			ofType="com.loco.aroundme.domain.ProductPic" select="getProductPics"
+			column="PRODUCT_ID" />
+	</resultMap>
+
+	<!-- ✅ 상품 등록 (PRODUCT 테이블) -->
 	<insert id="insertProduct"
 		parameterType="com.loco.aroundme.domain.Product">
-		INSERT INTO PRODUCT (PRODUCT_ID, USER_ID, PRODUCT_NAME, PRICE,
+		INSERT INTO PRODUCT (
+		PRODUCT_ID, USER_ID, PRODUCT_NAME,
+		PRICE,
 		PRODUCT_CATEGORY, DESCRIPTION,
-		PRODUCT_ADDRESS, PRODUCT_LAT, PRODUCT_LNG, PRODUCT_PLACE_ID, PRODUCT_REGDATE)
-		VALUES (PRODUCT_SEQ.NEXTVAL, #{userId}, #{productName}, #{price},
-		#{productCategory}, #{description},
-		#{productAddress}, #{productLat}, #{productLng}, #{productPlaceId}, SYSTIMESTAMP)
+		PRODUCT_ADDRESS, PRODUCT_LAT,
+		PRODUCT_LNG,
+		PRODUCT_PLACE_ID, PRODUCT_REGDATE
+		) VALUES (
+		PRODUCT_SEQ.NEXTVAL, #{userId, jdbcType=NUMERIC}, #{productName},
+		#{price},
+		#{productCategory}, #{description}, #{productAddress},
+		#{productLat},
+		#{productLng}, #{productPlaceId}, SYSTIMESTAMP
+		)
 	</insert>
 
-
-	<!-- 특정 상품 조회 -->
-	<select id="findProductById" parameterType="long"
-		resultType="com.loco.aroundme.domain.Product">
-		SELECT * FROM PRODUCT WHERE PRODUCT_ID = #{productId}
+	<!-- ✅ 최근 등록된 상품 ID 가져오기 -->
+	<select id="getLastInsertedProductId"
+		parameterType="java.lang.Long" resultType="java.lang.Long">
+		SELECT MAX(PRODUCT_ID) FROM PRODUCT
+		WHERE USER_ID = #{userId, jdbcType=NUMERIC}
 	</select>
 
-	<!-- 상품 이미지 등록 -->
-	<insert id="insertProductImage"
-		parameterType="com.loco.aroundme.domain.ProductImage">
-		INSERT INTO PRODUCT_PIC (PICTURE_ID, PRODUCT_ID,
-		PICTURE_URL, PICTURE_ORDER,
-		PICTURE_REGDATE)
-		VALUES
-		(PRODUCT_PIC_SEQ.NEXTVAL, PRODUCT_SEQ.CURRVAL, #{pictureUrl},
-		#{pictureOrder}, SYSTIMESTAMP)
+	<!-- ✅ 상품 이미지(Pic) 등록 (상품 등록 후 실행) -->
+	<insert id="insertProductPics">
+		INSERT INTO PRODUCT_PIC (PICTURE_ID, PRODUCT_ID, PICTURE_URL,
+		PICTURE_ORDER, PICTURE_REGDATE)
+		SELECT PRODUCT_PIC_SEQ.NEXTVAL, t.productId, t.pictureUrl, t.pictureOrder,
+		SYSTIMESTAMP
+		FROM (
+		<foreach collection="list" item="pic" separator=" UNION ALL ">
+			SELECT #{pic.productId} AS productId, #{pic.pictureUrl} AS pictureUrl,
+			#{pic.pictureOrder} AS pictureOrder FROM DUAL
+		</foreach>
+		) t
 	</insert>
 
-	<!-- 특정 상품의 모든 이미지 조회 -->
-	<select id="getProductImages" parameterType="long"
-		resultType="com.loco.aroundme.domain.ProductImage">
-		SELECT * FROM PRODUCT_PIC WHERE PRODUCT_ID = #{productId}
-		ORDER BY
-		PICTURE_ORDER
+	<!-- ✅ 특정 상품의 모든 이미지(Pic) 조회 -->
+	<select id="getProductPics" parameterType="long"
+		resultType="com.loco.aroundme.domain.ProductPic">
+		SELECT * FROM PRODUCT_PIC
+		WHERE PRODUCT_ID = #{productId}
+		ORDER BY PICTURE_ORDER
+	</select>
+
+	<!-- ✅ 전체 상품 조회 -->
+	<select id="selectProducts" resultMap="productResultMap">
+		SELECT * FROM PRODUCT
+		ORDER BY PRODUCT_REGDATE DESC
 	</select>
 </mapper>

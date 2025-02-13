@@ -74,8 +74,7 @@ const ProductInsert = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    const { name, content, category, price, images, address, coordinates } =
-      formData;
+    const { name, content, category, price, address, coordinates } = formData;
     if (
       !name ||
       !content ||
@@ -122,7 +121,6 @@ const ProductInsert = () => {
           headers: {
             'Content-Type': 'multipart/form-data',
           },
-          withCredentials: false, // 🔥 Spring Security가 인증을 요구하지 않는다면 false로 변경
         }
       );
 

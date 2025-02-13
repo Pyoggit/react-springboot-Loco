@@ -7,8 +7,9 @@ import org.springframework.web.multipart.MultipartFile;
 import com.loco.aroundme.domain.Product;
 
 public interface ProductService {
-	void insertProduct(Product product, List<MultipartFile> images) throws Exception;
+	void insertProduct(Product product, List<MultipartFile> images);
+	Product findProductById(Long productId);
 
-	Product findProductById(Long productId); // 매개변수 타입을 Long으로 변경
-
+	// 등록된 상품 전체 조회
+	List<Product> getProducts();
 }
