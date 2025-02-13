@@ -16,7 +16,12 @@
       href="https://fonts.googleapis.com/css2?family=Caveat:wght@400;700&display=swap"
       rel="stylesheet"
     />
-    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCdsLrcEN_dwjY7qw5LoPsHrhs2-KtCmvM&libraries=places"></script>
+    <script>
+      const googleMapsApiKey = '%VITE_GOOGLE_MAPS_API_KEY%';
+      document.write(
+        `<script src='https://maps.googleapis.com/maps/api/js?key=${googleMapsApiKey}&libraries=places'><\/script>`
+      );
+    </script>
   </head>
 
   <body>
