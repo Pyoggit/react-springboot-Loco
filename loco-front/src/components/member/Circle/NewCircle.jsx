@@ -115,7 +115,7 @@ const NewCircle = ({ onAddCircle }) => {
       circleName: title,
       circleCategory: category,
       circleDate: convertToTimestamp(date, time), // ✅ "yyyy-MM-dd HH:mm:ss" 형식으로 전송
-      circleMaxMember: maxMember || 10, // 기본 최대 인원 10명 설정
+      circleMaxMember: maxMember || 100, // 기본 최대 인원 100명 설정
       circleMember: 0,
       circleDetail: description,
       pictureId: pictureId || 'default',
@@ -231,11 +231,23 @@ const NewCircle = ({ onAddCircle }) => {
           onChange={handleFileChange}
         />
 
-        {formData.pictureData && (
+        {formData.pictureData ? (
           <div className="image-preview">
+            {/* 새로 업로드한 이미지가 있다면 Base64 사용 */}
             <img src={formData.pictureData} alt="미리보기" width="100" />
           </div>
-        )}
+        ) : formData.pictureUrl ? (
+          <div className="image-preview">
+            {/* 기존 이미지가 있다면 서버 URL 사용 */}
+            <img
+              src={`${import.meta.env.VITE_API_URL}/uploads/${
+                formData.pictureUrl
+              }`}
+              alt="기존 이미지"
+              width="100"
+            />
+          </div>
+        ) : null}
 
         <button type="submit" className="submit-button">
           모임 추가

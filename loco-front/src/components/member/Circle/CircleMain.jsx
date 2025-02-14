@@ -54,6 +54,7 @@ const CircleMain = () => {
       circleName: circle.circleName,
       circleCategory: circle.circleCategory,
       circleDate: circle.circleDate,
+      CircleDetail: circle.circleDetail,
       circleStatus: circle.circleStatus || '진행중', // 기본값 설정
       circleMaxMember: circle.circleMaxMember,
       circleMember: circle.circleMember,

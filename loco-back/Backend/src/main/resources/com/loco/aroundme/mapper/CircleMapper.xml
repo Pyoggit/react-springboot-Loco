@@ -9,10 +9,13 @@
 	<insert id="insertCircle"
 		parameterType="com.loco.aroundme.domain.Circle">
 		INSERT INTO CIRCLE (
-		CIRCLE_ID, USER_ID, CIRCLE_NAME, CIRCLE_DATE, CIRCLE_CATEGORY, CIRCLE_DETAIL,
-		CIRCLE_REGDATE, CIRCLE_ADDRESS, CIRCLE_LAT, CIRCLE_LNG,
+		CIRCLE_ID, USER_ID, CIRCLE_NAME, CIRCLE_DATE,
+		CIRCLE_CATEGORY, CIRCLE_DETAIL,
+		CIRCLE_REGDATE, CIRCLE_ADDRESS,
+		CIRCLE_LAT, CIRCLE_LNG,
 		CIRCLE_PLACE_ID,
-		CIRCLE_MAXMEMBER, PICTURE_ID, PICTURE_URL
+		CIRCLE_MAXMEMBER, PICTURE_ID,
+		PICTURE_URL
 		) VALUES (
 		CIRCLE_SEQ.NEXTVAL, #{userId},
 		#{circleName},
@@ -33,7 +36,8 @@
 	<!-- ✅ 특정 날짜의 모임 조회 -->
 	<select id="findCirclesByDate" parameterType="string"
 		resultType="com.loco.aroundme.domain.Circle">
-		SELECT * FROM CIRCLE WHERE TO_CHAR(CIRCLE_DATE, 'YYYY-MM-DD') = #{date}
+		SELECT * FROM CIRCLE WHERE TO_CHAR(CIRCLE_DATE,
+		'YYYY-MM-DD') = #{date}
 	</select>
 
 	<!-- ✅ 모든 모임 조회 -->
@@ -43,6 +47,39 @@
 	</select>
 	<!-- ✅ 모임 삭제 -->
 	<delete id="deleteCircle" parameterType="long">
-		DELETE FROM CIRCLE WHERE CIRCLE_ID = #{circleId}
+		DELETE FROM CIRCLE WHERE
+		CIRCLE_ID = #{circleId}
 	</delete>
+	<!-- ✅ 모임 인원 추가 -->
+	<update id="updateMemberCount" parameterType="long">
+		UPDATE CIRCLE
+		SET CIRCLE_MEMBER = CIRCLE_MEMBER + 1
+		WHERE CIRCLE_ID =
+		#{circleId}
+		AND <![CDATA[CIRCLE_MEMBER < CIRCLE_MAXMEMBER]]>
+	</update>
+	<!-- ✅ 모임 정보 조회 (중복 확인 후 유지) -->
+	<select id="findCircleById" parameterType="int"
+		resultType="com.loco.aroundme.domain.Circle">
+		SELECT * FROM CIRCLE WHERE CIRCLE_ID = #{circleId}
+	</select>
+
+	<!-- ✅ 모임 정보 업데이트 -->
+	<update id="updateCircle"
+		parameterType="com.loco.aroundme.domain.Circle">
+		UPDATE CIRCLE
+		SET CIRCLE_NAME = #{circleName},
+		CIRCLE_CATEGORY = #{circleCategory},
+		CIRCLE_DATE = TO_TIMESTAMP(#{circleDate}, 'YYYY-MM-DD HH24:MI:SS'),
+		CIRCLE_MAXMEMBER = #{circleMaxMember, jdbcType=INTEGER},
+		CIRCLE_DETAIL = #{circleDetail},
+		CIRCLE_ADDRESS = #{circleAddress},
+		CIRCLE_LAT = #{circleLat},
+		CIRCLE_LNG = #{circleLng},
+		CIRCLE_PLACE_ID = #{circlePlaceId},
+		PICTURE_URL = #{pictureUrl}
+		WHERE CIRCLE_ID = #{circleId}
+	</update>
 </mapper>
+
+

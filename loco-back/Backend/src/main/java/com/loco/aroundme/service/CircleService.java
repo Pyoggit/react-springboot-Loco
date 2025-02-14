@@ -11,6 +11,12 @@ public interface CircleService {
 	List<Circle> getAllCircles();
 
 	Circle createCircle(Circle circle);
-	
+
 	void deleteCircle(Long circleId);
+
+	boolean attendCircle(Long circleId);
+
+	Circle findCircleById(int circleId); // 기존 getCircleById에서 변경
+
+	void updateCircle(Circle circle);
 }
