@@ -135,41 +135,24 @@ export default function Header() {
     );
   };
 
-  function SearchButton({ navigate }) {
+  function SearchButton() {
     const searchButtonRef = useRef(null);
+    const navigate = useNavigate();
     const [status, setStatus] = useState(false);
     const [word, setWord] = useState("");
-    const { searchWord } = useParams();
     const [category, setCategory] = useState("all");
-
-    useEffect(() => {
-      if (searchWord) {
-        setWord(searchWord);
-        setStatus(true);
-      }
-    }, [searchWord]);
 
     const onSearchButtonClickHandler = () => {
       if (!status) {
         setStatus(true);
         return;
       }
+      // 검색어와 카테고리를 URL 파라미터로 전달
       navigate(`/search?category=${category}&query=${word}`);
     };
 
     return status ? (
       <div className="header-search-input-box">
-        <select
-          className="search-category"
-          value={category}
-          onChange={(e) => setCategory(e.target.value)}
-        >
-          <option value="all">전체</option>
-          <option value="board">게시판</option>
-          <option value="market">중고거래</option>
-          <option value="club">모임</option>
-        </select>
-
         <input
           className="header-search-input"
           type="text"
@@ -215,9 +198,6 @@ export default function Header() {
           </div>
           <div className="header-right-box">
             <SearchButton navigate={navigate} />
-            {/* {(isAuthPage || isMainPage || isSearchPage) && (
-            <SearchButton navigate={navigate} />
-          )} */}
             <MyPageButton />
           </div>
         </div>
