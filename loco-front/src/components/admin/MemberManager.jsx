@@ -1,82 +1,9 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import axios from "@/utils/AxiosConfig";
 import "@/css/admin/MemberManager.css";
 
 const MemberManager = () => {
-  const [members, setMembers] = useState([
-    {
-      no: 1,
-      id: "kkk",
-      provider: "kakao",
-      phone: "010-1111-1111",
-      birth: "2000-01-01",
-      region: "서울",
-      reg_date: "2025-02-05",
-    },
-    {
-      no: 2,
-      id: "ggg",
-      provider: "google",
-      phone: "010-2222-2222",
-      birth: "2000-01-01",
-      region: "부산",
-      reg_date: "2025-02-04",
-    },
-    {
-      no: 3,
-      id: "iii",
-      provider: "local",
-      phone: "010-3333-3333",
-      birth: "2000-01-01",
-      region: "대전",
-      reg_date: "2025-02-05",
-    },
-    {
-      no: 4,
-      id: "jjj",
-      provider: "local",
-      phone: "010-4444-4444",
-      birth: "2000-01-01",
-      region: "대구",
-      reg_date: "2025-02-06",
-    },
-    {
-      no: 5,
-      id: "mmm",
-      provider: "naver",
-      phone: "010-5555-5555",
-      birth: "2000-01-01",
-      region: "광주",
-      reg_date: "2025-02-07",
-    },
-    {
-      no: 6,
-      id: "nnn",
-      provider: "kakao",
-      phone: "010-6666-6666",
-      birth: "2000-01-01",
-      region: "인천",
-      reg_date: "2025-02-08",
-    },
-    {
-      no: 7,
-      id: "ooo",
-      provider: "local",
-      phone: "010-7777-7777",
-      birth: "2000-01-01",
-      region: "부산",
-      reg_date: "2025-02-09",
-    },
-    {
-      no: 8,
-      id: "ppp",
-      provider: "google",
-      phone: "010-8888-8888",
-      birth: "2000-01-01",
-      region: "서울",
-      reg_date: "2025-02-10",
-    },
-  ]);
-
+  const [members, setMembers] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 15;
   const [thName, setThName] = useState("");
@@ -84,13 +11,28 @@ const MemberManager = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [selectAll, setSelectAll] = useState(false);
 
+  // 관리자 페이지에서 모든 회원 정보를 불러옴
+  useEffect(() => {
+    axios
+      .get("/api/admin/members")
+      .then((response) => {
+        setMembers(response.data);
+      })
+      .catch((error) => {
+        console.error("회원 정보 가져오기 실패:", error);
+      });
+  }, []);
+
   const totalPages = Math.ceil(members.length / itemsPerPage);
   const indexOfLastItem = currentPage * itemsPerPage;
   const indexOfFirstItem = indexOfLastItem - itemsPerPage;
 
+  // ✅ 이메일 또는 이름으로 검색 가능하도록 수정
   const filteredMembers = members
-    .filter((member) =>
-      member.id.toLowerCase().includes(searchTerm.toLowerCase())
+    .filter(
+      (member) =>
+        member.userEmail.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        member.userName.toLowerCase().includes(searchTerm.toLowerCase()) // ✅ 이름 검색 추가
     )
     .slice(indexOfFirstItem, indexOfLastItem);
 
@@ -111,23 +53,19 @@ const MemberManager = () => {
     setThName(field);
   };
 
-  const handleSearch = (e) => {
-    setSearchTerm(e.target.value);
+  const handleSearch = async (e) => {
+    const keyword = e.target.value;
+    setSearchTerm(keyword);
     setCurrentPage(1);
-  };
 
-  const handleSelectAll = () => {
-    const newSelectAll = !selectAll;
-    setSelectAll(newSelectAll);
-    setMembers(members.map((member) => ({ ...member, checked: newSelectAll })));
-  };
-
-  const handleCheckboxChange = (id) => {
-    const updatedMembers = members.map((member) =>
-      member.id === id ? { ...member, checked: !member.checked } : member
-    );
-    setMembers(updatedMembers);
-    setSelectAll(updatedMembers.every((member) => member.checked));
+    try {
+      const response = await axios.get(
+        `/api/admin/members/search?keyword=${keyword}`
+      );
+      setMembers(response.data);
+    } catch (error) {
+      console.error("검색 중 오류 발생:", error);
+    }
   };
 
   return (
@@ -135,7 +73,7 @@ const MemberManager = () => {
       <div className="admin-member-header">
         <input
           type="text"
-          placeholder="아이디 검색"
+          placeholder="이름 또는 이메일 검색"
           value={searchTerm}
           onChange={handleSearch}
           className="admin-member-search-input"
@@ -150,70 +88,72 @@ const MemberManager = () => {
               <input
                 type="checkbox"
                 checked={selectAll}
-                onChange={handleSelectAll}
+                onChange={() => setSelectAll(!selectAll)}
               />
             </th>
-            <th onClick={() => handleSort("no")}>
-              NO {thName === "no" ? (sortOrder === "asc" ? "▲" : "▼") : ""}
+            <th onClick={() => handleSort("userId")}>
+              NO {thName === "userId" ? (sortOrder === "asc" ? "▲" : "▼") : ""}
             </th>
-            <th onClick={() => handleSort("id")}>
-              아이디 {thName === "id" ? (sortOrder === "asc" ? "▲" : "▼") : ""}
+            <th onClick={() => handleSort("userEmail")}>
+              이메일{" "}
+              {thName === "userEmail" ? (sortOrder === "asc" ? "▲" : "▼") : ""}
+            </th>
+            <th onClick={() => handleSort("userName")}>
+              이름{" "}
+              {thName === "userName" ? (sortOrder === "asc" ? "▲" : "▼") : ""}
             </th>
             <th onClick={() => handleSort("provider")}>
               로그인유형{" "}
               {thName === "provider" ? (sortOrder === "asc" ? "▲" : "▼") : ""}
             </th>
-            <th>전화번호</th>
+            <th>휴대폰 번호</th>
             <th>생년월일</th>
-            <th onClick={() => handleSort("region")}>
-              지역{" "}
-              {thName === "region" ? (sortOrder === "asc" ? "▲" : "▼") : ""}
-            </th>
-            <th onClick={() => handleSort("reg_date")}>
-              계정 생성일{" "}
-              {thName === "reg_date" ? (sortOrder === "asc" ? "▲" : "▼") : ""}
+            <th onClick={() => handleSort("userRegDate")}>
+              가입일{" "}
+              {thName === "userRegDate"
+                ? sortOrder === "asc"
+                  ? "▲"
+                  : "▼"
+                : ""}
             </th>
           </tr>
         </thead>
         <tbody>
           {filteredMembers.map((member) => (
-            <tr key={member.id}>
+            <tr key={member.userEmail}>
               <td>
                 <input
                   type="checkbox"
                   checked={member.checked || false}
-                  onChange={() => handleCheckboxChange(member.id)}
+                  onChange={() => {
+                    const updatedMembers = members.map((m) =>
+                      m.userEmail === member.userEmail
+                        ? { ...m, checked: !m.checked }
+                        : m
+                    );
+                    setMembers(updatedMembers);
+                  }}
                 />
               </td>
-              <td>{member.no}</td>
-              <td>{member.id}</td>
+              <td>{member.userId}</td>
+              <td>{member.userEmail}</td>
+              <td>{member.userName}</td>
               <td>{member.provider}</td>
-              <td>{member.phone}</td>
+              <td>
+                {member.mobile1 && member.mobile2 && member.mobile3
+                  ? `${member.mobile1}-${member.mobile2}-${member.mobile3}`
+                  : "없음"}
+              </td>
               <td>{member.birth}</td>
-              <td>{member.region}</td>
-              <td>{member.reg_date}</td>
+              <td>
+                {member.userRegDate
+                  ? new Date(member.userRegDate).toLocaleDateString()
+                  : ""}
+              </td>
             </tr>
           ))}
         </tbody>
       </table>
-
-      <div className="pagination">
-        <button
-          onClick={() => setCurrentPage(currentPage - 1)}
-          disabled={currentPage === 1}
-        >
-          이전
-        </button>
-        <span>
-          {currentPage} / {totalPages}
-        </span>
-        <button
-          onClick={() => setCurrentPage(currentPage + 1)}
-          disabled={currentPage === totalPages}
-        >
-          다음
-        </button>
-      </div>
     </div>
   );
 };
