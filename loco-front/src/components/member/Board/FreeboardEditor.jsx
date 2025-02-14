@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
+import axios from "axios";
 import "@/css/member/board/NoticeEditor.css";
 
 // 버튼 컴포넌트
@@ -16,9 +17,10 @@ const Button = ({ text, onClick, style }) => {
 };
 
 const FreeboardEditor = () => {
-  const { state } = useLocation(); // state에서 boardItem을 가져옵니다.
+  const { state } = useLocation(); // 이전 페이지에서 전달한 boardItem
   const nav = useNavigate();
 
+  // boardItem이 없으면 로딩 중 표시
   const [curBoardItem, setCurBoardItem] = useState(
     state ? state.boardItem : null
   );
@@ -49,24 +51,36 @@ const FreeboardEditor = () => {
       return;
     }
 
-    console.log("수정된 게시글 내용:", input);
-
     try {
-      // 실제 API 호출을 예시로 작성한 부분입니다.
-      console.log("게시글 수정 성공!");
-
-      // 수정 후 목록 페이지로 리디렉션
+      const response = await axios.put(
+        `${import.meta.env.VITE_API_URL}/api/board/freeboard/${
+          curBoardItem.boardId
+        }`,
+        input
+      );
+      console.log("게시글 수정 성공:", response.data);
       nav("/board/freeboard");
     } catch (error) {
-      console.error("수정 실패:", error);
+      console.error("게시글 수정 실패:", error);
+      window.alert("게시글 수정 중 오류가 발생했습니다.");
     }
   };
 
   const onClickDelete = async () => {
     const confirmDelete = window.confirm("정말로 이 글을 삭제하시겠습니까?");
     if (confirmDelete) {
-      console.log("삭제 요청:", curBoardItem);
-      nav("/board/freeboard");
+      try {
+        const response = await axios.delete(
+          `${import.meta.env.VITE_API_URL}/api/board/freeboard/${
+            curBoardItem.boardId
+          }`
+        );
+        console.log("게시글 삭제 성공:", response.data);
+        nav("/board/freeboard");
+      } catch (error) {
+        console.error("게시글 삭제 실패:", error);
+        window.alert("게시글 삭제 중 오류가 발생했습니다.");
+      }
     }
   };
 

@@ -1,6 +1,10 @@
 import { useState, useEffect } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
+import axios from "axios"; // Axios 사용
 import "@/css/member/board/NoticeEditor.css";
+
+// API 기본 경로 설정
+const API_BASE_URL = `${import.meta.env.VITE_API_URL}/api/board/freeboard`;
 
 // 버튼 컴포넌트
 const Button = ({ text, onClick, style }) => {
@@ -16,12 +20,10 @@ const Button = ({ text, onClick, style }) => {
 };
 
 const ReportEditor = () => {
-  const { state } = useLocation(); // state에서 boardItem을 가져옵니다.
+  const { state } = useLocation(); // state에서 boardItem을 가져옴
   const nav = useNavigate();
 
-  const [curBoardItem, setCurBoardItem] = useState(
-    state ? state.boardItem : null
-  );
+  const [curBoardItem, setCurBoardItem] = useState(state?.boardItem || null);
   const [input, setInput] = useState({
     title: "",
     content: "",
@@ -43,30 +45,44 @@ const ReportEditor = () => {
     setInput((prevInput) => ({ ...prevInput, [name]: value }));
   };
 
+  // 게시글 수정 (PUT 요청)
   const onClickSubmit = async () => {
-    if (!input.title || !input.content || !input.writer) {
-      window.alert("모든 필드를 입력해주세요.");
+    if (!input.title.trim() || !input.content.trim() || !input.writer.trim()) {
+      window.alert("제목, 내용, 작성자를 모두 입력해주세요.");
       return;
     }
 
-    console.log("수정된 게시글 내용:", input);
-
     try {
-      // 실제 API 호출을 예시로 작성한 부분입니다.
-      console.log("게시글 수정 성공!");
+      await axios.put(
+        `${API_BASE_URL}/view/${curBoardItem.id}`,
+        {
+          title: input.title,
+          content: input.content,
+          writer: input.writer,
+        },
+        { headers: { "Content-Type": "application/json" } }
+      );
 
-      // 수정 후 목록 페이지로 리디렉션
-      nav("/board/report");
+      window.alert("게시글이 수정되었습니다.");
+      nav("/board/report"); // 수정 후 목록으로 이동
     } catch (error) {
-      console.error("수정 실패:", error);
+      console.error("게시글 수정 실패:", error);
+      alert("게시글 수정에 실패했습니다.");
     }
   };
 
+  // 게시글 삭제 (DELETE 요청)
   const onClickDelete = async () => {
     const confirmDelete = window.confirm("정말로 이 글을 삭제하시겠습니까?");
-    if (confirmDelete) {
-      console.log("삭제 요청:", curBoardItem);
-      nav("/board/report");
+    if (!confirmDelete) return;
+
+    try {
+      await axios.delete(`${API_BASE_URL}/view/${curBoardItem.id}`);
+      window.alert("게시글이 삭제되었습니다.");
+      nav("/board/report"); // 삭제 후 목록으로 이동
+    } catch (error) {
+      console.error("게시글 삭제 실패:", error);
+      alert("게시글 삭제에 실패했습니다.");
     }
   };
 

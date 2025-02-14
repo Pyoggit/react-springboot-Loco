@@ -2,13 +2,13 @@ import React, { useState } from "react";
 import { useNavigate, useParams, useLocation } from "react-router-dom";
 import "@/css/member/board/FreeView.css";
 
-const NoticeboardView = () => {
+const ReportView = () => {
   const [comments, setComments] = useState([
     { id: 1, writer: "user1", content: "이건 댓글입니다." },
     { id: 2, writer: "user2", content: "이건 또 다른 댓글입니다." },
   ]);
 
-  const [newComment, setNewComment] = useState(""); // 댓글 입력 값 상태 추가
+  const [newComment, setNewComment] = useState("");
   const params = useParams();
   const nav = useNavigate();
 
@@ -23,36 +23,20 @@ const NoticeboardView = () => {
     if (confirmDelete) {
       // 삭제 기능을 구현하기 위한 코드 (여기서는 mock으로 처리)
       window.alert("삭제되었습니다.");
-      nav("/board/notice"); // 자유게시판으로 리디렉션
+      nav("/board/report"); // 자유게시판으로 리디렉션
     }
   };
 
   const onClickEdit = () => {
     // 수정 페이지로 이동 (글 수정 페이지 URL에 해당 글 ID를 포함)
-    nav(`/board/notice/editor/${curBoardItem.id}`, {
+    nav(`/board/report/editor/${curBoardItem.id}`, {
       state: { boardItem: curBoardItem }, // 상태로 게시글 정보를 넘겨줌
     });
   };
 
   const onClickCancel = () => {
     // 취소 시, 자유게시판으로 돌아가기
-    nav("/board/notice");
-  };
-
-  const onAddComment = () => {
-    if (newComment.trim() === "") {
-      window.alert("댓글을 입력해주세요.");
-      return;
-    }
-
-    const newCommentObj = {
-      id: comments.length + 1, // 댓글 ID는 간단히 길이로 처리
-      writer: "현재 사용자", // 작성자는 임시로 "현재 사용자"로 설정
-      content: newComment.trim(),
-    };
-
-    setComments((prevComments) => [...prevComments, newCommentObj]);
-    setNewComment(""); // 댓글 작성 후 입력란 초기화
+    nav("/board/report");
   };
 
   const curBoardItem = {
@@ -129,7 +113,7 @@ const NoticeboardView = () => {
             placeholder="댓글을 입력하세요..."
             className="freeview-textarea"
           />
-          <button onClick={onAddComment} className="freeview-commentButton">
+          <button onClick={() => {}} className="freeview-commentButton">
             댓글 달기
           </button>
         </div>
@@ -138,4 +122,4 @@ const NoticeboardView = () => {
   );
 };
 
-export default NoticeboardView;
+export default ReportView;

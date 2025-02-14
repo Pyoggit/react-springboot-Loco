@@ -1,50 +1,66 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import axios from "axios";
 import "@/css/member/board/NoticeNew.css";
 
 const FreeboardNew = () => {
   const nav = useNavigate();
 
-  // 게시글 입력값 상태
+  // 게시글 입력값 상태 (텍스트 데이터)
   const [input, setInput] = useState({
     title: "",
     content: "",
     writer: "",
-    image: "",
   });
+  // 파일 상태 (사진)
+  const [file, setFile] = useState(null);
 
-  // 입력값 변경 핸들러
+  // 텍스트 입력값 변경 핸들러
   const onChangeInput = (e) => {
     const { name, value } = e.target;
     setInput((prev) => ({ ...prev, [name]: value }));
   };
 
-  // 글 작성 시
-  const onClickSubmit = () => {
+  // 파일 선택 핸들러 (value 속성 제거)
+  const onFileChange = (e) => {
+    if (e.target.files && e.target.files.length > 0) {
+      setFile(e.target.files[0]);
+    }
+  };
+
+  // 글 작성 시 API 호출
+  const onClickSubmit = async () => {
     if (!input.title.trim() || !input.content.trim() || !input.writer.trim()) {
       alert("제목, 내용, 작성자를 모두 입력해주세요.");
       return;
     }
 
-    // 새 글 데이터 객체
-    const newPost = {
-      ...input,
-      id: Date.now(), // 고유한 id 생성
-      views: 0,
-      createdDate: new Date().getTime(),
-    };
+    // FormData 생성: 텍스트 데이터는 JSON으로 Blob에 담아서 "board" 필드로 전송
+    const formData = new FormData();
+    formData.append(
+      "board",
+      new Blob([JSON.stringify(input)], { type: "application/json" })
+    );
+    if (file) {
+      formData.append("file", file);
+    }
 
-    // 기존의 글 목록 불러오기 (없으면 빈 배열)
-    const existingPosts = JSON.parse(localStorage.getItem("posts")) || [];
-
-    // 새 글 추가
-    existingPosts.push(newPost);
-
-    // 글 목록을 localStorage에 저장
-    localStorage.setItem("posts", JSON.stringify(existingPosts));
-
-    // 글 작성 후 목록 페이지로 이동
-    nav("/board/freeboard");
+    try {
+      const response = await axios.post(
+        `${import.meta.env.VITE_API_URL}/api/board/freeboard/freeboardnew`,
+        formData,
+        {
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
+        }
+      );
+      console.log("게시글 등록 성공:", response.data);
+      nav("/board/freeboard");
+    } catch (error) {
+      console.error("게시글 등록 실패:", error);
+      alert("게시글 등록 중 오류가 발생했습니다.");
+    }
   };
 
   return (
@@ -72,9 +88,8 @@ const FreeboardNew = () => {
           />
           <input
             type="file"
-            name="사진"
-            onChange={onChangeInput}
-            value={input.image}
+            name="file"
+            onChange={onFileChange}
             className="new-input-file"
           />
           <textarea

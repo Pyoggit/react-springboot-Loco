@@ -232,7 +232,7 @@ const Faq = () => {
         FAQ(자주 묻는 질문)
         <button
           className="qna-write-button"
-          onClick={() => navigate("/board/faq/faqnew")}
+          onClick={() => navigate("/board/faq/new")}
         >
           글쓰기
         </button>
