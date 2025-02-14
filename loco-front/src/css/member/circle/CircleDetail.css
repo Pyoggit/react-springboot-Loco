@@ -115,3 +115,16 @@
 .back-button:hover {
   background-color: #555;
 }
+.delete-button {
+  background-color: #3f3f3f;
+  color: white;
+  padding: 10px 15px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 10px;
+}
+
+.delete-button:hover {
+  background-color: #8f8f8f;
+}
