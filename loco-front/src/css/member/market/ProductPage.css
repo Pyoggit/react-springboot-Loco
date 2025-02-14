@@ -166,8 +166,9 @@
 }
 
 /* 개별 상품 카드 */
-.productList-Item {
-  width: calc(22% - 12px);
+.product-List-Item {
+  /* width: calc(25% - 10px); */
+  /* width: 300px; */
   height: 300px;
   display: flex;
   flex-direction: column;
@@ -181,19 +182,19 @@
 }
 
 @media (max-width: 1024px) {
-  .productList-Item {
+  .product-List-Item {
     width: calc(33.33% - 12px); /* 태블릿: 3개씩 */
   }
 }
 
 @media (max-width: 768px) {
-  .productList-Item {
+  .product-List-Item {
     width: calc(50% - 12px); /* 모바일: 2개씩 */
   }
 }
 
 @media (max-width: 480px) {
-  .productList-Item {
+  .product-List-Item {
     width: 100%; /* 작은 화면: 1개씩 */
   }
 }
@@ -205,36 +206,48 @@
   align-items: center;
 }
 
-.productList-Item:hover {
+.product-List-Item:hover {
   background-color: #f9f9f9;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15); /* Hover 시 그림자 효과 추가 */
 }
 
 /* 이미지 스타일 */
-.item-image {
+/* .item-image {
   width: 100px;
   height: 100px;
   object-fit: cover;
   border-radius: 8px;
   margin-bottom: 8px;
+} */
+
+/* 썸네일 이미지 스타일 개선 */
+.product-image {
+  width: 150px;
+  max-width: 250px; /* 최대 폭을 250px로 지정 */
+  aspect-ratio: 1 / 1; /* 정사각형 비율 유지 */
+  object-fit: cover; /* 이미지 비율 유지하며 영역 채움 */
+  border-radius: 12px; /* 부드러운 모서리 처리 */
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15); /* 부드러운 그림자 효과 */
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  margin-bottom: 8px;
 }
 
 /* 정보 섹션 스타일 */
-.item-info {
+.product-info {
   text-align: center;
 }
 
-.item-info p {
+.product-info p {
   margin: 3px 0;
 }
 
-.item-name {
+.product-name {
   font-size: 15px;
   font-weight: bold;
 }
 
-.item-category,
-.item-price {
+.product-category,
+.product-price {
   font-size: 14px;
   color: #333;
 }

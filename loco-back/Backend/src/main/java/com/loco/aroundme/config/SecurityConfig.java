@@ -33,6 +33,7 @@ public class SecurityConfig {
             .cors(cors -> cors.configurationSource(corsConfigurationSource())) 
             .csrf(csrf -> csrf.disable()) 
             .authorizeHttpRequests(auth -> auth
+            	.requestMatchers("/upload/**").permitAll()
                 .requestMatchers(
                     "/api/users/signup", 
                     "/api/users/check-email", 

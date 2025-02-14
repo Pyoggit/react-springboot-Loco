@@ -74,12 +74,14 @@ const ProductInsert = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
+    const priceValue = Number(formData.price);
+
     const { name, content, category, price, address, coordinates } = formData;
     if (
       !name ||
       !content ||
       !category ||
-      !price ||
+      !priceValue ||
       !address ||
       !coordinates.lat
     ) {
@@ -96,7 +98,7 @@ const ProductInsert = () => {
       productName: name,
       description: content,
       productCategory: category,
-      price: price,
+      price: priceValue,
       productAddress: address,
       productLat: coordinates.lat,
       productLng: coordinates.lng,

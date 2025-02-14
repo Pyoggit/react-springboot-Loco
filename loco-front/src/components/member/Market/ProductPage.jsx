@@ -8,17 +8,29 @@ import { faHeart as solidHeart } from '@fortawesome/free-solid-svg-icons'; // �
 import { faHeart as regularHeart } from '@fortawesome/free-regular-svg-icons'; // 빈 하트
 import Payment from './Payment';
 
-const ListItem = ({ id, productName, image, productCategory, price }) => {
+const ListItem = ({
+  productId,
+  productName,
+  images,
+  productCategory,
+  price,
+}) => {
   const navigate = useNavigate();
   const [isLikeClick, setIsLikeClick] = useState(false);
 
   const handleDetailClick = (e) => {
     e.stopPropagation();
-    navigate(`/market/info/${id}`);
+    navigate(`/market/info/${productId}`);
   };
 
+  // 백엔드에서 저장된 파일명(pictureUrl)만 받아오므로, 정적 리소스 매핑 경로와 결합합니다.
+  const thumbnail =
+    images && images.length > 0
+      ? `${import.meta.env.VITE_API_URL}/upload/${images[0].pictureUrl}`
+      : '/default-placeholder.png';
+
   return (
-    <div className="productList-Item">
+    <div className="product-List-Item">
       <div className="like-button">
         <button
           className="like-button"
@@ -31,11 +43,11 @@ const ListItem = ({ id, productName, image, productCategory, price }) => {
         </button>
       </div>
       <div className="product-list">
-        <img src={image} alt={productName} className="item-image" />
-        <div className="item-info">
-          <p className="item-name">상품명: {productName}</p>
-          <p className="item-category">카테고리: {productCategory}</p>
-          <p className="item-price">가격: {price.toLocaleString()}원</p>
+        <img src={thumbnail} alt={productName} className="product-image" />
+        <div className="product-info">
+          <p className="product-name">상품명: {productName}</p>
+          <p className="product-category">카테고리: {productCategory}</p>
+          <p className="product-price">가격: {price.toLocaleString()}원</p>
           <div className="product-item-button">
             <button onClick={handleDetailClick} className="team-button">
               상세보기
@@ -62,10 +74,10 @@ export default function ProductPage() {
     '의류',
     '필기도구',
     '여행용품',
-    '가전제품',
+    '전자제품',
   ];
 
-  // 컴포넌트가 마운트될 때 등록된 상품들을 API로 불러오기
+  // 컴포넌트가 마운트될 때 등록된 상품들을 API로 불러옵니다.
   useEffect(() => {
     const fetchProducts = async () => {
       try {
@@ -143,7 +155,7 @@ export default function ProductPage() {
           {filteredItems.length > 0 ? (
             <ul className="product-grid">
               {filteredItems.map((item) => (
-                <li key={item.id}>
+                <li key={item.productId}>
                   <ListItem {...item} />
                 </li>
               ))}

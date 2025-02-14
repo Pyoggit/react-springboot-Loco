@@ -1,13 +1,18 @@
 package com.loco.aroundme.controller;
 
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
@@ -60,6 +65,26 @@ public class ProductController {
 		}
 	}
 
+	@PutMapping(value = "/update/{productId}", consumes = { MediaType.MULTIPART_FORM_DATA_VALUE })
+	public ResponseEntity<String> updateProduct(@PathVariable Long productId,
+			@RequestPart("product") String productJson,
+			@RequestPart(value = "images", required = false) List<MultipartFile> images) {
+		try {
+			log.info("🔹 [ProductController] 상품 수정 요청: productId={}", productId);
+
+			ObjectMapper objectMapper = new ObjectMapper();
+			Product product = objectMapper.readValue(productJson, Product.class);
+			product.setProductId(productId);
+
+			productService.updateProduct(product, images);
+
+			return ResponseEntity.ok("상품이 성공적으로 수정되었습니다.");
+		} catch (Exception e) {
+			log.error("❌ [ProductController] 상품 수정 중 오류 발생", e);
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("상품 수정 중 오류 발생: " + e.getMessage());
+		}
+	}
+
 	@GetMapping("/products")
 	public ResponseEntity<List<Product>> getProducts() {
 		try {
@@ -69,6 +94,38 @@ public class ProductController {
 		} catch (Exception e) {
 			log.error("❌ [ProductController] 상품 목록 조회 중 오류 발생", e);
 			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+		}
+	}
+
+	// ✅ 상품 삭제 요청 처리
+	@DeleteMapping("/remove")
+	public ResponseEntity<String> deleteProducts(@RequestBody Map<String, List<Long>> request) {
+		try {
+			List<Long> productIds = request.get("productIds");
+			log.info("🗑 [ProductController] 상품 삭제 요청 수신: {}", productIds);
+
+			if (productIds == null || productIds.isEmpty()) {
+				return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("삭제할 상품 ID가 없습니다.");
+			}
+
+			productService.deleteProducts(productIds);
+			return ResponseEntity.ok("선택한 상품이 삭제되었습니다.");
+		} catch (Exception e) {
+			log.error("❌ [ProductController] 상품 삭제 중 오류 발생", e);
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("상품 삭제 중 오류 발생: " + e.getMessage());
+		}
+	}
+
+	// ✅ 상품 상세 조회
+	@GetMapping("/info/{productId}")
+	public ResponseEntity<Product> getProductInfo(@PathVariable Long productId) {
+		try {
+			log.info("🔹 상품 상세 조회 요청: productId={}", productId);
+			Product product = productService.findProductById(productId);
+			return ResponseEntity.ok(product);
+		} catch (Exception e) {
+			log.error("❌ 상품 조회 중 오류 발생", e);
+			return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
 		}
 	}
 }

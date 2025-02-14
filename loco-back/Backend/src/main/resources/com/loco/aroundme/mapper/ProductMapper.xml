@@ -26,35 +26,59 @@
 		INSERT INTO PRODUCT (
 		PRODUCT_ID, USER_ID, PRODUCT_NAME,
 		PRICE,
-		PRODUCT_CATEGORY, DESCRIPTION,
-		PRODUCT_ADDRESS, PRODUCT_LAT,
-		PRODUCT_LNG,
-		PRODUCT_PLACE_ID, PRODUCT_REGDATE
+		PRODUCT_CATEGORY, DESCRIPTION, PRODUCT_ADDRESS, PRODUCT_LAT,
+		PRODUCT_LNG, PRODUCT_PLACE_ID, PRODUCT_REGDATE
 		) VALUES (
 		PRODUCT_SEQ.NEXTVAL, #{userId, jdbcType=NUMERIC}, #{productName},
-		#{price},
-		#{productCategory}, #{description}, #{productAddress},
-		#{productLat},
-		#{productLng}, #{productPlaceId}, SYSTIMESTAMP
+		#{price}, #{productCategory}, #{description}, #{productAddress},
+		#{productLat}, #{productLng}, #{productPlaceId}, SYSTIMESTAMP
 		)
 	</insert>
+
+	<!-- ✅ 상품 수정 (PRODUCT 테이블) -->
+	<update id="updateProduct"
+		parameterType="com.loco.aroundme.domain.Product">
+		UPDATE PRODUCT
+		SET PRODUCT_NAME = #{productName},
+		PRICE =
+		#{price},
+		PRODUCT_CATEGORY = #{productCategory},
+		DESCRIPTION =
+		#{description},
+		PRODUCT_ADDRESS = #{productAddress},
+		PRODUCT_LAT =
+		#{productLat},
+		PRODUCT_LNG = #{productLng},
+		PRODUCT_PLACE_ID =
+		#{productPlaceId}
+		WHERE PRODUCT_ID = #{productId}
+	</update>
 
 	<!-- ✅ 최근 등록된 상품 ID 가져오기 -->
 	<select id="getLastInsertedProductId"
 		parameterType="java.lang.Long" resultType="java.lang.Long">
-		SELECT MAX(PRODUCT_ID) FROM PRODUCT
-		WHERE USER_ID = #{userId, jdbcType=NUMERIC}
+		SELECT MAX(PRODUCT_ID) FROM
+		PRODUCT WHERE USER_ID = #{userId,
+		jdbcType=NUMERIC}
+	</select>
+
+	<!-- ✅ 상품 상세 조회 (이미지 포함) -->
+	<select id="findProductById" parameterType="long"
+		resultMap="productResultMap">
+		SELECT * FROM PRODUCT WHERE PRODUCT_ID = #{productId}
 	</select>
 
 	<!-- ✅ 상품 이미지(Pic) 등록 (상품 등록 후 실행) -->
 	<insert id="insertProductPics">
 		INSERT INTO PRODUCT_PIC (PICTURE_ID, PRODUCT_ID, PICTURE_URL,
 		PICTURE_ORDER, PICTURE_REGDATE)
-		SELECT PRODUCT_PIC_SEQ.NEXTVAL, t.productId, t.pictureUrl, t.pictureOrder,
+		SELECT PRODUCT_PIC_SEQ.NEXTVAL,
+		t.productId, t.pictureUrl, t.pictureOrder,
 		SYSTIMESTAMP
 		FROM (
 		<foreach collection="list" item="pic" separator=" UNION ALL ">
-			SELECT #{pic.productId} AS productId, #{pic.pictureUrl} AS pictureUrl,
+			SELECT
+			#{pic.productId} AS productId, #{pic.pictureUrl} AS pictureUrl,
 			#{pic.pictureOrder} AS pictureOrder FROM DUAL
 		</foreach>
 		) t
@@ -63,9 +87,9 @@
 	<!-- ✅ 특정 상품의 모든 이미지(Pic) 조회 -->
 	<select id="getProductPics" parameterType="long"
 		resultType="com.loco.aroundme.domain.ProductPic">
-		SELECT * FROM PRODUCT_PIC
-		WHERE PRODUCT_ID = #{productId}
-		ORDER BY PICTURE_ORDER
+		SELECT * FROM PRODUCT_PIC WHERE PRODUCT_ID = #{productId}
+		ORDER BY
+		PICTURE_ORDER
 	</select>
 
 	<!-- ✅ 전체 상품 조회 -->
@@ -73,4 +97,32 @@
 		SELECT * FROM PRODUCT
 		ORDER BY PRODUCT_REGDATE DESC
 	</select>
+
+	<!-- ✅ 삭제할 상품들의 이미지 경로 가져오기 -->
+	<select id="getProductImagePaths" parameterType="java.util.List"
+		resultType="java.lang.String">
+		SELECT PICTURE_URL FROM PRODUCT_PIC WHERE PRODUCT_ID IN
+		<foreach collection="productIds" item="id" open="("
+			separator="," close=")">
+			#{id}
+		</foreach>
+	</select>
+
+	<!-- ✅ 상품 이미지 삭제 -->
+	<delete id="deleteProductPics">
+		DELETE FROM PRODUCT_PIC WHERE PRODUCT_ID IN
+		<foreach collection="productIds" item="id" open="("
+			separator="," close=")">
+			#{id}
+		</foreach>
+	</delete>
+
+	<!-- ✅ 상품 삭제 -->
+	<delete id="deleteProducts">
+		DELETE FROM PRODUCT WHERE PRODUCT_ID IN
+		<foreach collection="productIds" item="id" open="("
+			separator="," close=")">
+			#{id}
+		</foreach>
+	</delete>
 </mapper>

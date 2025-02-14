@@ -13,6 +13,9 @@ import com.loco.aroundme.domain.ProductPic;
 public interface ProductMapper {
 	// ✅ 상품 등록
 	void insertProduct(Product product);
+	
+	// ✅ 상품 수정
+	void updateProduct(Product product);
 
 	// ✅ 특정 상품 조회 (ID 기반)
 	Product findProductById(Long productId);
@@ -28,4 +31,13 @@ public interface ProductMapper {
 
 	// ✅ 전체 상품 조회
 	List<Product> selectProducts();
+
+	// ✅ 삭제할 상품들의 이미지 경로 가져오기
+	List<String> getProductImagePaths(@Param("productIds") List<Long> productIds);
+
+	// ✅ 상품 이미지 삭제 (DB)
+	void deleteProductPics(@Param("productIds") List<Long> productIds);
+
+	// ✅ 상품 삭제
+	void deleteProducts(@Param("productIds") List<Long> productIds);
 }
