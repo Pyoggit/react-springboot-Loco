@@ -32,4 +32,9 @@ public class CircleServiceImpl implements CircleService {
         circleMapper.insertCircle(circle);
         return circle;
     }
+    
+    @Override
+    public void deleteCircle(Long circleId) {
+        circleMapper.deleteCircle(circleId);
+    }
 }

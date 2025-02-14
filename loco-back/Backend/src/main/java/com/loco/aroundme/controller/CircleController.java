@@ -70,4 +70,15 @@ public class CircleController {
                 .body("{\"message\": \"모임 생성 실패: " + e.getMessage() + "\"}");
         }
     }
+    @DeleteMapping("/{circleId}")
+    public ResponseEntity<?> deleteCircle(@PathVariable Long circleId) {
+        try {
+            System.out.println("🗑️ 삭제 요청 받은 ID: " + circleId);
+            circleService.deleteCircle(circleId);
+            return ResponseEntity.ok().body("{\"message\": \"모임이 삭제되었습니다.\"}");
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body("{\"message\": \"삭제 실패: " + e.getMessage() + "\"}");
+        }
+    }
 }

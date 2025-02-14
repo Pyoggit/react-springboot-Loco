@@ -18,4 +18,6 @@ public interface CircleMapper {
 
     /*새로운 모임 추가 */
     void insertCircle(Circle circle);
+    
+    void deleteCircle(Long circleId);
 }

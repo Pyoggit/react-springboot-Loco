@@ -11,4 +11,6 @@ public interface CircleService {
 	List<Circle> getAllCircles();
 
 	Circle createCircle(Circle circle);
+	
+	void deleteCircle(Long circleId);
 }
