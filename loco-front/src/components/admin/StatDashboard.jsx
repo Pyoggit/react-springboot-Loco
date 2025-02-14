@@ -26,6 +26,21 @@ const StatDashboard = () => {
     ],
   });
 
+  const chartOptions = {
+    responsive: true,
+    maintainAspectRatio: true,
+    plugins: {
+      legend: {
+        position: "top",
+        labels: {
+          font: {
+            size: 14,
+          },
+        },
+      },
+    },
+  };
+
   return (
     <div className="admin-stats-container">
       <div className="admin-stat-row">
@@ -77,7 +92,7 @@ const StatDashboard = () => {
                 },
               ],
             }}
-            options={{ responsive: true, maintainAspectRatio: false }}
+            options={chartOptions}
           />
         </div>
 
@@ -101,7 +116,7 @@ const StatDashboard = () => {
                 },
               ],
             }}
-            options={{ responsive: true, maintainAspectRatio: false }}
+            options={chartOptions}
           />
         </div>
       </div>
@@ -123,7 +138,7 @@ const StatDashboard = () => {
                 },
               ],
             }}
-            options={{ responsive: true, maintainAspectRatio: false }}
+            options={chartOptions}
           />
         </div>
 
@@ -155,7 +170,7 @@ const StatDashboard = () => {
                 },
               ],
             }}
-            options={{ responsive: true, maintainAspectRatio: false }}
+            options={chartOptions}
           />
         </div>
       </div>

@@ -27,7 +27,7 @@
 .admin-stat-card p {
   font-size: 20px;
   font-weight: bold;
-  color: #007bff;
+  color: rgba(177, 121, 241);
 }
 
 .admin-chart-row {
@@ -38,14 +38,34 @@
 
 .admin-chart-container {
   flex: 1;
-  height: 320px;
+  min-width: 300px;
+  max-width: 100%;
+  height: 350px;
   background: #f9f9f9;
-  padding: 15px;
+  padding: 20px;
   border-radius: 10px;
-  margin: 10px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  overflow: hidden;
 }
 
-.admin-chart-container h5 {
-  text-align: center;
-  margin-bottom: 10px;
+.admin-chart-container canvas {
+  max-width: 100% !important;
+  height: auto !important;
+  display: block;
+}
+
+@media (max-width: 1024px) {
+  .admin-stat-row,
+  .admin-chart-row {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .admin-chart-container {
+    width: 90%;
+    margin-bottom: 20px;
+  }
 }

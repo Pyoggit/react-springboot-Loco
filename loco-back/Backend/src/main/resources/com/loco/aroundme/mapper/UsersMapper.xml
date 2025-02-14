@@ -90,6 +90,32 @@
 		!= null">#{address2}</if> <if test="address2 == null">NULL</if> , SYSDATE, 
 		#{originUser}, #{sysUser} ) </insert> -->
 
+	<!-- 관리자 모드에서 모든 유저정보 가져오기 위한 쿼리문 -->
+	<select id="findAllUsers" resultType="com.loco.aroundme.domain.Users">
+	    SELECT
+	      USER_ID, PROVIDER, PROVIDER_ID, USER_EMAIL, PASSWORD,
+	      ROLE_ID, USER_NAME,
+	      GENDER,
+	      MOBILE1, MOBILE2, MOBILE3,
+	      BIRTH,
+	      ADDRESS1, ADDRESS2, USER_REGDATE, ORIGIN_USER, SYS_USER
+	    FROM USERS
+	    ORDER BY USER_ID DESC
+	</select>
+	
+	<!-- 유저 이메일 또는 유저 이름으로 검색 -->
+	<!-- <select id="searchUsers" resultType="com.loco.aroundme.domain.Users">
+	    SELECT USER_ID, PROVIDER, PROVIDER_ID, USER_EMAIL, PASSWORD,
+	           ROLE_ID, USER_NAME, GENDER,
+	           MOBILE1, MOBILE2, MOBILE3, BIRTH,
+	           ZIPCODE, ADDRESS1, ADDRESS2, USER_REGDATE, ORIGIN_USER, SYS_USER
+	    FROM USERS
+	    WHERE USER_EMAIL LIKE '%' || #{keyword} || '%' 
+	       OR USER_NAME LIKE '%' || #{keyword} || '%' 
+	    ORDER BY USER_ID DESC
+	</select> -->
+	
+
 
 
 

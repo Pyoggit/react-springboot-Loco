@@ -66,18 +66,6 @@
   overflow: hidden;
 }
 
-.search-category {
-  border: none;
-  background: none;
-  font-size: 14px;
-  padding: 5px;
-  cursor: pointer;
-  outline: none;
-  min-width: 85px;
-  display: flex;
-  align-items: center;
-}
-
 .header-search-input-box {
   border: 1px solid rgba(0, 0, 0, 0.2);
   border-radius: 43px;

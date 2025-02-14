@@ -1,0 +1,104 @@
+.service-wrapper {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  padding: 40px 0;
+  background-color: #fff;
+}
+
+.service-container {
+  display: flex;
+  width: 80%;
+  justify-content: space-between;
+  align-items: stretch;
+  border: 1px solid #ddd;
+  border-radius: 10px;
+  background: white;
+}
+
+.service-item {
+  flex: 1;
+  padding: 40px;
+  text-align: center;
+  border-right: 1px solid #ddd;
+}
+
+.service-item:last-child {
+  border-right: none;
+}
+
+.service-icon {
+  font-size: 36px;
+  color: black;
+  margin-bottom: 10px;
+}
+
+.phone-icon {
+  background-color: black;
+  color: white;
+  border-radius: 50%;
+  padding: 10px;
+}
+
+.service-title {
+  font-size: 18px;
+  font-weight: bold;
+  margin-bottom: 10px;
+}
+
+.service-number {
+  font-size: 22px;
+  font-weight: bold;
+  color: black;
+  margin-bottom: 5px;
+}
+
+.service-hours {
+  font-size: 14px;
+  color: #777;
+}
+
+.service-note {
+  font-size: 14px;
+  color: #777;
+}
+
+.service-description {
+  font-size: 14px;
+  color: #777;
+  line-height: 1.5;
+}
+
+.service-button {
+  display: inline-block;
+  margin-top: 15px;
+  padding: 10px 20px;
+  border-radius: 5px;
+  border: 1px solid black;
+  color: black;
+  text-decoration: none;
+  font-weight: bold;
+  transition: 0.3s;
+}
+
+.service-button:hover {
+  background-color: black;
+  color: white;
+}
+
+@media (max-width: 1024px) {
+  .service-container {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .service-item {
+    width: 100%;
+    border-right: none;
+    border-bottom: 1px solid #ddd;
+  }
+
+  .service-item:last-child {
+    border-bottom: none;
+  }
+}

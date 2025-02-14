@@ -1,3 +1,4 @@
+import React, { useState } from "react";
 import Carousel from "@/components/member/Common/Carousel";
 import Category from "@/components/member/Common/Category";
 import Circles from "@/components/member/Common/Circles";
@@ -8,6 +9,8 @@ import Four from "/src/assets/images/slide-4.jpg";
 import Five from "/src/assets/images/slide-5.jpg";
 
 export default function Home() {
+  const [selectedCategory, setSelectedCategory] = useState("전체");
+
   return (
     <>
       <Carousel>
@@ -17,8 +20,11 @@ export default function Home() {
         <img key={3} src={Four} alt="Slide 4" />
         <img key={4} src={Five} alt="Slide 5" />
       </Carousel>
-      <Category />
-      <Circles />
+      <Category
+        selectedCategory={selectedCategory}
+        setSelectedCategory={setSelectedCategory}
+      />
+      <Circles selectedCategory={selectedCategory} />
     </>
   );
 }
