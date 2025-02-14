@@ -17,4 +17,11 @@ public class ProductPic {
 	private String pictureUrl; // 이미지 URL
 	private int pictureOrder; // 이미지 순서 (썸네일 = 1)
 	private Timestamp pictureRegdate; // 등록일
+
+	// 🔹 기존 생성자와 충돌하지 않도록 필요한 생성자 추가
+	public ProductPic(Long productId, String pictureUrl, int pictureOrder) {
+		this.productId = productId;
+		this.pictureUrl = pictureUrl;
+		this.pictureOrder = pictureOrder;
+	}
 }
