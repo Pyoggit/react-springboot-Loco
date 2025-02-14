@@ -6,7 +6,7 @@ import circle04 from "@/assets/images/circle04.jpg";
 import circle05 from "@/assets/images/circle05.jpg";
 import circle06 from "@/assets/images/circle06.jpg";
 
-const circles = [
+const allCircles = [
   { name: "IT 개발자 스터디", category: "스터디", image: circle01 },
   { name: "독서 토론", category: "취미", image: circle02 },
   { name: "친목 모임", category: "친목", image: circle03 },
@@ -15,13 +15,22 @@ const circles = [
   { name: "여행 동행 구하기", category: "여행/동행", image: circle06 },
 ];
 
-const Circles = () => {
+const Circles = ({ selectedCategory }) => {
+  const filteredCircles =
+    selectedCategory === "전체"
+      ? allCircles
+      : allCircles.filter((circle) => circle.category === selectedCategory);
+
   return (
     <section className="circles-layout">
       <div className="circles-container">
-        <h2 className="circles-title">전체 모임</h2>
+        <h2 className="circles-title">
+          {selectedCategory === "전체"
+            ? "전체 모임"
+            : `${selectedCategory} 모임`}
+        </h2>
         <div className="circles-grid">
-          {circles.map((circle, index) => (
+          {filteredCircles.map((circle, index) => (
             <div key={index} className="circle-card">
               <img
                 src={circle.image}
