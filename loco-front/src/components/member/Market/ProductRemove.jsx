@@ -1,83 +1,44 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import axios from 'axios';
 import '@/css/member/market/ProductRemove.css';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faMinus, faPlus } from '@fortawesome/free-solid-svg-icons';
-import { faHeart as solidHeart } from '@fortawesome/free-solid-svg-icons'; // 꽉 찬 하트
-import { faHeart as regularHeart } from '@fortawesome/free-regular-svg-icons'; // 빈 하트
-import Payment from './Payment';
+import { faMinus } from '@fortawesome/free-solid-svg-icons';
 
-const mockData = [
-  {
-    id: 1,
-    name: '상품1',
-    image: '이미지1',
-    category: '스포츠용품',
-    content: '설명1',
-    price: 1000,
-  },
-  {
-    id: 2,
-    name: '상품2',
-    image: '이미지2',
-    category: '도서',
-    content: '설명2',
-    price: 2000,
-  },
-  {
-    id: 3,
-    name: '상품3',
-    image: '이미지3',
-    category: '의류',
-    content: '설명3',
-    price: 3000,
-  },
-  {
-    id: 4,
-    name: '상품4',
-    image: '이미지4',
-    category: '필기도구',
-    content: '설명4',
-    price: 4000,
-  },
-  {
-    id: 5,
-    name: '상품5',
-    image: '이미지5',
-    category: '여행용품',
-    content: '설명5',
-    price: 5000,
-  },
-  {
-    id: 6,
-    name: '상품6',
-    image: '이미지6',
-    category: '가전제품',
-    content: '설명6',
-    price: 6000,
-  },
-];
-
-const ListItem = ({ id, name, image, category, price, isChecked, onCheck }) => {
+const ListItem = ({
+  productId,
+  productName,
+  images,
+  productCategory,
+  price,
+  isChecked,
+  onCheck,
+}) => {
   const navigate = useNavigate();
+
+  // 썸네일 이미지 URL 생성
+  const thumbnail =
+    images && images.length > 0
+      ? `${import.meta.env.VITE_API_URL}/upload/${images[0].pictureUrl}`
+      : '/default-placeholder.png';
 
   return (
     <div className="productList-Item">
       <input
         type="checkbox"
         checked={isChecked}
-        onChange={() => onCheck(id)}
+        onChange={() => onCheck(productId)}
         className="product-checkbox"
       />
       <div className="product-list">
-        <img src={image} alt={name} className="item-image" />
-        <div className="item-info">
-          <p className="item-name">상품명: {name}</p>
-          <p className="item-category">카테고리: {category}</p>
-          <p className="item-price">가격: {price.toLocaleString()}원</p>
+        <img src={thumbnail} alt={productName} className="product-image" />
+        <div className="product-info">
+          <p className="product-name">상품명: {productName}</p>
+          <p className="product-category">카테고리: {productCategory}</p>
+          <p className="product-price">가격: {price.toLocaleString()}원</p>
           <div className="product-item-button">
             <button
-              onClick={() => navigate(`/market/info/${id}`)}
+              onClick={() => navigate(`/market/info/${productId}`)}
               className="team-button"
             >
               상세보기
@@ -95,7 +56,7 @@ export default function ProductRemove() {
   const [searchOpt, setSearchOpt] = useState('name');
   const [selectedCategory, setSelectedCategory] = useState('전체');
   const [selectedItems, setSelectedItems] = useState([]);
-  const [items, setItems] = useState(mockData);
+  const [items, setItems] = useState([]);
 
   const categories = [
     '전체',
@@ -104,35 +65,72 @@ export default function ProductRemove() {
     '의류',
     '필기도구',
     '여행용품',
-    '가전제품',
+    '전자제품',
   ];
 
-  const handleCheck = (id) => {
+  // ✅ 등록된 상품 목록을 불러오기
+  useEffect(() => {
+    const fetchProducts = async () => {
+      try {
+        const response = await axios.get(
+          `${import.meta.env.VITE_API_URL}/api/market/products`
+        );
+        setItems(response.data);
+      } catch (error) {
+        console.error('상품 목록 조회 실패:', error);
+      }
+    };
+    fetchProducts();
+  }, []);
+
+  // ✅ 개별 상품 선택/해제
+  const handleCheck = (productId) => {
     setSelectedItems((prev) =>
-      prev.includes(id) ? prev.filter((item) => item !== id) : [...prev, id]
+      prev.includes(productId)
+        ? prev.filter((id) => id !== productId)
+        : [...prev, productId]
     );
   };
 
-  const handleRemoveSelected = () => {
-    setItems(items.filter((item) => !selectedItems.includes(item.id)));
-    setSelectedItems([]);
-  };
+  // ✅ 선택된 상품 삭제
+  const handleRemoveSelected = async () => {
+    if (selectedItems.length === 0) {
+      alert('삭제할 상품을 선택해주세요.');
+      return;
+    }
 
-  const handleSelectAll = () => {
-    if (selectedItems.length === items.length) {
+    try {
+      await axios.delete(`${import.meta.env.VITE_API_URL}/api/market/remove`, {
+        data: { productIds: selectedItems }, // 요청 본문으로 삭제할 상품 ID 목록 전달
+      });
+
+      // 삭제 후 리스트 갱신
+      setItems(items.filter((item) => !selectedItems.includes(item.productId)));
       setSelectedItems([]);
-    } else {
-      setSelectedItems(items.map((item) => item.id));
+      alert('선택한 상품이 삭제되었습니다.');
+    } catch (error) {
+      console.error('상품 삭제 실패:', error);
+      alert('상품 삭제 중 오류가 발생했습니다.');
     }
   };
 
+  // ✅ 전체 선택/해제
+  const handleSelectAll = () => {
+    setSelectedItems(
+      selectedItems.length === items.length
+        ? []
+        : items.map((item) => item.productId)
+    );
+  };
+
+  // ✅ 검색 및 카테고리 필터링 적용
   const filteredItems = items.filter((item) => {
     const matchesCategory =
-      selectedCategory === '전체' || item.category === selectedCategory;
+      selectedCategory === '전체' || item.productCategory === selectedCategory;
     const matchesSearch =
       searchOpt === 'name'
-        ? item.name.toLowerCase().includes(search.toLowerCase())
-        : item.category.toLowerCase().includes(search.toLowerCase());
+        ? item.productName.toLowerCase().includes(search.toLowerCase())
+        : item.productCategory.toLowerCase().includes(search.toLowerCase());
     return matchesCategory && matchesSearch;
   });
 
@@ -188,9 +186,9 @@ export default function ProductRemove() {
             <ul className="product-grid">
               {filteredItems.map((item) => (
                 <ListItem
-                  key={item.id}
+                  key={item.productId}
                   {...item}
-                  isChecked={selectedItems.includes(item.id)}
+                  isChecked={selectedItems.includes(item.productId)}
                   onCheck={handleCheck}
                 />
               ))}
