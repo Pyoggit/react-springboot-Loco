@@ -5,44 +5,40 @@ import Freeboard from "../../components/member/Board/Freeboard";
 import Qna from "../../components/member/Board/Qna";
 import Report from "../../components/member/Board/Report";
 import Improvement from "../../components/member/Board/Improvement";
-import NoticeNew from "../../components/member/Board/NoticeNew";
-import QnaNew from "../../components/member/Board/QnaNew";
 import NoticeboardView from "../../components/member/Board/NoticeboardView";
 import FreeView from "../../components/member/Board/FreeView";
 import NoticeEditor from "../../components/member/Board/NoticeEditor";
 import FreeboardEditor from "../../components/member/Board/FreeboardEditor";
-import ImprovementNew from "../../components/member/Board/ImprovementNew";
 import ReportEditor from "../../components/member/Board/ReportEditor";
-import ReportNew from "../../components/member/Board/ReportNew";
-import FaqNew from "../../components/member/Board/FaqNew";
 import ReportView from "../../components/member/Board/ReportView";
+import BoardNew from "../../components/member/Board/BoardNew";
 
 const BoardPage = () => {
   return (
     <Routes>
-      <Route path="notice" element={<Notice />} />
-      <Route path="faq" element={<Faq />} />
-      <Route path="freeboard" element={<Freeboard />} />
-      <Route path="qna" element={<Qna />} />
+      {/* <Route path="notice" element={<Notice />} /> */}
+      {/* <Route path="faq" element={<Faq />} /> */}
+      {/* <Route path="freeboard" element={<Freeboard />} /> */}
+      {/* <Route path="qna" element={<Qna />} /> */}
       <Route path="report" element={<Report />} />
-      <Route path="improvement" element={<Improvement />} />
+      {/* <Route path="improvement" element={<Improvement />} /> */}
 
-      <Route path="notice/new" element={<NoticeNew />} />
-      <Route path="qna/qnanew" element={<QnaNew />} />
-      <Route path="improvement/improvementnew" element={<ImprovementNew />} />
-      <Route path="report/reportnew" element={<ReportNew />} />
-      <Route path="faq/faqnew" element={<FaqNew />} />
+      {/* 글 작성 */}
+      <Route path="/new" element={<BoardNew />} />
 
-      <Route path="notice/noticeboardview/:id" element={<NoticeboardView />} />
-      <Route path="freeboard/freeview/:id" element={<FreeView />} />
-      <Route path="report/reportview/:id" element={<ReportView />} />
+      {/* <Route path="notice/view/:id" element={<NoticeboardView />} /> */}
+      {/* <Route path="qna/view/:id" element={<QnaView />} /> */}
+      {/* <Route path="freeboard/view/:id" element={<FreeView />} /> */}
+      {/* <Route path="improvement/view/:id" element={<ImprovementView />} /> */}
+      <Route path="report/view/:id" element={<ReportView />} />
+      {/* <Route path="faq/view/:id" element={<FaqView />} /> */}
 
-      <Route path="notice/editor/:id" element={<NoticeEditor />} />
-      <Route path="freeboard/editor/:id" element={<FreeboardEditor />} />
-      <Route path="improvement/editor/:id" element={<NoticeEditor />} />
+      {/* <Route path="notice/editor/:id" element={<NoticeEditor />} /> */}
+      {/* <Route path="freeboard/editor/:id" element={<FreeboardEditor />} /> */}
+      {/* <Route path="improvement/editor/:id" element={<ImprovementEditor />} /> */}
       <Route path="report/editor/:id" element={<ReportEditor />} />
-      {/* <Route path="qna/editor/:id" element={<NoticeEditor />} />
-      <Route path="faq/editor/:id" element={<NoticeEditor />} /> */}
+      {/* <Route path="qna/editor/:id" element={<QnaEditor />} /> */}
+      {/* <Route path="faq/editor/:id" element={<FaqEditor />} /> */}
     </Routes>
   );
 };

@@ -145,7 +145,7 @@ const Notice = () => {
           <div
             key={item.id}
             className="notice-board-item"
-            onClick={() => nav(`/board/notice/noticeboardview/${item.id}`)} // 클릭 시 해당 글로 이동 (경로 수정됨)
+            onClick={() => handlePostClick(item)} // 클릭 시 조회수 증가 및 해당 글로 이동
           >
             <span className="notice-board-title">{item.title}</span>
             <span className="notice-board-writer">{item.writer}</span>

@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.loco.aroundme.mapper.BoardMapper">
+
+	<insert id="insertBoard"
+		parameterType="com.loco.aroundme.domain.Board">
+		INSERT INTO BOARD (BOARD_ID, TYPE, TITLE, USER_ID, CONTENT, VIEWS,
+		BOARD_REGDATE, PICTURE_URL)
+		VALUES (Board_SEQ.NEXTVAL, #{type}, #{title}, #{userId}, #{content}, #{views},
+		SYSTIMESTAMP, #{pictureUrl})
+	</insert>
+</mapper>

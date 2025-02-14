@@ -1,51 +1,10 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import axios from "axios";
 import "@/css/member/board/Notice.css";
 
-const mockData = [
-  {
-    id: 1,
-    title: "제목1",
-    content: "내용1",
-    writer: "김김김",
-    createdDate: new Date("2025-01-01").getTime(),
-    views: 0, // 조회수 추가
-  },
-  {
-    id: 2,
-    title: "제목2",
-    content: "내용2",
-    writer: "박박박",
-    createdDate: new Date("2025-01-09").getTime(),
-    views: 0, // 조회수 추가
-  },
-  {
-    id: 3,
-    title: "제목3",
-    content: "내용3",
-    writer: "이이이",
-    createdDate: new Date("2025-01-13").getTime(),
-    views: 0, // 조회수 추가
-  },
-  {
-    id: 4,
-    title: "제목4",
-    content: "내용4",
-    writer: "홍홍홍",
-    createdDate: new Date("2025-01-14").getTime(),
-    views: 0, // 조회수 추가
-  },
-  {
-    id: 5,
-    title: "제목5",
-    content: "내용5",
-    writer: "최최최",
-    createdDate: new Date("2025-01-15").getTime(),
-    views: 0, // 조회수 추가
-  },
-];
-
 const Freeboard = () => {
+  const [boards, setBoards] = useState([]); // API로부터 받은 게시글 목록
   const [search, setSearch] = useState("");
   const [sortType, setSortType] = useState("latest");
   const [searchOpt, setSearchOpt] = useState("title");
@@ -53,21 +12,34 @@ const Freeboard = () => {
   const postsPerPage = 10;
   const nav = useNavigate();
 
+  // 컴포넌트가 마운트되면 백엔드 API에서 자유게시판 목록을 불러옴
+  useEffect(() => {
+    axios
+      .get(`${import.meta.env.VITE_API_URL}/api/board/freeboard`)
+      .then((response) => {
+        // 응답 데이터는 Board 객체 배열이라고 가정 (예: boardId, title, writer, boardRegdate, views 등)
+        setBoards(response.data);
+      })
+      .catch((error) => {
+        console.error("자유게시판 목록 조회 실패:", error);
+      });
+  }, []);
+
   const onChangeSearch = (e) => setSearch(e.target.value);
   const onChangeSearchOpt = (e) => setSearchOpt(e.target.value);
   const onChangeSortType = (e) => setSortType(e.target.value);
 
   const getFilteredItems = () => {
-    if (search === "") return mockData;
-    return mockData.filter((item) =>
+    if (search === "") return boards;
+    return boards.filter((item) =>
       item[searchOpt].toLowerCase().includes(search.toLowerCase())
     );
   };
 
   const sortedData = getFilteredItems().sort((a, b) =>
     sortType === "oldest"
-      ? Number(a.createdDate) - Number(b.createdDate)
-      : Number(b.createdDate) - Number(a.createdDate)
+      ? new Date(a.boardRegdate) - new Date(b.boardRegdate)
+      : new Date(b.boardRegdate) - new Date(a.boardRegdate)
   );
 
   const indexOfLastPost = currentPage * postsPerPage;
@@ -85,13 +57,9 @@ const Freeboard = () => {
     (_, i) => i + 1
   );
 
+  // 게시글 클릭 시 상세 페이지로 이동 (백엔드 상세 조회 시 조회수 증가 처리)
   const handlePostClick = (item) => {
-    // 조회수 증가
-    const updatedMockData = mockData.map((post) =>
-      post.id === item.id ? { ...post, views: post.views + 1 } : post
-    );
-
-    nav(`/board/freeboard/freeview/${item.id}`);
+    nav(`/board/freeboard/freeview/${item.boardId}`);
   };
 
   return (
@@ -100,7 +68,7 @@ const Freeboard = () => {
         <div className="notice-title">자유 게시판</div>
         <button
           className="notice-write-button"
-          onClick={() => nav("/board/notice/new")}
+          onClick={() => nav("/board/freeboard/new")}
         >
           글쓰기
         </button>
@@ -134,7 +102,7 @@ const Freeboard = () => {
               <td className="notice-board-title">글제목</td>
               <td className="notice-board-writer">작성자</td>
               <td className="notice-board-date">작성일</td>
-              <td className="notice-board-views">조회수</td> {/* 조회수 추가 */}
+              <td className="notice-board-views">조회수</td>
             </tr>
           </tbody>
         </table>
@@ -143,14 +111,14 @@ const Freeboard = () => {
       <div>
         {currentPosts.map((item) => (
           <div
-            key={item.id}
+            key={item.boardId}
             className="notice-board-item"
-            onClick={() => nav(`/board/freeboard/freeview/${item.id}`)} // 클릭 시 해당 글로 이동 (경로 수정됨)
+            onClick={() => handlePostClick(item)}
           >
             <span className="notice-board-title">{item.title}</span>
             <span className="notice-board-writer">{item.writer}</span>
             <span className="notice-board-date">
-              {new Date(item.createdDate).toLocaleDateString()}
+              {new Date(item.boardRegdate).toLocaleDateString()}
             </span>
             <span className="notice-board-views">{item.views}</span>
           </div>

@@ -232,7 +232,7 @@ const Improvement = () => {
         불편&개선사항
         <button
           className="qna-write-button"
-          onClick={() => navigate("/board/improvement/Improvementnew")} // navigate 함수로 변경
+          onClick={() => navigate("/board/improvement/new")} // navigate 함수로 변경
         >
           글쓰기
         </button>
