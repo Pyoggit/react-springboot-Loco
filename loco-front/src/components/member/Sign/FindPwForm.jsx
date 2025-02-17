@@ -1,41 +1,62 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import axios from "@/utils/AxiosConfig";
 import "@/css/member/sign/FindPwForm.css";
 
 const FindPwForm = () => {
-  //   const [email, setEmail] = useState("");
-  //   const [name, mobile] = useState("");
+  const [name, setName] = useState("");
   const [email, setEmail] = useState("");
+  const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log("Find Email Attempt:", { email });
-  };
+    setError("");
+    setLoading(true);
 
-  const onFindEmailClick = () => {
-    navigate("/send/email/result"); // 일부 가린 이메일을 보여주는 페이지로 이동동
+    try {
+      const response = await axios.post("/api/users/request-verification", {
+        name,
+        email,
+      });
+
+      if (response.status === 200) {
+        navigate(`/find-password/verify?email=${email}`);
+      }
+    } catch (err) {
+      setError(err.response?.data || "인증번호 요청 실패");
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
     <div id="auth-wrapper">
       <div className="auth-container">
         <h2>비밀번호 찾기</h2>
-        <form onSubmit={handleSubmit} className="find-email-form">
+        <form onSubmit={handleSubmit} className="login-form">
           <div className="input-group">
-            <label htmlFor="email">이메일</label>
+            <label>이름</label>
             <input
               type="text"
-              id="email"
-              placeholder="이메일을 입력하세요"
+              value={name}
+              onChange={(e) => setName(e.target.value)}
+              required
+            />
+          </div>
+          <div className="input-group">
+            <label>이메일</label>
+            <input
+              type="email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               required
             />
           </div>
-
-          <button type="submit" className="find-pw-btn">
-            비밀번호 찾기
+          {error && <p className="error-message">{error}</p>}
+          <button type="submit" className="find-pw-btn" disabled={loading}>
+            {loading ? "요청 중..." : "인증번호 받기"}
           </button>
         </form>
       </div>
