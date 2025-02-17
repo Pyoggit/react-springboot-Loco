@@ -26,6 +26,8 @@ public interface CircleMapper {
 	void deleteCircle(Long circleId);
 
 	void updateMemberCount(@Param("circleId") Long circleId);
+	
+	
 
 	@Select("SELECT * FROM CIRCLE WHERE CIRCLE_ID = #{circleId}")
 	Circle getCircleById(Long circleId);

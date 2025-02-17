@@ -9,6 +9,7 @@ import com.loco.aroundme.common.security.domain.CustomUser;
 import com.loco.aroundme.domain.Circle;
 import com.loco.aroundme.domain.Users;
 import com.loco.aroundme.mapper.CircleMapper;
+import com.loco.aroundme.mapper.UsersMapper;
 
 @Service
 public class CircleServiceImpl implements CircleService {
@@ -81,4 +82,6 @@ public class CircleServiceImpl implements CircleService {
 	        return circleMapper.isUserAttending(circleId, userId) > 0;
 	    }
 	
+	    
+	    
 }
