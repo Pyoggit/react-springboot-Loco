@@ -59,11 +59,9 @@ const BoardView = () => {
   };
 
   // 게시글 수정 페이지로 이동 (상태로 게시글 데이터를 전달)
-  // 경로를 '/board/${type}/boardEditor/${boardId}' 로 수정
   const onClickEdit = () => {
-    nav(`/board/${type}/boardEditor/${boardId}`, { state: { boardItem } });
+    nav(`/board/${type}/boardeditor/${boardId}`, { state: { boardItem } });
   };
-
   // 취소 시 게시판 목록 페이지로 이동
   const onClickCancel = () => {
     nav(`/board/${type}`);
@@ -87,11 +85,11 @@ const BoardView = () => {
         }
       );
       console.log("댓글 등록 성공, 응답:", response.data);
-      setComments([...comments, response.data]);
-      // 등록 후 상태 초기화
+      // ✅ 새로운 댓글을 맨 위에 추가 (최근 댓글이 먼저 보이도록)
+      setComments((prevComments) => [...prevComments, response.data]);
+
+      // 등록 후 입력 필드 초기화
       setNewComment("");
-      setEditingCommentId(null);
-      setEditingCommentContent("");
     } catch (error) {
       console.error("댓글 추가 실패:", error);
       window.alert("댓글 추가 중 오류가 발생했습니다.");
@@ -223,7 +221,7 @@ const BoardView = () => {
                     }}
                     className="freeview-commentButton"
                   >
-                    삭제
+                    취소
                   </button>
                 </div>
               ) : (

@@ -15,6 +15,13 @@
 		#{views}, SYSDATE,
 		#{pictureUrl})
 	</insert>
+	
+	<!-- ✅ 게시글 수정 -->
+    <update id="updateBoard">
+        UPDATE BOARD
+        SET TITLE = #{title}, CONTENT = #{content}, PICTURE_URL = #{pictureUrl}
+        WHERE BOARD_ID = #{boardId}
+    </update>
 
 	<!-- ✅ 게시판 타입별 게시글 조회 -->
 	<select id="selectBoardsByType" parameterType="String"
@@ -113,9 +120,6 @@
 		<result property="regdate" column="REGDATE"
 			javaType="java.util.Date" jdbcType="TIMESTAMP" />
 	</resultMap>
-
-
-
 
 </mapper>
 

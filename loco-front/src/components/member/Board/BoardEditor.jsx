@@ -14,7 +14,9 @@ const BoardEditor = () => {
     content: "",
     writer: "",
   });
+
   const [selectedFile, setSelectedFile] = useState(null);
+  const [previewImage, setPreviewImage] = useState(null);
   const [loading, setLoading] = useState(true);
 
   // 기존 boardItem이 없으면 백엔드에서 데이터 fetch
@@ -25,18 +27,19 @@ const BoardEditor = () => {
         content: state.boardItem.content,
         writer: state.boardItem.writer,
       });
+      setPreviewImage(state.boardItem.pictureUrl); // 기존 이미지 미리보기 설정
       setLoading(false);
     } else {
       axios
         .get(`${import.meta.env.VITE_API_URL}/api/board/${type}/${boardId}`)
         .then((response) => {
-          // response.data가 { board: {...}, comments: [...] } 형태라면:
           const board = response.data.board;
           setFormData({
             title: board.title,
             content: board.content,
             writer: board.writer,
           });
+          setPreviewImage(board.pictureUrl); // 기존 이미지 미리보기 설정
         })
         .catch((error) => {
           console.error("게시글 데이터를 가져오는 중 오류 발생:", error);
@@ -55,7 +58,9 @@ const BoardEditor = () => {
 
   const handleFileChange = (e) => {
     if (e.target.files && e.target.files[0]) {
-      setSelectedFile(e.target.files[0]);
+      const file = e.target.files[0];
+      setSelectedFile(file);
+      setPreviewImage(URL.createObjectURL(file)); // 새로운 이미지 미리보기 업데이트
     }
   };
 
@@ -71,12 +76,18 @@ const BoardEditor = () => {
 
     try {
       const updateData = new FormData();
-      updateData.append("title", formData.title);
-      updateData.append("content", formData.content);
-      updateData.append("writer", formData.writer);
+      const boardData = {
+        title: formData.title,
+        content: formData.content,
+        writer: formData.writer,
+      };
+
+      updateData.append("post", JSON.stringify(boardData));
+
       if (selectedFile) {
         updateData.append("image", selectedFile);
       }
+
       await axios.put(
         `${import.meta.env.VITE_API_URL}/api/board/${type}/${boardId}`,
         updateData,
@@ -84,8 +95,9 @@ const BoardEditor = () => {
           headers: { "Content-Type": "multipart/form-data" },
         }
       );
+
       alert("게시글이 수정되었습니다.");
-      navigate(`/board/${type}`);
+      navigate(`/board/${type}/${boardId}`);
     } catch (error) {
       console.error("게시글 수정 실패:", error);
       alert("게시글 수정에 실패했습니다.");
@@ -107,7 +119,7 @@ const BoardEditor = () => {
   };
 
   if (loading) {
-    return <div>데이터 로딩중...</div>;
+    return <div>데이터 로딩 중...</div>;
   }
 
   return (
@@ -130,6 +142,7 @@ const BoardEditor = () => {
           value={formData.writer}
           onChange={handleChange}
         />
+
         <textarea
           name="content"
           placeholder="내용"
@@ -137,13 +150,27 @@ const BoardEditor = () => {
           value={formData.content}
           onChange={handleChange}
         />
-        {/* 파일 수정 입력 */}
+        {/* 기존 이미지 미리보기 */}
+        {previewImage && (
+          <div className="image-preview-container">
+            <p>현재 이미지:</p>
+            <img
+              src={previewImage}
+              alt="기존 이미지"
+              className="preview-image"
+            />
+          </div>
+        )}
+
+        {/* 파일 업로드 */}
         <input
           type="file"
           ref={fileInputRef}
           onChange={handleFileChange}
           accept="image/*"
+          className="file-input"
         />
+
         <div className="notice-button">
           <button
             type="button"

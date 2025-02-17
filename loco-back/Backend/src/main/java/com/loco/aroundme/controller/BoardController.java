@@ -140,6 +140,30 @@ public class BoardController {
 		}
 	}
 
+	/** ✅ 게시글 수정 */
+	@PutMapping("/{type}/{id}")
+	public ResponseEntity<String> updateBoard(@PathVariable String type, @PathVariable Long id,
+			@RequestPart("post") String postJson, @RequestPart(value = "image", required = false) MultipartFile image) {
+		try {
+			log.info("📌 게시글 수정 요청: {}", postJson);
+			String imageUrl = null;
+
+			// 이미지가 새로 업로드되었을 경우 저장
+			if (image != null && !image.isEmpty()) {
+				imageUrl = fileService.saveFile(image);
+				log.info("✅ 새 이미지 저장 완료: {}", imageUrl);
+			}
+
+			// JSON을 Board 객체로 변환 후 수정
+			Board board = boardService.convertJsonToBoard(postJson, imageUrl);
+			boardService.updateBoard(type, id, board);
+			return ResponseEntity.ok("게시글 수정 성공");
+		} catch (Exception e) {
+			log.error("❌ 게시글 수정 중 오류 발생: {}", e.getMessage());
+			return ResponseEntity.badRequest().body("게시글 수정 실패: " + e.getMessage());
+		}
+	}
+
 	/** ✅ 특정 게시판 유형의 게시글 목록 조회 (추가) */
 	@GetMapping("/{type}")
 	public List<Board> getBoardByType(@PathVariable String type) {
@@ -166,24 +190,6 @@ public class BoardController {
 	public ResponseEntity<?> increaseViews(@PathVariable String type, @PathVariable Long id) {
 		boardService.increaseViews(id);
 		return ResponseEntity.ok("조회수 증가 성공");
-	}
-
-	@PutMapping("/{type}/{id}")
-	public ResponseEntity<?> updateBoard(@PathVariable String type, @PathVariable Long id,
-			@RequestPart("post") String postJson, @RequestPart(value = "image", required = false) MultipartFile image) {
-		try {
-			String pictureUrl = null;
-			if (image != null && !image.isEmpty()) {
-				pictureUrl = fileService.saveFile(image);
-			}
-			// JSON 데이터를 Board 객체로 변환 (pictureUrl은 수정 시 전달받은 값으로 설정)
-			Board board = boardService.convertJsonToBoard(postJson, pictureUrl);
-			// updateBoard 메서드 호출 (게시글의 ID를 설정)
-			boardService.updateBoard(type, id, board);
-			return ResponseEntity.ok("게시글 수정 성공");
-		} catch (Exception e) {
-			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("게시글 수정 실패: " + e.getMessage());
-		}
 	}
 
 	/** 댓글 등록 (userId 사용) */

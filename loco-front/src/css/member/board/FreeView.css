@@ -105,7 +105,7 @@
 
 .freeview-commentInput button {
   padding: 10px 20px;
-  background-color: #deafe4;
+  background-color: #6b7894;
   color: white;
   border: none;
   border-radius: 5px;
@@ -113,7 +113,7 @@
 }
 
 .freeview-commentInput button:hover {
-  background-color: #0b7dda;
+  background-color: #8792aa;
 }
 
 .freeview-commentButton {
@@ -135,8 +135,8 @@
   right: 0;
   width: 0;
   height: 2px;
-  background-color: #deb5db;
-  transition: width 0.3s ease;
+  background-color: #e1a4dc;
+  transition: width 0.4s ease;
 }
 
 .freeview-commentButton:hover::after {

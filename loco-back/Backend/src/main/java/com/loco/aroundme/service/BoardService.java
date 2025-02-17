@@ -45,8 +45,9 @@ public interface BoardService {
 	/** 특정 게시글의 댓글 조회 */
 	List<BoardComment> getCommentsByBoardId(Long boardId);
 
-	/** 게시글 수정 */
-    void updateBoard(String type, Long id, Board board);
+    /** ✅ 게시글 수정 */
+    void updateBoard(String type, Long boardId, Board board);
+
 
     /** 댓글 등록 (userId 사용) */
     BoardComment addComment(Long boardId, BoardComment comment);
@@ -59,4 +60,5 @@ public interface BoardService {
 
 	/** 게시글 삭제 */
 	void deleteBoard(String type, Long id);
+	
 }

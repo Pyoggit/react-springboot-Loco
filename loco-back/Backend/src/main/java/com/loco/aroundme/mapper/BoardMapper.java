@@ -40,8 +40,8 @@ public interface BoardMapper {
 	// 특정 게시글 조회
 	Board selectBoardById(@Param("id") Long id);
 
-	// 게시글 수정
-	void updateBoard(Board board);
+	/** ✅ 게시글 수정 */
+    void updateBoard(Board board);
 
 	// 게시글 삭제
 	void deleteBoard(@Param("id") Long id);

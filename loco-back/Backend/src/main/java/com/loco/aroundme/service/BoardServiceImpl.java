@@ -103,9 +103,20 @@ public class BoardServiceImpl implements BoardService {
 		return boardMapper.selectBoardById(id);
 	}
 
-	/** 게시글 수정 */
+	/** ✅ 게시글 수정 */
 	@Override
 	public void updateBoard(String type, Long id, Board board) {
+		Board existingBoard = boardMapper.selectBoardById(id);
+
+		if (existingBoard == null) {
+			throw new RuntimeException("게시글을 찾을 수 없습니다.");
+		}
+
+		// 새로운 이미지가 업로드되지 않았다면 기존 이미지 유지
+		if (board.getPictureUrl() == null) {
+			board.setPictureUrl(existingBoard.getPictureUrl());
+		}
+
 		board.setBoardId(id);
 		boardMapper.updateBoard(board);
 	}
