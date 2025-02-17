@@ -1,56 +1,58 @@
-import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import React, { useState, useEffect } from "react";
+import { useLocation, useNavigate } from "react-router-dom";
+import axios from "@/utils/AxiosConfig";
 import "@/css/member/sign/FindEmailForm.css";
 
 const FindEmailResult = () => {
-  //   const [email, setEmail] = useState("");
-  //   const [name, mobile] = useState("");
-  const [name, setName] = useState("");
-  const [mobile, setMobile] = useState("");
+  const location = useLocation();
   const navigate = useNavigate();
+  const queryParams = new URLSearchParams(location.search);
+  const name = queryParams.get("name") || "";
+  const mobile = queryParams.get("mobile") || "";
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    console.log("Find Email Attempt:", { name, mobile });
-  };
+  const [email, setEmail] = useState(null);
+  const [error, setError] = useState("");
 
-  const onFindEmailClick = () => {
-    navigate("/find/email/result"); // 일부 가린 이메일을 보여주는 페이지로 이동동
+  useEffect(() => {
+    if (name && mobile) {
+      findEmail();
+    }
+  }, [name, mobile]);
+
+  const findEmail = async () => {
+    try {
+      const response = await axios.post("/api/users/find-email", {
+        name,
+        mobile,
+      });
+
+      if (response.data.email) {
+        setEmail(response.data.email); // ✅ 객체가 아닌 email 문자열만 저장
+      } else {
+        setError("일치하는 계정이 없습니다.");
+      }
+    } catch (err) {
+      console.error("이메일 찾기 오류:", err);
+      setError("이메일을 찾을 수 없습니다. 다시 시도해주세요.");
+    }
   };
 
   return (
     <div id="auth-wrapper">
       <div className="auth-container">
-        <h2>이메일 찾기</h2>
-        <form onSubmit={handleSubmit} className="find-email-form">
-          <div className="input-group">
-            <label htmlFor="password">이름</label>
-            <input
-              type="password"
-              id="password"
-              placeholder="이름을 입력하세요"
-              value={name}
-              onChange={(e) => setName(e.target.value)}
-              required
-            />
-          </div>
-
-          <div className="input-group">
-            <label htmlFor="email">휴대폰 번호</label>
-            <input
-              type="email"
-              id="email"
-              placeholder="휴대폰 번호를 입력하세요"
-              value={mobile}
-              onChange={(e) => setMobile(e.target.value)}
-              required
-            />
-          </div>
-
-          <button type="submit" className="find-email-btn">
-            이메일 찾기
-          </button>
-        </form>
+        <h2>이메일 찾기 결과</h2>
+        {email ? (
+          <>
+            <p className="email-result">
+              회원님의 이메일: <strong>{email}</strong>
+            </p>
+            <button className="login-btn" onClick={() => navigate("/login")}>
+              로그인하러 가기
+            </button>
+          </>
+        ) : (
+          <p className="error-message">{error}</p>
+        )}
       </div>
     </div>
   );
