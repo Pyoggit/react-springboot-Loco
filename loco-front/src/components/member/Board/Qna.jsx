@@ -181,7 +181,7 @@ const mockData = [
   },
 ];
 
-const Qna = () => {
+const Faq = () => {
   const [search, setSearch] = useState("");
   const [searchField, setSearchField] = useState("title");
   const [sortType, setSortType] = useState("latest");
@@ -229,10 +229,10 @@ const Qna = () => {
   return (
     <div className="qna-list">
       <header className="qna-header">
-        Q&A
+        FAQ(자주 묻는 질문)
         <button
           className="qna-write-button"
-          onClick={() => navigate("/board/qna/new")}
+          onClick={() => navigate("/board/faq/new")}
         >
           글쓰기
         </button>
@@ -320,4 +320,4 @@ const Qna = () => {
   );
 };
 
-export default Qna;
+export default Faq;

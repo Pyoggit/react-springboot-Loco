@@ -181,7 +181,7 @@ const mockData = [
   },
 ];
 
-const Improvement = () => {
+const Faq = () => {
   const [search, setSearch] = useState("");
   const [searchField, setSearchField] = useState("title");
   const [sortType, setSortType] = useState("latest");
@@ -229,10 +229,10 @@ const Improvement = () => {
   return (
     <div className="qna-list">
       <header className="qna-header">
-        불편&개선사항
+        FAQ(자주 묻는 질문)
         <button
           className="qna-write-button"
-          onClick={() => navigate("/board/improvement/new")} // navigate 함수로 변경
+          onClick={() => navigate("/board/faq/new")}
         >
           글쓰기
         </button>
@@ -268,7 +268,7 @@ const Improvement = () => {
         <table>
           <tbody>
             <tr>
-              <td className="qna-board-title">불편&개선사항</td>
+              <td className="qna-board-title"> 궁금한 질문</td>
               <td className="qna-board-writer">작성자</td>
               <td className="qna-board-date">작성일</td>
             </tr>
@@ -320,4 +320,4 @@ const Improvement = () => {
   );
 };
 
-export default Improvement;
+export default Faq;
