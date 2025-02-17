@@ -1,22 +1,45 @@
+// import axios from "axios";
+
+// const instance = axios.create({
+//   baseURL: "http://localhost:8080",
+//   withCredentials: true,
+// });
+
+// // ✅ 요청 인터셉터 (로그아웃 후에는 헤더에 토큰을 안 붙이도록 수정)
+// instance.interceptors.request.use(
+//   (config) => {
+//     // ✅ `document.cookie`에서 직접 쿠키 가져오기 (로그아웃 후 삭제됐는지 확인)
+//     const accessToken = document.cookie
+//       .split("; ")
+//       .find(
+//         (row) =>
+//           row.startsWith("normal_accessToken=") ||
+//           row.startsWith("kakao_accessToken=")
+//       )
+//       ?.split("=")[1];
+
+//     console.log("🔍 현재 accessToken 값:", accessToken); // ✅ 디버깅 추가
+
+//     if (accessToken) {
+//       config.headers.Authorization = `Bearer ${accessToken}`;
+//     } else {
+//       console.log("⚠️ accessToken 없음 → 인증 헤더 제거");
+//       delete config.headers.Authorization; // ✅ 로그아웃 후 Authorization 헤더 삭제
+//     }
+
+//     return config;
+//   },
+//   (error) => Promise.reject(error)
+// );
+
+// export default instance;
+
 import axios from "axios";
+axios.defaults.withCredentials = true;
 
-// Axios 기본 설정 (백엔드 API 주소)
-axios.defaults.baseURL = "http://localhost:8080";
-axios.defaults.withCredentials = true; // 쿠키를 포함하여 요청
+const instance = axios.create({
+  baseURL: "http://localhost:8080",
+  withCredentials: true, // ✅ 쿠키 포함 요청
+});
 
-// 모든 요청에 JWT 토큰 자동 추가
-axios.interceptors.request.use(
-  (config) => {
-    // 일반 유저 토큰(normal_accessToken)이 있으면 우선 사용, 없으면 관리자 토큰(admin_accessToken) 사용
-    const token =
-      localStorage.getItem("normal_accessToken") ||
-      localStorage.getItem("admin_accessToken");
-    if (token) {
-      config.headers.Authorization = `Bearer ${token}`;
-    }
-    return config;
-  },
-  (error) => Promise.reject(error)
-);
-
-export default axios;
+export default instance;
