@@ -3,9 +3,9 @@ import ProductPage from '../../components/member/Market/ProductPage';
 import ProductInsert from '../../components/member/Market/ProductInsert';
 import ProductInfo from '../../components/member/Market/ProductInfo';
 import ProductUpdate from '../../components/member/Market/ProductUpdate';
-import { SuccessPage } from '../../components/member/Market/Success';
-import { FailPage } from '../../components/member/Market/Fail';
 import ProductRemove from '../../components/member/Market/ProductRemove';
+import { PaymentSuccess } from '../../components/member/Market/PaymentSuccess';
+import { PaymentFail } from '../../components/member/Market/PaymentFail';
 
 export default function MarketPage() {
   return (
@@ -16,8 +16,8 @@ export default function MarketPage() {
         <Route path="info/:id" element={<ProductInfo />} />
         <Route path="update/:id" element={<ProductUpdate />} />
         <Route path="remove" element={<ProductRemove />} />
-        <Route path="payment-success" element={<SuccessPage />} />
-        <Route path="payment-fail" element={<FailPage />} />
+        <Route path="payment-success" element={<PaymentSuccess />} />
+        <Route path="payment-fail" element={<PaymentFail />} />
       </Routes>
     </>
   );

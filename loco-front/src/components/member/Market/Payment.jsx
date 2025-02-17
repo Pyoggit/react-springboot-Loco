@@ -1,25 +1,85 @@
-import React from 'react';
-import { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { loadTossPayments } from '@tosspayments/payment-sdk';
+import axios from 'axios';
 
-const Payment = ({ amount, orderName }) => {
+const Payment = ({ amount, orderName, productId }) => {
+  const [userId, setUserId] = useState(null);
+  const [userName, setUserName] = useState('고객'); // 기본값 설정
+
+  // ✅ 로그인한 사용자 정보 가져오기
+  useEffect(() => {
+    const loginUser = localStorage.getItem('loginUser');
+    if (loginUser) {
+      try {
+        const parsedUser = JSON.parse(loginUser);
+        console.log('✅ 로그인한 사용자 정보:', parsedUser);
+        setUserId(parsedUser.userId);
+        setUserName(parsedUser.userName);
+      } catch (error) {
+        console.error('❌ 로그인 사용자 정보 파싱 오류:', error);
+      }
+    }
+  }, []);
+
   const initPayment = async () => {
     try {
       const tossPayments = await loadTossPayments(
         'test_ck_ORzdMaqN3wnppavR15Ab85AkYXQG'
       );
-      const orderId = 'ORDER_123456789';
 
-      tossPayments.requestPayment('카드', {
-        amount: amount,
-        orderId: orderId,
-        orderName: orderName,
-        customerName: '권민성',
-        successUrl: `${window.location.origin}/market/payment-success?orderId=${orderId}&amount=${amount}`,
-        failUrl: `${window.location.origin}/market/payment-fail?orderId=${orderId}&amount=${amount}`,
-      });
+      const loginUser = localStorage.getItem('loginUser');
+      if (!loginUser) {
+        alert('로그인이 필요합니다.');
+        return;
+      }
+
+      const parsedUser = JSON.parse(loginUser);
+      const userId = parsedUser.userId;
+      const customerName = parsedUser.userName; // ✅ 구매자 이름 추가
+
+      if (!productId) {
+        alert('상품 정보가 없습니다. 다시 시도해주세요.');
+        return;
+      }
+
+      // ✅ 주문 생성 요청 (customerName 포함)
+      const orderResponse = await axios.post(
+        `${import.meta.env.VITE_API_URL}/api/payment/create-order`,
+        {
+          userId: userId,
+          customerName: customerName, // ✅ 구매자 이름 추가
+          productId: productId,
+          productName: orderName,
+          totalAmount: amount,
+          paymentMethod: '카드',
+        }
+      );
+
+      const { success, orderId, message } = orderResponse.data;
+
+      if (!success || !orderId) {
+        alert(message || '주문 생성 중 오류가 발생했습니다.');
+        return;
+      }
+
+      console.log('✅ 생성된 Order ID:', orderId);
+
+      // ✅ Toss Payments 결제 요청
+      tossPayments
+        .requestPayment('카드', {
+          amount: amount,
+          orderId: orderId,
+          orderName: orderName,
+          customerName: customerName, // ✅ 구매자 이름 반영
+          successUrl: `${window.location.origin}/market/payment-success?orderId=${orderId}&amount=${amount}&productId=${productId}`,
+          failUrl: `${window.location.origin}/market/payment-fail?orderId=${orderId}`,
+        })
+        .catch((error) => {
+          console.error('❌ Toss 결제 창 오류:', error);
+          alert('결제 요청 중 문제가 발생했습니다. 다시 시도해주세요.');
+        });
     } catch (error) {
-      console.error(error);
+      console.error('❌ 결제 요청 중 오류 발생:', error);
     }
   };
 
