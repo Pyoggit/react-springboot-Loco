@@ -1,7 +1,7 @@
 import { useSearchParams } from 'react-router-dom';
 import '@/css/member/market/Fail.css';
 
-export function FailPage() {
+export function PaymentFail() {
   const [searchParams] = useSearchParams();
 
   const orderId = searchParams.get('orderId') || '알 수 없음';
