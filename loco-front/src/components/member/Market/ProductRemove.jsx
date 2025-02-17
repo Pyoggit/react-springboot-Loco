@@ -68,12 +68,16 @@ export default function ProductRemove() {
     '전자제품',
   ];
 
-  // ✅ 등록된 상품 목록을 불러오기
+  // ✅ 내 상품 목록 불러오기
   useEffect(() => {
     const fetchProducts = async () => {
       try {
+        const token = localStorage.getItem('accessToken');
         const response = await axios.get(
-          `${import.meta.env.VITE_API_URL}/api/market/products`
+          `${import.meta.env.VITE_API_URL}/api/market/my-products`,
+          {
+            headers: { Authorization: `Bearer ${token}` },
+          }
         );
         setItems(response.data);
       } catch (error) {
@@ -100,8 +104,10 @@ export default function ProductRemove() {
     }
 
     try {
+      const token = localStorage.getItem('accessToken');
       await axios.delete(`${import.meta.env.VITE_API_URL}/api/market/remove`, {
-        data: { productIds: selectedItems }, // 요청 본문으로 삭제할 상품 ID 목록 전달
+        headers: { Authorization: `Bearer ${token}` },
+        data: { productIds: selectedItems },
       });
 
       // 삭제 후 리스트 갱신

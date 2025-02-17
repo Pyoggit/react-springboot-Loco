@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.loco.aroundme.mapper.PaymentMapper">
+	<!-- ✅ 결제 정보 저장 (CUSTOMER_NAME 추가) -->
+	<insert id="insertOrder"
+		parameterType="com.loco.aroundme.domain.Order">
+		INSERT INTO ORDERS (
+		ORDER_ID, USER_ID, CUSTOMER_NAME,
+		PRODUCT_ID, PAYMENT_METHOD, TOTAL_AMOUNT, STATUS,
+		ORDER_DATE,
+		PAYMENT_KEY
+		) VALUES (
+		#{orderId}, #{userId}, #{customerName},
+		#{productId}, #{paymentMethod},
+		#{totalAmount}, #{status},
+		SYSTIMESTAMP, #{paymentKey, jdbcType=VARCHAR}
+		)
+	</insert>
+
+	<!-- ✅ 주문 조회 (상품명 포함) -->
+	<select id="findOrderWithProductName"
+		parameterType="java.lang.String"
+		resultType="com.loco.aroundme.domain.Order">
+		SELECT o.*, p.PRODUCT_NAME as orderName
+		FROM ORDERS o
+		JOIN
+		PRODUCT p ON o.PRODUCT_ID = p.PRODUCT_ID
+		WHERE o.ORDER_ID = #{orderId}
+	</select>
+
+	<!-- ✅ 결제 승인 후 주문 상태 업데이트 -->
+	<update id="updateOrderStatus">
+		UPDATE ORDERS
+		SET STATUS = #{status}, PAYMENT_KEY =
+		#{paymentKey}
+		WHERE ORDER_ID = #{orderId}
+	</update>
+
+</mapper>
