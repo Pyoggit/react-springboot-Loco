@@ -16,35 +16,37 @@ const CircleMain = () => {
   const [circles, setCircles] = useState([]); // ✅ 백엔드에서 가져온 모임 데이터 저장
 
   /** ✅ 1. 선택한 날짜의 모임 데이터 가져오기 */
+  const fetchCircles = async () => {
+    try {
+      const token = localStorage.getItem('token');
+      const formattedDate = selectedDate.toISOString().split('T')[0];
+
+      const response = await axios.get(
+        `${import.meta.env.VITE_API_URL}/api/circles?date=${formattedDate}`,
+        {
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+
+      console.log('📥 서버에서 받은 데이터:', response.data);
+      setCircles(response.data);
+    } catch (error) {
+      console.error('❌ 모임 데이터를 불러오는 중 오류 발생:', error);
+    }
+  };
+
+  // ✅ 선택한 날짜가 변경되면 모임 데이터를 불러옴
   useEffect(() => {
-    const fetchCircles = async () => {
-      try {
-        const token = localStorage.getItem('token');
-        const formattedDate = selectedDate.toISOString().split('T')[0];
-
-        const response = await axios.get(
-          `${import.meta.env.VITE_API_URL}/api/circles?date=${formattedDate}`,
-          {
-            headers: {
-              'Content-Type': 'application/json',
-              Authorization: `Bearer ${token}`,
-            },
-          }
-        );
-
-        console.log('📥 서버에서 받은 데이터:', response.data);
-        setCircles(response.data);
-      } catch (error) {
-        console.error('❌ 모임 데이터를 불러오는 중 오류 발생:', error);
-      }
-    };
-
     fetchCircles();
   }, [selectedDate]);
 
   /** ✅ 2. 새로운 모임 추가 시 기존 데이터와 합치기 */
   const handleAddCircle = (newCircle) => {
-    setCircles((prevCircles) => [...prevCircles, newCircle]);
+    setCircles((prevCircles) => [newCircle, ...prevCircles]); // ✅ 새 모임을 앞에 추가
+    fetchCircles(); // ✅ 백엔드 데이터도 다시 가져오기
   };
 
   /** ✅ 3. 모임 상세 페이지로 이동 */
@@ -54,7 +56,7 @@ const CircleMain = () => {
       circleName: circle.circleName,
       circleCategory: circle.circleCategory,
       circleDate: circle.circleDate,
-      CircleDetail: circle.circleDetail,
+      circleDetail: circle.circleDetail,
       circleStatus: circle.circleStatus || '진행중', // 기본값 설정
       circleMaxMember: circle.circleMaxMember,
       circleMember: circle.circleMember,
