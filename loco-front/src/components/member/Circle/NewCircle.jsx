@@ -14,18 +14,20 @@ const categories = [
 
 const NewCircle = () => {
   const [formData, setFormData] = useState({
+    userId: null, // ✅ userId 기본값 추가
     title: '',
     date: '',
     time: '',
     description: '',
     category: '',
-    circleMaxMember: 10, // 기본 최대 인원 설정
+    circleMaxMember: 10,
     location: '',
     coordinates: { lat: null, lng: null },
     placeId: '',
+    pictureUrl: '',
   });
 
-  const [selectedFile, setSelectedFile] = useState(null); // ✅ 파일 저장
+  const [selectedFile, setSelectedFile] = useState(null);
   const navigate = useNavigate();
   const inputRef = useRef(null);
   const fileInputRef = useRef(null);
@@ -52,6 +54,22 @@ const NewCircle = () => {
     });
   }, []);
 
+  /** ✅ userId를 localStorage에서 가져오기 (지연 로딩) */
+  useEffect(() => {
+    setTimeout(() => {
+      const storedUserId = localStorage.getItem('userId');
+      console.log('📌 localStorage에서 가져온 userId:', storedUserId);
+
+      if (storedUserId) {
+        setFormData((prev) => ({ ...prev, userId: Number(storedUserId) })); // ✅ 숫자로 변환해서 저장
+      } else {
+        console.error('❌ userId가 LocalStorage에 없음');
+        alert('로그인이 필요합니다.');
+        navigate('/login'); // ✅ 로그인 페이지로 이동
+      }
+    }, 500); // ✅ 0.5초 딜레이 추가 (비동기 처리 보장)
+  }, []);
+
   /** ✅ 입력값 변경 핸들러 */
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -63,13 +81,15 @@ const NewCircle = () => {
     const file = e.target.files[0];
     if (!file) return;
 
-    const formData = new FormData();
-    formData.append('file', file);
+    const fileData = new FormData();
+    fileData.append('file', file);
+
+    console.log('📤 업로드할 파일 데이터:', fileData);
 
     try {
       const response = await axios.post(
         `${import.meta.env.VITE_API_URL}/api/circles/upload`,
-        formData,
+        fileData,
         {
           headers: {
             'Content-Type': 'multipart/form-data',
@@ -78,9 +98,10 @@ const NewCircle = () => {
       );
 
       if (response.status === 200) {
+        console.log('✅ 파일 업로드 성공:', response.data.filePath);
         setFormData((prev) => ({
           ...prev,
-          pictureUrl: response.data.filePath, // ✅ 서버에서 반환된 업로드된 파일 URL 저장
+          pictureUrl: response.data.filePath,
         }));
       }
     } catch (error) {
@@ -99,42 +120,48 @@ const NewCircle = () => {
     e.preventDefault();
 
     const token = localStorage.getItem('token');
+    console.log('📌 저장된 토큰:', token);
+    console.log('📌 현재 formData:', formData);
+
     if (!token) {
       alert('로그인이 필요합니다.');
       return;
     }
 
-    const formDataToSend = new FormData();
-
-    if (selectedFile) {
-      // ✅ 파일이 있는 경우만 추가
-      formDataToSend.append('file', selectedFile);
+    if (!formData.userId) {
+      alert('사용자 정보가 없습니다. 다시 로그인해주세요.');
+      return;
     }
 
-    formDataToSend.append('circleName', formData.title);
-    formDataToSend.append('circleCategory', formData.category);
-    formDataToSend.append(
-      'circleDate',
-      convertToTimestamp(formData.date, formData.time)
-    );
-    formDataToSend.append('circleMaxMember', formData.circleMaxMember);
-    formDataToSend.append('circleDetail', formData.description);
-    formDataToSend.append('circleAddress', formData.location);
-    formDataToSend.append('circleLat', formData.coordinates.lat);
-    formDataToSend.append('circleLng', formData.coordinates.lng);
-    formDataToSend.append('circlePlaceId', formData.placeId);
+    const newCircleData = {
+      userId: formData.userId, // ✅ userId 값이 없으면 안 보냄
+      circleName: formData.title,
+      circleCategory: formData.category,
+      circleDate: convertToTimestamp(formData.date, formData.time),
+      circleMaxMember: formData.circleMaxMember,
+      circleDetail: formData.description,
+      circleAddress: formData.location,
+      circleLat: formData.coordinates.lat,
+      circleLng: formData.coordinates.lng,
+      circlePlaceId: formData.placeId,
+      pictureUrl: formData.pictureUrl,
+    };
+
+    console.log('📤 전송할 모임 데이터:', newCircleData);
 
     try {
       const response = await axios.post(
         `${import.meta.env.VITE_API_URL}/api/circles`,
-        formDataToSend,
+        newCircleData,
         {
           headers: {
-            'Content-Type': 'multipart/form-data',
+            'Content-Type': 'application/json',
             Authorization: `Bearer ${token}`,
           },
         }
       );
+
+      console.log('✅ 모임 생성 응답:', response);
 
       if (response.status === 200) {
         alert('모임이 성공적으로 추가되었습니다!');
@@ -142,11 +169,13 @@ const NewCircle = () => {
       }
     } catch (error) {
       console.error('❌ 모임 추가 실패:', error);
+      console.log('⚠️ 서버 응답 데이터:', error.response?.data);
       alert(
         `모임 생성 실패: ${error.response?.data?.message || error.message}`
       );
     }
   };
+
   return (
     <div className="new-circle-form-container">
       <h2>새로운 모임 추가</h2>
@@ -227,13 +256,9 @@ const NewCircle = () => {
           onChange={handleFileChange}
         />
 
-        {selectedFile && (
+        {formData.pictureUrl && (
           <div className="image-preview">
-            <img
-              src={URL.createObjectURL(selectedFile)}
-              alt="미리보기"
-              width="100"
-            />
+            <img src={formData.pictureUrl} alt="미리보기" width="100" />
           </div>
         )}
 
