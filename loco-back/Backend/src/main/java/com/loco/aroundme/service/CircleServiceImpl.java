@@ -5,7 +5,9 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.loco.aroundme.common.security.domain.CustomUser;
 import com.loco.aroundme.domain.Circle;
+import com.loco.aroundme.domain.Users;
 import com.loco.aroundme.mapper.CircleMapper;
 
 @Service
@@ -45,21 +47,7 @@ public class CircleServiceImpl implements CircleService {
 		circleMapper.deleteCircle(circleId);
 	}
 
-	@Override
-	public boolean attendCircle(Long circleId) {
-		Circle circle = circleMapper.getCircleById(circleId);
-
-		if (circle == null) {
-			throw new IllegalArgumentException("존재하지 않는 모임입니다.");
-		}
-
-		if (circle.getCircleMember() >= circle.getCircleMaxMember()) {
-			throw new IllegalStateException("모임 정원이 초과되었습니다.");
-		}
-
-		circleMapper.updateMemberCount(circleId); // ✅ 참석 인원 증가
-		return true;
-	}
+	
 
 	@Override
 	public Circle findCircleById(int circleId) { // 기존 getCircleById에서 변경
@@ -71,4 +59,26 @@ public class CircleServiceImpl implements CircleService {
 		circleMapper.updateCircle(circle);
 	}
 
+	 @Override
+	    public void attendCircle(int circleId, int userId) {
+	        if (circleMapper.isUserAttending(circleId, userId) == 0) {
+	            circleMapper.attendCircle(circleId, userId);
+	        }
+	    }
+
+	    @Override
+	    public void cancelAttendance(int circleId, int userId) {
+	        circleMapper.cancelAttendance(circleId, userId);
+	    }
+
+	    @Override
+	    public List<Users> getAttendeesByCircleId(int circleId) {
+	        return circleMapper.getAttendeesByCircleId(circleId);
+	    }
+
+	    @Override
+	    public boolean isUserAttending(int circleId, int userId) {
+	        return circleMapper.isUserAttending(circleId, userId) > 0;
+	    }
+	
 }

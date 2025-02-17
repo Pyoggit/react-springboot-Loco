@@ -58,11 +58,7 @@
 		#{circleId}
 		AND <![CDATA[CIRCLE_MEMBER < CIRCLE_MAXMEMBER]]>
 	</update>
-	<!-- ✅ 모임 정보 조회 (중복 확인 후 유지) -->
-	<select id="findCircleById" parameterType="int"
-		resultType="com.loco.aroundme.domain.Circle">
-		SELECT * FROM CIRCLE WHERE CIRCLE_ID = #{circleId}
-	</select>
+	
 
 	<!-- ✅ 모임 정보 업데이트 -->
 	<update id="updateCircle"
