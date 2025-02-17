@@ -33,8 +33,13 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
         String requestURI = request.getRequestURI();
 
-        // 로그인 API 요청은 JWT 검사를 건너뜀
-        if (requestURI.equals("/api/adminpage/login")) {
+        // 🔹 JWT 검사를 건너뛸 API 목록
+        if (requestURI.startsWith("/api/users/find-email") || 
+            requestURI.startsWith("/api/users/signup") || 
+            requestURI.startsWith("/api/users/login") || 
+            requestURI.startsWith("/api/auth/kakao") || 
+            requestURI.startsWith("/api/auth/google") || 
+            requestURI.equals("/api/adminpage/login")) {
             chain.doFilter(request, response);
             return;
         }
@@ -42,11 +47,11 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         String accessToken = resolveToken(request);
         String refreshToken = resolveRefreshToken(request);
 
-        // 액세스 토큰이 유효하면 사용자 인증 처리
+        // 🔹 액세스 토큰이 유효하면 사용자 인증 처리
         if (accessToken != null && jwtUtil.validateToken(accessToken)) {
             authenticateUser(accessToken);
         }
-        // 액세스 토큰이 만료되었지만 리프레시 토큰이 유효하면 새로운 액세스 토큰 발급
+        // 🔹 액세스 토큰이 만료되었지만 리프레시 토큰이 유효하면 새로운 액세스 토큰 발급
         else if (refreshToken != null && jwtUtil.validateToken(refreshToken)) {
             refreshAccessToken(refreshToken, response);
         }
@@ -55,7 +60,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     }
 
     /**
-     * 새 액세스 토큰을 발급하고 사용자 인증을 수행
+     * 🔹 새 액세스 토큰을 발급하고 사용자 인증을 수행
      */
     private void refreshAccessToken(String refreshToken, HttpServletResponse response) {
         Claims claims = jwtUtil.getClaims(refreshToken);
@@ -78,7 +83,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     }
 
     /**
-     * 사용자 인증 처리
+     * 🔹 사용자 인증 처리
      */
     private void authenticateUser(String token) {
         Claims claims = jwtUtil.getClaims(token);
@@ -93,29 +98,42 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     }
 
     /**
-     * HTTP 요청에서 액세스 토큰 추출
+     * 🔹 HTTP 요청에서 액세스 토큰 추출 (헤더 또는 쿠키에서 가져옴)
      */
     private String resolveToken(HttpServletRequest request) {
         String bearerToken = request.getHeader("Authorization");
-        return (bearerToken != null && bearerToken.startsWith("Bearer ")) ? bearerToken.substring(7) : null;
+        if (bearerToken != null && bearerToken.startsWith("Bearer ")) {
+            return bearerToken.substring(7);
+        }
+
+        // 🚨 쿠키에서 `kakao_accessToken` 찾기 추가!
+        if (request.getCookies() != null) {
+            for (Cookie cookie : request.getCookies()) {
+                if ("kakao_accessToken".equals(cookie.getName())) {
+                    return cookie.getValue();
+                }
+            }
+        }
+        return null;
     }
 
     /**
-     * HTTP 요청에서 리프레시 토큰 추출
+     * 🔹 HTTP 요청에서 리프레시 토큰 추출 (헤더 또는 쿠키에서 가져옴)
      */
     private String resolveRefreshToken(HttpServletRequest request) {
         String refreshToken = request.getHeader("Refresh-Token");
-        return (refreshToken != null && !refreshToken.isEmpty()) ? refreshToken : null;
-    }
-//    private String resolveRefreshToken(HttpServletRequest request) {
-//        if (request.getCookies() != null) {
-//            for (Cookie cookie : request.getCookies()) {
-//                if ("refreshToken".equals(cookie.getName())) {
-//                    return cookie.getValue();
-//                }
-//            }
-//        }
-//        return null;
-//    }
+        if (refreshToken != null && !refreshToken.isEmpty()) {
+            return refreshToken;
+        }
 
+        // 🚨 쿠키에서도 리프레시 토큰을 찾음
+        if (request.getCookies() != null) {
+            for (Cookie cookie : request.getCookies()) {
+                if ("refreshToken".equals(cookie.getName())) {
+                    return cookie.getValue();
+                }
+            }
+        }
+        return null;
+    }
 }
