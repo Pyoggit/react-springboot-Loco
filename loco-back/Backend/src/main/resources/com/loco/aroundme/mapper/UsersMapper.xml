@@ -2,57 +2,39 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.loco.aroundme.mapper.UsersMapper">
 
-	<!-- 회원 조회 (이메일로 검색) -->
-<!-- 	<select id="read" parameterType="String" resultType="com.loco.aroundme.domain.Users"> 
-		SELECT * FROM USERS WHERE USER_EMAIL = #{userEmail} FETCH FIRST 1 ROWS ONLY 
-		</select> -->
+
 
 	<!-- 회원 조회 (이메일로 검색) -->
-	<!-- <select id="read" parameterType="String" resultType="com.loco.aroundme.domain.Users"> 
-		SELECT USER_ID, USER_EMAIL, PASSWORD, ROLE_ID, USER_NAME, GENDER, MOBILE1, 
-		MOBILE2, MOBILE3, PHONE1, PHONE2, PHONE3, BIRTH, ZIPCODE, ADDRESS1, ADDRESS2, 
-		USER_REGDATE, ORIGIN_USER, SYS_USER FROM USERS WHERE USER_EMAIL = #{userEmail} 
-		</select> -->
-
-	<!-- 회원 조회 (이메일로 검색) -->
- 	<select id="read" parameterType="String"
-		resultType="com.loco.aroundme.domain.Users">
+	<select id="read" parameterType="String"
+		resultType="com.loco.aroundme.domain.Users" flushCache="true">
 		SELECT
-		USER_ID, PROVIDER, PROVIDER_ID, USER_EMAIL, PASSWORD,
+		USER_ID,
+		PROVIDER, PROVIDER_ID, USER_EMAIL, PASSWORD,
 		ROLE_ID, USER_NAME,
-		GENDER,
-		MOBILE1, MOBILE2, MOBILE3, PHONE1, PHONE2,
-		PHONE3,
-		BIRTH,
-		ZIPCODE, ADDRESS1, ADDRESS2, USER_REGDATE, ORIGIN_USER,
-		SYS_USER
+		GENDER, MOBILE1, MOBILE2, MOBILE3,
+		PHONE1, PHONE2, PHONE3, BIRTH,
+		ZIPCODE, ADDRESS1, ADDRESS2,
+		USER_REGDATE, ORIGIN_USER, SYS_USER
 		FROM
 		USERS
 		WHERE USER_EMAIL = #{userEmail}
-	</select> 
+		FETCH FIRST 1 ROWS ONLY
+	</select>
 
 
-	<!-- 일반 회원가입 (카카오, 구글 포함) -->
-	<!-- <insert id="insertUser" parameterType="com.loco.aroundme.domain.Users"> 
-		INSERT INTO USERS ( USER_ID, PROVIDER, PROVIDER_ID, USER_EMAIL, PASSWORD, 
-		ROLE_ID, USER_NAME, GENDER, MOBILE1, MOBILE2, MOBILE3, PHONE1, PHONE2, PHONE3, 
-		BIRTH, ZIPCODE, ADDRESS1, ADDRESS2, USER_REGDATE, ORIGIN_USER, SYS_USER ) 
-		VALUES ( USERS_SEQ.NEXTVAL, NULLIF(#{provider}, ''), NULLIF(#{providerId},''), 
-		#{userEmail}, #{password}, #{roleId}, #{userName}, #{gender}, #{mobile1}, 
-		#{mobile2}, #{mobile3}, NULLIF(#{phone1}, ''), NULLIF(#{phone2}, ''), NULLIF(#{phone3},''), 
-		#{birth}, #{zipcode}, #{address1}, NULLIF(#{address2}, ''), SYSDATE, NULLIF(#{originUser}, 
-		''), NULLIF(#{sysUser}, '') ) </insert> -->
 
 
 	<!-- 일반 회원가입 (카카오, 구글 포함) -->
 	<insert id="insertUser"
 		parameterType="com.loco.aroundme.domain.Users">
 		INSERT INTO USERS (
-		USER_ID, PROVIDER, PROVIDER_ID, USER_EMAIL, PASSWORD, ROLE_ID, USER_NAME,
-		GENDER, MOBILE1, MOBILE2, MOBILE3, PHONE1, PHONE2, PHONE3,
-		BIRTH, ZIPCODE, ADDRESS1, ADDRESS2, USER_REGDATE, ORIGIN_USER, SYS_USER
-		)
-		VALUES (
+		USER_ID, PROVIDER, PROVIDER_ID,
+		USER_EMAIL, PASSWORD,
+		ROLE_ID, USER_NAME, GENDER, MOBILE1, MOBILE2,
+		MOBILE3,
+		PHONE1, PHONE2, PHONE3, BIRTH, ZIPCODE, ADDRESS1, ADDRESS2,
+		USER_REGDATE, ORIGIN_USER, SYS_USER
+		) VALUES (
 		USERS_SEQ.NEXTVAL,
 		#{provider, jdbcType=VARCHAR},
 		#{providerId, jdbcType=VARCHAR},
@@ -60,61 +42,74 @@
 		#{password, jdbcType=VARCHAR},
 		#{roleId, jdbcType=NUMERIC},
 		#{userName, jdbcType=VARCHAR},
-		#{gender, jdbcType=VARCHAR},
+		#{gender,
+		jdbcType=VARCHAR},
 		#{mobile1, jdbcType=VARCHAR},
-		#{mobile2, jdbcType=VARCHAR},
+		#{mobile2,
+		jdbcType=VARCHAR},
 		#{mobile3, jdbcType=VARCHAR},
-		#{phone1, jdbcType=VARCHAR},
+		#{phone1,
+		jdbcType=VARCHAR},
 		#{phone2, jdbcType=VARCHAR},
-		#{phone3, jdbcType=VARCHAR},
+		#{phone3,
+		jdbcType=VARCHAR},
 		#{birth, jdbcType=VARCHAR},
-		#{zipcode, jdbcType=VARCHAR},
+		#{zipcode,
+		jdbcType=VARCHAR},
 		#{address1, jdbcType=VARCHAR},
-		#{address2, jdbcType=VARCHAR},
+		#{address2,
+		jdbcType=VARCHAR},
 		SYSDATE,
 		#{originUser, jdbcType=VARCHAR},
-		#{sysUser, jdbcType=VARCHAR}
+		#{sysUser,
+		jdbcType=VARCHAR}
 		)
 	</insert>
 
-
-	<!-- 회원가입 <insert id="insertUser" parameterType="com.loco.aroundme.domain.Users"> 
-		INSERT INTO USERS ( USER_ID, USER_EMAIL, PASSWORD, ROLE_ID, USER_NAME, GENDER, 
-		MOBILE1, MOBILE2, MOBILE3, PHONE1, PHONE2, PHONE3, BIRTH, ZIPCODE, ADDRESS1, 
-		ADDRESS2, USER_REGDATE, ORIGIN_USER, SYS_USER ) VALUES ( USERS_SEQ.NEXTVAL, 
-		#{userEmail}, #{password}, #{roleId}, #{userName}, #{gender}, #{mobile1}, 
-		#{mobile2}, #{mobile3}, <if test="phone1 != null">#{phone1}</if> <if test="phone1 
-		== null">NULL</if> , <if test="phone2 != null">#{phone2}</if> <if test="phone2 
-		== null">NULL</if> , <if test="phone3 != null">#{phone3}</if> <if test="phone3 
-		== null">NULL</if> , #{birth}, #{zipcode}, #{address1}, <if test="address2 
-		!= null">#{address2}</if> <if test="address2 == null">NULL</if> , SYSDATE, 
-		#{originUser}, #{sysUser} ) </insert> -->
-
 	<!-- 관리자 모드에서 모든 유저정보 가져오기 위한 쿼리문 -->
-	<select id="findAllUsers" resultType="com.loco.aroundme.domain.Users">
-	    SELECT
-	      USER_ID, PROVIDER, PROVIDER_ID, USER_EMAIL, PASSWORD,
-	      ROLE_ID, USER_NAME,
-	      GENDER,
-	      MOBILE1, MOBILE2, MOBILE3,
-	      BIRTH,
-	      ADDRESS1, ADDRESS2, USER_REGDATE, ORIGIN_USER, SYS_USER
-	    FROM USERS
-	    ORDER BY USER_ID DESC
+	<select id="findAllUsers"
+		resultType="com.loco.aroundme.domain.Users">
+		SELECT
+		USER_ID, PROVIDER, PROVIDER_ID, USER_EMAIL, PASSWORD,
+		ROLE_ID, USER_NAME,
+		GENDER,
+		MOBILE1, MOBILE2, MOBILE3,
+		BIRTH,
+		ADDRESS1,
+		ADDRESS2, USER_REGDATE, ORIGIN_USER, SYS_USER
+		FROM USERS
+		ORDER BY
+		USER_ID DESC
 	</select>
-	
-	<!-- 유저 이메일 또는 유저 이름으로 검색 -->
-	<!-- <select id="searchUsers" resultType="com.loco.aroundme.domain.Users">
-	    SELECT USER_ID, PROVIDER, PROVIDER_ID, USER_EMAIL, PASSWORD,
-	           ROLE_ID, USER_NAME, GENDER,
-	           MOBILE1, MOBILE2, MOBILE3, BIRTH,
-	           ZIPCODE, ADDRESS1, ADDRESS2, USER_REGDATE, ORIGIN_USER, SYS_USER
-	    FROM USERS
-	    WHERE USER_EMAIL LIKE '%' || #{keyword} || '%' 
-	       OR USER_NAME LIKE '%' || #{keyword} || '%' 
-	    ORDER BY USER_ID DESC
-	</select> -->
-	
+
+	<!-- 회원 정보 업데이트 (프로필 이미지 포함) -->
+	<update id="updateUser"
+		parameterType="com.loco.aroundme.domain.Users">
+		UPDATE USERS
+		SET
+		<!-- PASSWORD = #{password, jdbcType=VARCHAR}, -->
+		USER_NAME = #{userName, jdbcType=VARCHAR},
+		GENDER = #{gender, jdbcType=VARCHAR},
+		MOBILE1 = #{mobile1, jdbcType=VARCHAR},
+		MOBILE2 = #{mobile2, jdbcType=VARCHAR},
+		MOBILE3 = #{mobile3, jdbcType=VARCHAR},
+		PHONE1 = #{phone1, jdbcType=VARCHAR},
+		PHONE2 = #{phone2, jdbcType=VARCHAR},
+		PHONE3 = #{phone3, jdbcType=VARCHAR},
+		BIRTH = #{birth, jdbcType=VARCHAR},
+		ZIPCODE = #{zipcode, jdbcType=VARCHAR},
+		ADDRESS1 = #{address1, jdbcType=VARCHAR},
+		ADDRESS2 = #{address2, jdbcType=VARCHAR},
+		ORIGIN_USER = #{originUser, jdbcType=VARCHAR}  <!-- ✅ 프로필 이미지 추가 -->
+		WHERE USER_EMAIL = #{userEmail}
+	</update>
+
+	<!-- ✅ 회원 탈퇴 (이메일 기반) -->
+	<delete id="deleteUser" parameterType="String">
+		DELETE FROM USERS WHERE USER_EMAIL = #{userEmail}
+	</delete>
+
+
 
 
 

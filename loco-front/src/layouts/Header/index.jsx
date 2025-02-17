@@ -11,7 +11,11 @@ import "./style.css";
 export default function Header() {
   const navigate = useNavigate();
   const { pathname } = useLocation();
-  const [cookies, setCookie, removeCookie] = useCookies(["loginUser"]);
+  const [cookies, setCookie, removeCookie] = useCookies([
+    "loginUser",
+    "normal_accessToken",
+    "kakao_accessToken",
+  ]);
   const [isLogin, setLogin] = useState(false);
   const [isSearchPage, setSearchPage] = useState(false);
   const [loginUser, setLoginUser] = useState(null);
@@ -24,97 +28,189 @@ export default function Header() {
   // const USER_PATH = (userEmail) => `/mypage/${userEmail}`;
   const USER_PATH = () => "/mypage";
 
-  useEffect(() => {
-    const fetchUserInfo = async () => {
-      // const token = localStorage.getItem("accessToken");
-      const token = localStorage.getItem("normal_accessToken");
-      if (!token) {
-        removeCookie("loginUser", { path: "/" });
-        setLogin(false);
-        setLoginUser(null);
-        setSearchPage(pathname.startsWith(SEARCH_PATH()));
-        return;
-      }
+  // const fetchUserInfo = async () => {
+  //   // ✅ 먼저 로컬스토리지에서 normal & kakao 토큰 가져오기
+  //   const normalAccessToken = localStorage.getItem("normal_accessToken");
+  //   const kakaoAccessToken = localStorage.getItem("kakao_accessToken");
 
-      try {
-        const response = await axios.get("/api/users/mypage");
-        console.log("📌 받은 유저 정보:", response.data);
+  //   let tokenType = "";
+  //   let accessToken = "";
 
-        // ✅ 유저 정보가 다르면 업데이트, 같으면 업데이트 안 함
-        if (!loginUser || loginUser.email !== response.data.email) {
-          setLoginUser(response.data);
-          setCookie("loginUser", response.data, { path: "/" });
-          setLogin(true);
-        }
-      } catch (error) {
-        console.error("유저 정보 가져오기 실패:", error);
-        localStorage.removeItem("normal_accessToken");
-        localStorage.removeItem("normal_refreshToken");
-        removeCookie("loginUser", { path: "/" });
-        setLogin(false);
-        setLoginUser(null);
-      }
-    };
+  //   if (normalAccessToken) {
+  //     tokenType = "normal";
+  //     accessToken = normalAccessToken;
+  //   } else if (kakaoAccessToken) {
+  //     tokenType = "kakao";
+  //     accessToken = kakaoAccessToken;
+  //   } else {
+  //     console.warn("🚨 저장된 토큰 없음 → API 요청 안 보냄");
+  //     setLogin(false);
+  //     setLoginUser(null);
+  //     return;
+  //   }
 
-    fetchUserInfo();
-  }, [pathname]); // ✅ `cookies.loginUser` 제거, `pathname`만 의존성으로 사용
+  //   try {
+  //     console.log(`📌 ${tokenType} Authorization 헤더 추가: `, accessToken);
 
-  const handleLogout = async () => {
-    try {
-      const token = localStorage.getItem("normal_accessToken");
-      if (!token) throw new Error("로그인 상태가 아닙니다.");
+  //     const response = await axios.get("/api/users/mypage", {
+  //       headers: {
+  //         Authorization: `Bearer ${accessToken}`, // ✅ 헤더에 토큰 추가
+  //       },
+  //     });
 
-      await axios.post(
-        "/api/users/logout",
-        {},
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
+  //     console.log("📌 로그인 상태 확인:", response.data);
+  //     setLoginUser(response.data);
+  //     setLogin(true);
+  //   } catch (error) {
+  //     console.error("🚨 로그인 토큰 없음 → 로그인 상태 초기화", error);
+  //     setLogin(false);
+  //     setLoginUser(null);
+  //   }
+  // };
+  const fetchUserInfo = async () => {
+    const normalAccessToken = localStorage.getItem("normal_accessToken");
+    const kakaoAccessToken = localStorage.getItem("kakao_accessToken");
 
-      // 로그아웃 성공 시 클라이언트 상태 초기화
-      localStorage.removeItem("normal_accessToken");
-      localStorage.removeItem("normal_refreshToken");
-      removeCookie("loginUser", { path: "/" });
-      setLoginUser(null);
+    let accessToken = normalAccessToken || kakaoAccessToken;
+
+    if (!accessToken) {
+      console.warn("🚨 저장된 토큰 없음 → API 요청 안 보냄");
       setLogin(false);
-      alert("로그아웃 성공!");
-      navigate(MAIN_PATH());
+      setLoginUser(null);
+      return;
+    }
+
+    try {
+      console.log("📌 Authorization 헤더 추가: ", accessToken);
+
+      const response = await axios.get("/api/users/mypage", {
+        headers: {
+          Authorization: `Bearer ${accessToken}`, // ✅ 헤더에 토큰 추가
+        },
+      });
+
+      console.log("📌 로그인 상태 확인:", response.data);
+      setLoginUser(response.data);
+      setLogin(true);
     } catch (error) {
-      console.error("로그아웃 실패:", error);
-      alert("로그아웃 중 문제가 발생했습니다.");
+      console.error("🚨 로그인 토큰 없음 → 로그인 상태 초기화", error);
+      setLogin(false);
+      setLoginUser(null);
     }
   };
 
+  // ✅ useEffect에서 `fetchUserInfo` 호출 (로그인 상태 체크)
+  useEffect(() => {
+    fetchUserInfo();
+  }, []);
+
+  // const handleLogout = async () => {
+  //   try {
+  //     console.log("🚀 로그아웃 요청을 보냄!");
+
+  //     // ✅ normal & kakao accessToken 가져오기
+  //     const normalToken = localStorage.getItem("normal_accessToken");
+  //     const kakaoToken = localStorage.getItem("kakao_accessToken");
+
+  //     // ✅ 보낼 Authorization 헤더 결정
+  //     let headers = {};
+  //     if (normalToken) {
+  //       headers.Authorization = `Bearer ${normalToken}`;
+  //     } else if (kakaoToken) {
+  //       headers.Authorization = `Bearer ${kakaoToken}`;
+  //     }
+
+  //     // ✅ 백엔드로 로그아웃 요청
+  //     const response = await axios.post("/api/users/logout", {}, { headers });
+
+  //     console.log("✅ 로그아웃 API 응답:", response);
+
+  //     if (response.status === 200) {
+  //       // ✅ localStorage에서 모든 토큰 삭제
+  //       localStorage.removeItem("normal_accessToken");
+  //       localStorage.removeItem("normal_refreshToken");
+  //       localStorage.removeItem("kakao_accessToken");
+  //       localStorage.removeItem("kakao_refreshToken");
+
+  //       setLoginUser(null);
+  //       setLogin(false);
+
+  //       alert("로그아웃 성공!");
+  //       navigate("/");
+  //     } else {
+  //       console.error("❌ 로그아웃 실패: 응답 상태", response.status);
+  //     }
+  //   } catch (error) {
+  //     console.error("❌ 로그아웃 API 요청 실패:", error);
+  //   }
+  // };
+  const handleLogout = async () => {
+    try {
+      console.log("🚀 로그아웃 요청을 보냄!");
+
+      const normalToken = localStorage.getItem("normal_accessToken");
+      const kakaoToken = localStorage.getItem("kakao_accessToken");
+
+      let headers = {};
+      if (normalToken) {
+        headers.Authorization = `Bearer ${normalToken}`;
+      } else if (kakaoToken) {
+        headers.Authorization = `Bearer ${kakaoToken}`;
+      }
+
+      const response = await axios.post("/api/users/logout", {}, { headers });
+
+      console.log("✅ 로그아웃 API 응답:", response);
+
+      if (response.status === 200) {
+        localStorage.removeItem("normal_accessToken");
+        localStorage.removeItem("normal_refreshToken");
+        localStorage.removeItem("kakao_accessToken");
+        localStorage.removeItem("kakao_refreshToken");
+
+        setLoginUser(null);
+        setLogin(false);
+
+        alert("로그아웃 성공!");
+        navigate("/");
+      } else {
+        console.error("❌ 로그아웃 실패: 응답 상태", response.status);
+      }
+    } catch (error) {
+      console.error("❌ 로그아웃 API 요청 실패:", error);
+    }
+  };
+
+  console.log("📌 로그인한 유저 데이터:", loginUser);
+
   const MyPageButton = () => {
     const [isDropdownOpen, setDropdownOpen] = useState(false);
-    //const { userEmail } = useParams();
 
     return isLogin ? (
       <div
         className={`user-info ${isDropdownOpen ? "open" : ""}`}
         onClick={() => setDropdownOpen(!isDropdownOpen)}
       >
-        <span className="user-name">{loginUser?.userName}님, Welcome!</span>
-        <FontAwesomeIcon
-          icon={faSquareCaretDown}
-          className="dropdown-icon"
-        />{" "}
+        <span className="user-name">
+          {loginUser?.userName}님, Welcome!{" "}
+          {localStorage.getItem("kakao_accessToken") ? "" : ""}
+        </span>
+        <FontAwesomeIcon icon={faSquareCaretDown} className="dropdown-icon" />{" "}
         <div className="user-dropdown">
           <div className="user-profile">
             <div
               className="profile-pic"
               style={{
                 backgroundImage: `url(${
-                  loginUser?.profileImage || "/default-profile.png"
+                  loginUser?.profileImage?.startsWith("http")
+                    ? loginUser?.profileImage
+                    : `http://localhost:8080${loginUser?.profileImage}` // ✅ 여기서 서버 이미지 URL 설정됨
                 })`,
               }}
             ></div>
+
             <div className="user-details">
               <div className="user-name">{loginUser?.userName}</div>{" "}
-              {/* ✅ user.name만 폰트 변경 */}
               <div className="user-email">{loginUser?.email}</div>
             </div>
           </div>
