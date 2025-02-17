@@ -20,9 +20,30 @@ const ProductUpdate = () => {
     placeId: '',
   });
 
+  const [userId, setUserId] = useState(null);
+  const [product, setProduct] = useState(null);
   const [existingImages, setExistingImages] = useState([]);
   const [newFiles, setNewFiles] = useState([]);
   const [loading, setLoading] = useState(true);
+
+  /** ✅ 로그인한 사용자 정보 가져오기 */
+  useEffect(() => {
+    const loginUser = localStorage.getItem('loginUser');
+
+    if (!loginUser) {
+      console.warn('⚠️ 로그인 정보가 없습니다. 다시 로그인 필요');
+      navigate('/login');
+      return;
+    }
+
+    try {
+      const parsedUser = JSON.parse(loginUser);
+      console.log('✅ 로그인한 사용자 정보:', parsedUser);
+      setUserId(parsedUser.userId);
+    } catch (error) {
+      console.error('❌ 로그인 사용자 정보 파싱 오류:', error);
+    }
+  }, [navigate]);
 
   /** ✅ 기존 상품 정보 불러오기 */
   useEffect(() => {
@@ -31,29 +52,28 @@ const ProductUpdate = () => {
         const response = await axios.get(
           `${import.meta.env.VITE_API_URL}/api/market/info/${id}`
         );
-        const product = response.data;
-
+        console.log('✅ 상품 정보:', response.data);
+        setProduct(response.data);
         setFormData({
-          name: product.productName,
-          content: product.description,
-          category: product.productCategory,
-          price: product.price,
-          address: product.productAddress,
+          name: response.data.productName,
+          content: response.data.description,
+          category: response.data.productCategory,
+          price: response.data.price,
+          address: response.data.productAddress,
           coordinates: {
-            lat: product.productLat,
-            lng: product.productLng,
+            lat: response.data.productLat,
+            lng: response.data.productLng,
           },
-          placeId: product.productPlaceId,
+          placeId: response.data.productPlaceId,
         });
 
-        // 기존 이미지 URL 설정
         setExistingImages(
-          product.images.map(
+          response.data.images.map(
             (img) => `${import.meta.env.VITE_API_URL}/upload/${img.pictureUrl}`
           )
         );
       } catch (error) {
-        console.error('상품 정보를 불러오는 중 오류 발생:', error);
+        console.error('❌ 상품 정보를 불러오는 중 오류 발생:', error);
         alert('존재하지 않는 상품입니다.');
         navigate('/market', { replace: true });
       } finally {
@@ -64,27 +84,22 @@ const ProductUpdate = () => {
     fetchProduct();
   }, [id, navigate]);
 
+  /** ✅ 본인만 수정 가능하도록 체크 */
+  useEffect(() => {
+    if (product && userId) {
+      console.log('🟢 로그인한 유저 ID:', userId);
+      console.log('🟢 상품 등록자 ID:', product.userId);
+
+      if (product.userId !== userId) {
+        alert('본인이 등록한 상품만 수정할 수 있습니다.');
+        navigate('/market');
+      }
+    }
+  }, [product, userId, navigate]);
+
   if (loading) {
     return <div>데이터 로딩중...!</div>;
   }
-
-  /** ✅ 입력 값 핸들러 */
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setFormData((prev) => ({
-      ...prev,
-      [name]: value,
-    }));
-  };
-
-  /** ✅ 파일 선택 핸들러 */
-  const handleFileChange = (e) => {
-    const fileList = Array.from(e.target.files).slice(0, 3); // 최대 3개 선택
-    const imageUrls = fileList.map((file) => URL.createObjectURL(file));
-
-    setNewFiles(fileList);
-    setExistingImages(imageUrls);
-  };
 
   /** ✅ 상품 수정 요청 */
   const handleUpdate = async () => {
@@ -98,10 +113,28 @@ const ProductUpdate = () => {
       return;
     }
 
+    // ✅ 수정 요청 전에 accessToken 확인
+    let token = localStorage.getItem('normal_accessToken'); // ✅ 올바른 토큰 키 확인
+    if (!token) {
+      console.error('❌ 저장된 토큰 없음! 다시 로그인 필요');
+      alert('로그인이 필요합니다. 다시 로그인해주세요.');
+      navigate('/login');
+      return;
+    }
+
+    console.log('🟢 수정 요청 전 accessToken 확인:', token);
+    console.log('🟢 로그인한 유저 ID:', userId);
+    console.log('🟢 상품 등록자 ID:', product.userId);
+
+    if (userId !== product.userId) {
+      alert('본인이 등록한 상품만 수정할 수 있습니다.');
+      return;
+    }
+
     const formDataToSend = new FormData();
 
-    // ✅ JSON 데이터를 Blob 형태로 추가
     const updatedProductData = {
+      userId, // ✅ 로그인한 사용자 ID 포함
       productId: id,
       productName: formData.name,
       description: formData.content,
@@ -120,19 +153,22 @@ const ProductUpdate = () => {
       })
     );
 
-    // ✅ 새로운 이미지 추가
     newFiles.forEach((file) => {
       formDataToSend.append('images', file);
     });
 
     try {
+      console.log('🔹 수정 요청 데이터:', updatedProductData);
+
       const response = await axios.put(
         `${import.meta.env.VITE_API_URL}/api/market/update/${id}`,
         formDataToSend,
         {
           headers: {
             'Content-Type': 'multipart/form-data',
+            Authorization: `Bearer ${token}`, // ✅ 토큰 포함
           },
+          withCredentials: true,
         }
       );
 
@@ -141,8 +177,16 @@ const ProductUpdate = () => {
         navigate(`/market/info/${id}`);
       }
     } catch (error) {
-      console.error('상품 수정 실패:', error);
-      alert('상품 수정에 실패했습니다.');
+      console.error('❌ 상품 수정 실패:', error);
+
+      // ✅ 백엔드에서 401(Unauthorized) 응답 시 로그인 필요 안내
+      if (error.response?.status === 401) {
+        alert('로그인 세션이 만료되었습니다. 다시 로그인해주세요.');
+        localStorage.removeItem('normal_accessToken');
+        navigate('/login');
+      } else {
+        alert('상품 수정에 실패했습니다.');
+      }
     }
   };
 
@@ -155,7 +199,7 @@ const ProductUpdate = () => {
           name="name"
           placeholder="상품명"
           value={formData.name}
-          onChange={handleChange}
+          onChange={(e) => setFormData({ ...formData, name: e.target.value })}
         />
         <label htmlFor="fileUpload" className="file-label">
           새로운 이미지를 선택하세요 (최대 3장)
@@ -165,7 +209,7 @@ const ProductUpdate = () => {
           multiple
           name="images"
           ref={fileInputRef}
-          onChange={handleFileChange}
+          onChange={(e) => setNewFiles(Array.from(e.target.files))}
         />
         <div className="product-preview-container">
           {existingImages.map((image, index) => (
@@ -181,33 +225,16 @@ const ProductUpdate = () => {
           name="content"
           placeholder="상품 설명"
           value={formData.content}
-          onChange={handleChange}
+          onChange={(e) =>
+            setFormData({ ...formData, content: e.target.value })
+          }
         />
-        <select
-          name="category"
-          value={formData.category}
-          onChange={handleChange}
-        >
-          <option value="">카테고리 선택</option>
-          <option value="스포츠용품">스포츠용품</option>
-          <option value="도서">도서</option>
-          <option value="의류">의류</option>
-          <option value="필기도구">필기도구</option>
-          <option value="여행용품">여행용품</option>
-          <option value="전자제품">전자제품</option>
-        </select>
         <input
           type="text"
           name="price"
           placeholder="가격"
           value={formData.price}
-          onChange={handleChange}
-        />
-        <input
-          type="text"
-          placeholder="거래 장소를 검색하세요"
-          value={formData.address}
-          readOnly
+          onChange={(e) => setFormData({ ...formData, price: e.target.value })}
         />
         <GoogleMap />
         <div className="product-insert-button">

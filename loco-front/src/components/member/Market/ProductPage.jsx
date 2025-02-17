@@ -6,7 +6,6 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faMinus, faPlus } from '@fortawesome/free-solid-svg-icons';
 import { faHeart as solidHeart } from '@fortawesome/free-solid-svg-icons'; // 꽉 찬 하트
 import { faHeart as regularHeart } from '@fortawesome/free-regular-svg-icons'; // 빈 하트
-import Payment from './Payment';
 
 const ListItem = ({
   productId,
@@ -14,6 +13,7 @@ const ListItem = ({
   images,
   productCategory,
   price,
+  userName, // 판매자 이름 추가
 }) => {
   const navigate = useNavigate();
   const [isLikeClick, setIsLikeClick] = useState(false);
@@ -48,11 +48,12 @@ const ListItem = ({
           <p className="product-name">상품명: {productName}</p>
           <p className="product-category">카테고리: {productCategory}</p>
           <p className="product-price">가격: {price.toLocaleString()}원</p>
+          <p className="product-seller">판매자: {userName}</p>{' '}
+          {/* 판매자 정보 표시 */}
           <div className="product-item-button">
             <button onClick={handleDetailClick} className="team-button">
               상세보기
             </button>
-            <Payment amount={price} orderName={productName} />
           </div>
         </div>
       </div>
@@ -156,7 +157,8 @@ export default function ProductPage() {
             <ul className="product-grid">
               {filteredItems.map((item) => (
                 <li key={item.productId}>
-                  <ListItem {...item} />
+                  <ListItem {...item} userName={item.userName} />{' '}
+                  {/* 판매자 정보 전달 */}
                 </li>
               ))}
             </ul>

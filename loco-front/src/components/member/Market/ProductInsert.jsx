@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import GoogleMap from './GoogleMap';
@@ -19,12 +19,55 @@ const ProductInsert = () => {
     placeId: '',
   });
 
+  const [userId, setUserId] = useState(null);
+  const [accessToken, setAccessToken] = useState(null);
   const [files, setFiles] = useState([]);
   const autoCompleteRef = useRef(null);
   const inputRef = useRef(null);
 
+  /** ✅ 로그인한 사용자 정보 가져오기 */
+  useEffect(() => {
+    const fetchUserInfo = async () => {
+      const token = localStorage.getItem('normal_accessToken'); // ✅ JWT 토큰 가져오기
+      console.log('📌 저장된 accessToken:', token);
+
+      if (!token) {
+        alert('로그인이 필요합니다.');
+        navigate('/login');
+        return;
+      }
+
+      try {
+        const response = await axios.get(
+          `${import.meta.env.VITE_API_URL}/api/users/mypage`,
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+            withCredentials: true,
+          }
+        );
+
+        if (response.status === 200) {
+          console.log('✅ 유저 정보 불러오기 성공:', response.data);
+          setUserId(response.data.userId);
+          setAccessToken(token);
+        } else {
+          alert('사용자 정보를 불러올 수 없습니다.');
+          navigate('/login');
+        }
+      } catch (error) {
+        console.error('🚨 사용자 정보 불러오기 실패:', error);
+        alert('로그인이 필요합니다.');
+        navigate('/login');
+      }
+    };
+
+    fetchUserInfo();
+  }, [navigate]);
+
   /** Google Places API 자동완성 설정 */
-  React.useEffect(() => {
+  useEffect(() => {
     if (!window.google) return;
 
     autoCompleteRef.current = new window.google.maps.places.Autocomplete(
@@ -57,7 +100,7 @@ const ProductInsert = () => {
 
   /** ✅ 파일 선택 핸들러 */
   const handleFileChange = (e) => {
-    const fileList = Array.from(e.target.files).slice(0, 3); // 최대 3개 선택
+    const fileList = Array.from(e.target.files).slice(0, 3);
     const imageUrls = fileList.map((file) => URL.createObjectURL(file));
 
     formData.images.forEach((image) => URL.revokeObjectURL(image));
@@ -74,55 +117,62 @@ const ProductInsert = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    const priceValue = Number(formData.price);
+    console.log('📌 제출 전 로그인 사용자 ID:', userId);
+    console.log('📌 제출 전 accessToken:', accessToken);
 
-    const { name, content, category, price, address, coordinates } = formData;
+    if (!userId || !accessToken) {
+      alert('로그인이 필요합니다.');
+      navigate('/login');
+      return;
+    }
+
+    const priceValue = Number(formData.price);
     if (
-      !name ||
-      !content ||
-      !category ||
+      !formData.name ||
+      !formData.content ||
+      !formData.category ||
       !priceValue ||
-      !address ||
-      !coordinates.lat
+      !formData.address
     ) {
       alert('모든 항목을 입력해주세요.');
       return;
     }
 
-    // ✅ FormData 생성
     const formDataToSend = new FormData();
 
-    // ✅ JSON 데이터를 Blob 형태로 추가
     const productData = {
-      userId: 1, // 로그인된 사용자 ID (테스트용)
-      productName: name,
-      description: content,
-      productCategory: category,
+      userId: userId, // ✅ 로그인된 사용자 ID 추가
+      productName: formData.name,
+      description: formData.content,
+      productCategory: formData.category,
       price: priceValue,
-      productAddress: address,
-      productLat: coordinates.lat,
-      productLng: coordinates.lng,
+      productAddress: formData.address,
+      productLat: formData.coordinates.lat,
+      productLng: formData.coordinates.lng,
       productPlaceId: formData.placeId,
     };
 
     formDataToSend.append(
       'product',
-      new Blob([JSON.stringify(productData)], { type: 'application/json' }) // ✅ JSON을 Blob 형태로 변환
+      new Blob([JSON.stringify(productData)], { type: 'application/json' })
     );
 
-    // ✅ 이미지 추가
     files.forEach((file) => {
       formDataToSend.append('images', file);
     });
 
     try {
+      console.log('🚀 상품 등록 요청 데이터:', productData);
+
       const response = await axios.post(
-        `${import.meta.env.VITE_API_URL}/api/market/insert`, // ✅ .env에서 API URL 가져오기
+        `${import.meta.env.VITE_API_URL}/api/market/insert`,
         formDataToSend,
         {
           headers: {
             'Content-Type': 'multipart/form-data',
+            Authorization: `Bearer ${accessToken}`, // ✅ 토큰 포함
           },
+          withCredentials: true,
         }
       );
 
@@ -131,7 +181,7 @@ const ProductInsert = () => {
         navigate('/market');
       }
     } catch (error) {
-      console.error('상품 등록 실패:', error);
+      console.error('🚨 상품 등록 실패:', error);
       alert(
         `상품 등록에 실패했습니다: ${
           error.response?.data?.message || error.message
