@@ -1,8 +1,9 @@
 package com.loco.aroundme.controller;
 
 import java.io.File;
+import java.io.IOException;
+import java.sql.Timestamp;
 import java.util.List;
-import java.util.Map;
 import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,8 +11,6 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -21,20 +20,14 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.multipart.MultipartFile;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.loco.aroundme.common.security.jwt.JwtUtil;
 import com.loco.aroundme.domain.Circle;
 import com.loco.aroundme.domain.Users;
 import com.loco.aroundme.service.CircleFileStorageService;
 import com.loco.aroundme.service.CircleService;
-import com.loco.aroundme.service.UsersService;
-
-import io.jsonwebtoken.io.IOException;
 
 @RestController
 @RequestMapping("/api/circles")
@@ -47,15 +40,14 @@ public class CircleController {
 
 	@Autowired
 	private JwtUtil JwtUtil; // 🔥 JWT 유틸 클래스 주입
-	
 
 	public CircleController(CircleService circleService, CircleFileStorageService fileStorageService) {
 		this.circleService = circleService;
 		this.fileStorageService = fileStorageService;
 	}
 
-	@Value("${upload.path}") // 업로드 경로를 설정 파일에서 가져오기
-	private String uploadPath;
+	@Value("${upload.path}") // ✅ 파일 저장 경로 (application.properties에서 설정)
+	private String uploadDir;
 
 	/** ✅ 1. 특정 날짜의 모임 리스트 반환 */
 	@GetMapping
@@ -82,26 +74,64 @@ public class CircleController {
 		}
 	}
 
-	  @PostMapping("/upload")
-	    public ResponseEntity<?> uploadFile(@RequestParam("file") MultipartFile file) throws IllegalStateException, java.io.IOException {
-	        try {
-	            // ✅ 폴더가 없으면 생성
-	            File uploadFolder = new File(uploadPath);
-	            if (!uploadFolder.exists()) {
-	                uploadFolder.mkdirs();
-	            }
+	/** ✅ 1. 모임 생성 & 파일 업로드 */
+	@PostMapping(consumes = { MediaType.MULTIPART_FORM_DATA_VALUE })
+	public ResponseEntity<?> createCircleWithFile(@RequestParam(value = "file", required = false) MultipartFile file, // ✅
+																														// 파일
+																														// 필수
+																														// 아님
+			@RequestParam("circleName") String circleName, @RequestParam("circleCategory") String circleCategory,
+			@RequestParam("circleDate") String circleDate, @RequestParam("circleMaxMember") int circleMaxMember,
+			@RequestParam("circleDetail") String circleDetail, @RequestParam("circleAddress") String circleAddress,
+			@RequestParam("circleLat") Double circleLat, @RequestParam("circleLng") Double circleLng,
+			@RequestParam("circlePlaceId") String circlePlaceId) {
+		try {
+			String filePath = "/upload/default.png"; // ✅ 기본 이미지 설정
 
-	            // ✅ 파일 저장
-	            String fileName = UUID.randomUUID() + "_" + file.getOriginalFilename();
-	            File saveFile = new File(uploadPath + "/" + fileName);
-	            file.transferTo(saveFile);
+			// ✅ 1. 파일이 있을 경우 저장
+			if (file != null && !file.isEmpty()) {
+				File uploadDir = new File("C:/upload/");
+				if (!uploadDir.exists()) {
+					uploadDir.mkdirs();
+				}
 
-	            return ResponseEntity.ok().body("{\"message\": \"파일 업로드 성공\", \"filePath\": \"/upload/" + fileName + "\"}");
-	        } catch (IOException e) {
-	            return ResponseEntity.status(500).body("{\"message\": \"파일 업로드 실패: " + e.getMessage() + "\"}");
-	        }
-	    }
-	
+				String fileName = UUID.randomUUID() + "_" + file.getOriginalFilename();
+				File saveFile = new File("C:/upload/" + fileName);
+				file.transferTo(saveFile);
+				filePath = "/upload/" + fileName; // ✅ 저장된 이미지 경로
+			}
+
+			// ✅ 2. 모임 정보 저장
+			Circle newCircle = new Circle();
+			newCircle.setCircleName(circleName);
+			newCircle.setCircleCategory(circleCategory);
+			newCircle.setCircleDate(circleDate);
+			newCircle.setCircleMaxMember(circleMaxMember);
+			newCircle.setCircleDetail(circleDetail);
+			newCircle.setCircleAddress(circleAddress);
+			newCircle.setCircleLat(circleLat);
+			newCircle.setCircleLng(circleLng);
+			newCircle.setCirclePlaceId(circlePlaceId);
+			newCircle.setPictureUrl(filePath); // ✅ 변경된 이미지 경로 저장
+
+			circleService.createCircle(newCircle);
+
+			return ResponseEntity.ok().body(
+					"{\"message\": \"모임이 성공적으로 생성되었습니다.\", \"imagePath\": \"" + newCircle.getPictureUrl() + "\"}");
+		} catch (IOException e) {
+			return ResponseEntity.status(500).body("{\"message\": \"파일 저장 실패: " + e.getMessage() + "\"}");
+		}
+	}
+
+	/** ✅ 2. 이미지 접근 허용 (Spring MVC) */
+	@GetMapping("/upload/{filename:.+}")
+	public ResponseEntity<?> serveFile(@PathVariable String filename) {
+		File file = new File(UPLOAD_DIR + filename);
+		if (!file.exists()) {
+			return ResponseEntity.status(HttpStatus.NOT_FOUND).body("파일을 찾을 수 없습니다.");
+		}
+		return ResponseEntity.ok(file);
+	}
 
 	// 삭제기능
 	@DeleteMapping("/{circleId}")
@@ -188,6 +218,57 @@ public class CircleController {
 			@RequestHeader("Authorization") String token) {
 		int userId = JwtUtil.getUserIdFromToken(token);
 		return ResponseEntity.ok(circleService.isUserAttending(circleId, userId));
+	}
+	
+	/** ✅ 카테고리별 모임 리스트 반환 */
+	@GetMapping("/category")
+	public ResponseEntity<?> getCirclesByCategory(@RequestParam(required = false) String category) {
+	    try {
+	        System.out.println("📌 요청된 카테고리: " + category); // ✅ 요청된 카테고리 확인
+	        List<Circle> circles;
+	        
+	        if (category == null || category.isEmpty() || category.equals("전체")) {
+	            circles = circleService.getAllCircles(); 
+	        } else {
+	            circles = circleService.getCirclesByCategory(category);
+	        }
+
+	        // ✅ 응답 데이터 확인 로그
+	        System.out.println("📥 필터링된 모임 개수: " + circles.size());
+
+	        return ResponseEntity.ok(circles);
+	    } catch (Exception e) {
+	        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+	                .body("모임 데이터를 불러오는 중 오류 발생: " + e.getMessage());
+	    }
+	}
+	// 검색조회 기능
+	@GetMapping("/search")
+	public ResponseEntity<?> searchCircles(
+	        @RequestParam(required = false) String clubTitle,
+	        @RequestParam(required = false) String city,
+	        @RequestParam(required = false) String district,
+	        @RequestParam(required = false) String category,
+	        @RequestParam(required = false) String startDate) {
+	    try {
+	        System.out.println("🔍 검색 요청: 제목=" + clubTitle + ", 지역=" + city + ", 카테고리=" + category + ", 날짜=" + startDate);
+
+	        if (clubTitle == null) clubTitle = "";
+	        if (city == null) city = "";
+	        if (district == null) district = "";
+	        if (category == null || category.equals("all")) category = "";
+	        if (startDate == null) startDate = "";
+
+	        List<Circle> circles = circleService.searchCircles(clubTitle, city, district, category, startDate);
+	        
+	        // 🔥 검색 결과 로그 추가
+	        System.out.println("🔍 검색 결과: " + circles.size() + "개");
+
+	        return ResponseEntity.ok(circles);
+	    } catch (Exception e) {
+	        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+	                .body("검색 중 오류 발생: " + e.getMessage());
+	    }
 	}
 
 }

@@ -2,9 +2,9 @@ package com.loco.aroundme.service;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.Date;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Random;
 import java.util.UUID;
 
 import org.springframework.http.HttpStatus;
@@ -109,42 +109,41 @@ public class UsersServiceImpl implements UsersService {
 	@Override
 	@Transactional
 	public void registerUser(Users user, MultipartFile profileImage) throws Exception {
-	    try {
-	        if (user == null || user.getUserEmail() == null || user.getUserEmail().trim().isEmpty()) {
-	            throw new IllegalArgumentException("User 정보가 유효하지 않습니다.");
-	        }
+		try {
+			if (user == null || user.getUserEmail() == null || user.getUserEmail().trim().isEmpty()) {
+				throw new IllegalArgumentException("User 정보가 유효하지 않습니다.");
+			}
 
-	        if (user.getPassword() == null || user.getPassword().trim().isEmpty()) {
-	            user.setPassword("1234");
-	        }
-	        user.setPassword(passwordEncoder.encode(user.getPassword()));
+			if (user.getPassword() == null || user.getPassword().trim().isEmpty()) {
+				user.setPassword("1234");
+			}
+			user.setPassword(passwordEncoder.encode(user.getPassword()));
 
-	        if (user.getRoleId() == null) {
-	            user.setRoleId(2L);
-	        }
+			if (user.getRoleId() == null) {
+				user.setRoleId(2L);
+			}
 
-	        if (profileImage != null && !profileImage.isEmpty()) {
-	            uploadProfileImage(user, profileImage);
-	        } else {
-	            user.setOriginUser("default-image.png");
-	            user.setSysUser("default-image.png");
-	        }
+			if (profileImage != null && !profileImage.isEmpty()) {
+				uploadProfileImage(user, profileImage);
+			} else {
+				user.setOriginUser("default-image.png");
+				user.setSysUser("default-image.png");
+			}
 
-	        usersMapper.insertUser(user);
-	        log.info("✅ 사용자 저장 완료: {}, 프로필 이미지={}", user.getUserEmail(), user.getOriginUser());
+			usersMapper.insertUser(user);
+			log.info("✅ 사용자 저장 완료: {}, 프로필 이미지={}", user.getUserEmail(), user.getOriginUser());
 
-	    } catch (IllegalArgumentException e) {
-	        log.error("🚨 유효하지 않은 입력값: {}", e.getMessage());
-	        throw new IllegalArgumentException("입력값이 올바르지 않습니다: " + e.getMessage());
-	    } catch (IOException e) {
-	        log.error("🚨 파일 업로드 실패: {}", e.getMessage());
-	        throw new RuntimeException("파일 업로드 중 오류가 발생했습니다.");
-	    } catch (Exception e) {
-	        log.error("🚨 회원가입 중 알 수 없는 오류 발생: {}", e.getMessage());
-	        throw new RuntimeException("회원가입 처리 중 오류가 발생했습니다.");
-	    }
+		} catch (IllegalArgumentException e) {
+			log.error("🚨 유효하지 않은 입력값: {}", e.getMessage());
+			throw new IllegalArgumentException("입력값이 올바르지 않습니다: " + e.getMessage());
+		} catch (IOException e) {
+			log.error("🚨 파일 업로드 실패: {}", e.getMessage());
+			throw new RuntimeException("파일 업로드 중 오류가 발생했습니다.");
+		} catch (Exception e) {
+			log.error("🚨 회원가입 중 알 수 없는 오류 발생: {}", e.getMessage());
+			throw new RuntimeException("회원가입 처리 중 오류가 발생했습니다.");
+		}
 	}
-
 
 	@Override
 	public Users read(String email) {
@@ -157,73 +156,70 @@ public class UsersServiceImpl implements UsersService {
 	@Override
 	@Transactional
 	public void updateUser(Users user, MultipartFile profileImage) {
-	    if (user.getUserEmail() == null || user.getUserEmail().trim().isEmpty()) {
-	        throw new IllegalArgumentException("🚨 userEmail이 null이므로 업데이트할 수 없습니다!");
-	    }
+		if (user.getUserEmail() == null || user.getUserEmail().trim().isEmpty()) {
+			throw new IllegalArgumentException("🚨 userEmail이 null이므로 업데이트할 수 없습니다!");
+		}
 
-	    try {
-	        log.info("🔄 업데이트 진행: {}", user.getUserEmail());
+		try {
+			log.info("🔄 업데이트 진행: {}", user.getUserEmail());
 
-	        // ✅ 기존 데이터 유지하면서 필요한 부분만 업데이트
-	        Users existingUser = usersMapper.read(user.getUserEmail());
-	        if (existingUser == null) {
-	            throw new IllegalArgumentException("해당 이메일의 사용자가 존재하지 않습니다.");
-	        }
+			// ✅ 기존 데이터 유지하면서 필요한 부분만 업데이트
+			Users existingUser = usersMapper.read(user.getUserEmail());
+			if (existingUser == null) {
+				throw new IllegalArgumentException("해당 이메일의 사용자가 존재하지 않습니다.");
+			}
 
-	        existingUser.setUserName(user.getUserName());
-	        existingUser.setGender(user.getGender());
-	        existingUser.setMobile1(user.getMobile1());
-	        existingUser.setMobile2(user.getMobile2());
-	        existingUser.setMobile3(user.getMobile3());
-	        existingUser.setPhone1(user.getPhone1());
-	        existingUser.setPhone2(user.getPhone2());
-	        existingUser.setPhone3(user.getPhone3());
-	        existingUser.setZipcode(user.getZipcode());
-	        existingUser.setAddress1(user.getAddress1());
-	        existingUser.setAddress2(user.getAddress2());
+			existingUser.setUserName(user.getUserName());
+			existingUser.setGender(user.getGender());
+			existingUser.setMobile1(user.getMobile1());
+			existingUser.setMobile2(user.getMobile2());
+			existingUser.setMobile3(user.getMobile3());
+			existingUser.setPhone1(user.getPhone1());
+			existingUser.setPhone2(user.getPhone2());
+			existingUser.setPhone3(user.getPhone3());
+			existingUser.setZipcode(user.getZipcode());
+			existingUser.setAddress1(user.getAddress1());
+			existingUser.setAddress2(user.getAddress2());
 
-	        // ✅ 프로필 이미지 처리
-	        if (profileImage != null && !profileImage.isEmpty()) {
-	            uploadProfileImage(existingUser, profileImage);
-	        }
+			// ✅ 프로필 이미지 처리
+			if (profileImage != null && !profileImage.isEmpty()) {
+				uploadProfileImage(existingUser, profileImage);
+			}
 
-	        usersMapper.updateUser(existingUser);
-	        log.info("✅ 회원 정보 업데이트 완료: {}", user.getUserEmail());
-	    } catch (Exception e) {
-	        log.error("❌ 회원 정보 업데이트 중 오류 발생", e);
-	        throw new RuntimeException("회원정보 업데이트 중 오류가 발생했습니다.");
-	    }
+			usersMapper.updateUser(existingUser);
+			log.info("✅ 회원 정보 업데이트 완료: {}", user.getUserEmail());
+		} catch (Exception e) {
+			log.error("❌ 회원 정보 업데이트 중 오류 발생", e);
+			throw new RuntimeException("회원정보 업데이트 중 오류가 발생했습니다.");
+		}
 	}
 
-
-	
 	// ✅ 프로필 이미지 업로드 및 저장된 파일명 반환
 	@Override
-    public String uploadProfileImage(Users user, MultipartFile profileImage) throws IOException {
-        if (profileImage == null || profileImage.isEmpty()) {
-            return null;
-        }
+	public String uploadProfileImage(Users user, MultipartFile profileImage) throws IOException {
+		if (profileImage == null || profileImage.isEmpty()) {
+			return null;
+		}
 
-        String originalFilename = profileImage.getOriginalFilename();
-        if (originalFilename == null || !originalFilename.contains(".")) {
-            throw new IllegalArgumentException("유효하지 않은 파일명입니다.");
-        }
+		String originalFilename = profileImage.getOriginalFilename();
+		if (originalFilename == null || !originalFilename.contains(".")) {
+			throw new IllegalArgumentException("유효하지 않은 파일명입니다.");
+		}
 
-        String extension = originalFilename.substring(originalFilename.lastIndexOf(".")).toLowerCase();
-        if (!isAllowedExtension(extension)) {
-            throw new IllegalArgumentException("허용되지 않은 파일 형식입니다.");
-        }
+		String extension = originalFilename.substring(originalFilename.lastIndexOf(".")).toLowerCase();
+		if (!isAllowedExtension(extension)) {
+			throw new IllegalArgumentException("허용되지 않은 파일 형식입니다.");
+		}
 
-        String uniqueFileName = UUID.randomUUID().toString() + extension;
-        File file = new File(UPLOAD_DIR + uniqueFileName);
-        profileImage.transferTo(file);
+		String uniqueFileName = UUID.randomUUID().toString() + extension;
+		File file = new File(UPLOAD_DIR + uniqueFileName);
+		profileImage.transferTo(file);
 
-        user.setOriginUser(originalFilename);
-        user.setSysUser(uniqueFileName);
+		user.setOriginUser(originalFilename);
+		user.setSysUser(uniqueFileName);
 
-        return uniqueFileName;
-    }
-
+		return uniqueFileName;
+	}
 
 	private boolean isAllowedExtension(String extension) {
 		String[] allowedExtensions = { ".jpg", ".jpeg", ".png", ".gif" };
@@ -309,31 +305,28 @@ public class UsersServiceImpl implements UsersService {
 		}
 	}
 
-
-	
 	@Override
 	@Transactional
 	public void deleteUser(String userEmail) throws Exception {
-	    if (userEmail == null || userEmail.trim().isEmpty()) {
-	        throw new IllegalArgumentException("🚨 이메일이 null이므로 삭제할 수 없습니다!");
-	    }
+		if (userEmail == null || userEmail.trim().isEmpty()) {
+			throw new IllegalArgumentException("🚨 이메일이 null이므로 삭제할 수 없습니다!");
+		}
 
-	    try {
-	        log.info("🗑️ 회원 탈퇴 진행: {}", userEmail);
+		try {
+			log.info("🗑️ 회원 탈퇴 진행: {}", userEmail);
 
-	        Users existingUser = usersMapper.read(userEmail);
-	        if (existingUser == null) {
-	            throw new IllegalArgumentException("해당 이메일의 사용자가 존재하지 않습니다.");
-	        }
+			Users existingUser = usersMapper.read(userEmail);
+			if (existingUser == null) {
+				throw new IllegalArgumentException("해당 이메일의 사용자가 존재하지 않습니다.");
+			}
 
-	        usersMapper.deleteUser(userEmail);
-	        log.info("✅ 회원 탈퇴 완료: {}", userEmail);
-	    } catch (Exception e) {
-	        log.error("❌ 회원 탈퇴 중 오류 발생", e);
-	        throw new RuntimeException("회원 탈퇴 중 오류가 발생했습니다.");
-	    }
+			usersMapper.deleteUser(userEmail);
+			log.info("✅ 회원 탈퇴 완료: {}", userEmail);
+		} catch (Exception e) {
+			log.error("❌ 회원 탈퇴 중 오류 발생", e);
+			throw new RuntimeException("회원 탈퇴 중 오류가 발생했습니다.");
+		}
 	}
-
 
 	@Override
 	public Users findByEmail(String email) {
@@ -341,40 +334,63 @@ public class UsersServiceImpl implements UsersService {
 		return null;
 	}
 
-
 	@Override
 	public Optional<String> findEmailByNameAndMobile(String name, String mobile) {
-		// TODO Auto-generated method stub
-		return Optional.empty();
-	}
+		// ✅ 휴대폰 번호를 3개 필드로 나눠서 처리
+		if (mobile.length() < 10) {
+			return Optional.empty();
+		}
 
+		String mobile1 = mobile.substring(0, 3); // 010
+		String mobile2 = mobile.substring(3, 7); // 중간 4자리
+		String mobile3 = mobile.substring(7); // 끝 4자리
+
+		// ✅ Mapper를 호출하여 이메일 조회
+		return Optional.ofNullable(usersMapper.findEmailByNameAndMobile(name, mobile1, mobile2, mobile3));
+	}
 
 	@Override
 	public boolean existsByNameAndEmail(String name, String email) {
-		// TODO Auto-generated method stub
-		return false;
+		Users user = usersMapper.read(email);
+		return user != null && user.getUserName().equals(name);
 	}
-
 
 	@Override
 	public boolean existsByEmail(String email) {
-		// TODO Auto-generated method stub
-		return false;
+		return usersMapper.read(email) != null;
 	}
-
 
 	@Override
+	@Transactional
 	public String generateTemporaryPassword(String email) {
-		// TODO Auto-generated method stub
-		return null;
+		String tempPassword = generateRandomPassword();
+		String encryptedPassword = passwordEncoder.encode(tempPassword);
+
+		Users user = usersMapper.read(email);
+		if (user != null) {
+			user.setPassword(encryptedPassword);
+			usersMapper.updateUser(user);
+		}
+
+		return tempPassword;
 	}
 
+	private String generateRandomPassword() {
+		String chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*";
+		StringBuilder sb = new StringBuilder();
+		Random random = new Random();
+
+		for (int i = 0; i < 10; i++) {
+			sb.append(chars.charAt(random.nextInt(chars.length())));
+		}
+
+		return sb.toString();
+	}
 
 	@Override
 	public void updateUser(Users user) throws Exception {
 		// TODO Auto-generated method stub
-		
-	}
 
+	}
 
 }

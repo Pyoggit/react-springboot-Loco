@@ -30,4 +30,8 @@ public interface CircleService {
 
 	boolean isUserAttending(int circleId, int userId);
 
+	List<Circle> getCirclesByCategory(String category);
+
+	List<Circle> searchCircles(String clubTitle, String city, String district, String category, String startDate);
+
 }
