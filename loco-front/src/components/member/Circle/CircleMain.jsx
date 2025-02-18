@@ -45,13 +45,6 @@ const CircleMain = () => {
 
   /** ✅ 2. 새로운 모임 추가 시 기존 데이터와 합치기 */
   const handleAddCircle = (newCircle) => {
-    const token = localStorage.getItem('token');
-
-    if (!token) {
-      alert('로그인이 필요합니다.');
-      return; // ✅ 로그인이 안 되어 있으면 실행하지 않음
-    }
-
     setCircles((prevCircles) => [newCircle, ...prevCircles]); // ✅ 새 모임을 앞에 추가
     fetchCircles(); // ✅ 백엔드 데이터도 다시 가져오기
   };

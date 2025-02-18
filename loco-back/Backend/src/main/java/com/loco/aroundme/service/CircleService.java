@@ -18,10 +18,11 @@ public interface CircleService {
 
 	void deleteCircle(Long circleId);
 
+
 	Circle findCircleById(int circleId); // 기존 getCircleById에서 변경
 
 	void updateCircle(Circle circle);
-
+	
 	void attendCircle(int circleId, int userId);
 
 	void cancelAttendance(int circleId, int userId);
@@ -29,9 +30,10 @@ public interface CircleService {
 	List<Users> getAttendeesByCircleId(int circleId);
 
 	boolean isUserAttending(int circleId, int userId);
-
+	
 	List<Circle> getCirclesByCategory(String category);
-
+	
 	List<Circle> searchCircles(String clubTitle, String city, String district, String category, String startDate);
+
 
 }

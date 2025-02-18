@@ -1,7 +1,7 @@
-import React, { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import axios from '@/utils/AxiosConfig';
-import '@/css/member/common/Circles.css';
+import React, { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
+import axios from "@/utils/AxiosConfig";
+import "@/css/member/common/Circles.css";
 
 const Circles = ({ selectedCategory }) => {
   const [circles, setCircles] = useState([]);
@@ -16,16 +16,16 @@ const Circles = ({ selectedCategory }) => {
 
   const fetchCircles = async () => {
     try {
-      const response = await axios.get('/api/circles/category', {
+      const response = await axios.get("/api/circles/category", {
         params: {
-          category: selectedCategory === '전체' ? '' : selectedCategory,
+          category: selectedCategory === "전체" ? "" : selectedCategory,
         },
       });
 
-      console.log('📥 서버 응답 데이터:', response.data); // ✅ 디버깅용 로그
+      console.log("📥 서버 응답 데이터:", response.data); // ✅ 디버깅용 로그
       setCircles(response.data);
     } catch (error) {
-      console.error('❌ 모임 데이터 불러오기 실패:', error);
+      console.error("❌ 모임 데이터 불러오기 실패:", error);
     }
   };
 
@@ -37,8 +37,8 @@ const Circles = ({ selectedCategory }) => {
     <section className="circles-layout">
       <div className="circles-container">
         <h2 className="circles-title">
-          {selectedCategory === '전체'
-            ? '전체 모임'
+          {selectedCategory === "전체"
+            ? "전체 모임"
             : `${selectedCategory} 모임`}
         </h2>
         <div className="circles-grid">
@@ -52,7 +52,7 @@ const Circles = ({ selectedCategory }) => {
                 src={
                   circle.pictureUrl
                     ? `${import.meta.env.VITE_API_URL}${circle.pictureUrl}`
-                    : '/images/default-image.png'
+                    : "/images/default-image.png"
                 }
                 className="circle-image"
                 alt={circle.circleName}

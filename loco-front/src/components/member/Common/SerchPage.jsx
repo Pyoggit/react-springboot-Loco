@@ -1,28 +1,28 @@
-import React, { useState, useEffect } from 'react';
-import { useLocation } from 'react-router-dom';
-import axios from 'axios';
-import CircleListDetail from '@/components/member/circle/CircleListDetail';
-import { areaData } from '@/utils/areaData';
-import '@/css/member/common/searchPage.css';
+import React, { useState, useEffect } from "react";
+import { useLocation } from "react-router-dom";
+import axios from "axios";
+import CircleListDetail from "@/components/member/circle/CircleListDetail";
+import { areaData } from "@/utils/areaData";
+import "@/css/member/common/searchPage.css";
 
 function SearchPage() {
   const location = useLocation();
   const queryParams = new URLSearchParams(location.search);
 
-  const initialSearchTerm = queryParams.get('query') || '';
-  const initialCategory = queryParams.get('category') || '';
+  const initialSearchTerm = queryParams.get("query") || "";
+  const initialCategory = queryParams.get("category") || "";
 
   const [filters, setFilters] = useState({
     clubTitle: initialSearchTerm,
-    city: '',
-    district: '',
+    city: "",
+    district: "",
     category: initialCategory,
-    startDate: '',
+    startDate: "",
   });
 
   const [clubs, setClubs] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
-  const [selectedCity, setSelectedCity] = useState('');
+  const [selectedCity, setSelectedCity] = useState("");
 
   useEffect(() => {
     fetchClubs();
@@ -34,20 +34,20 @@ function SearchPage() {
 
       // ✅ 제목이 비어있으면 전체 데이터를 반환 (검색어 없으면 전체 조회)
       const params = Object.fromEntries(
-        Object.entries(filters).filter(([_, v]) => v !== null && v !== '')
+        Object.entries(filters).filter(([_, v]) => v !== null && v !== "")
       );
 
-      console.log('🔍 검색 요청 데이터:', params);
+      console.log("🔍 검색 요청 데이터:", params);
 
       const response = await axios.get(
-        'http://localhost:8080/api/circles/search',
+        "http://localhost:8080/api/circles/search",
         { params }
       );
 
-      console.log('✅ 백엔드에서 받은 원본 데이터:', response.data);
+      console.log("✅ 백엔드에서 받은 원본 데이터:", response.data);
       setClubs(response.data || []);
     } catch (error) {
-      console.error('❌ 검색한 모임정보 가져오는 중 오류 발생', error);
+      console.error("❌ 검색한 모임정보 가져오는 중 오류 발생", error);
     } finally {
       setIsLoading(false);
     }
@@ -63,7 +63,7 @@ function SearchPage() {
     setFilters((prevFilters) => ({
       ...prevFilters,
       city: value,
-      district: '',
+      district: "",
     }));
   };
 
@@ -77,7 +77,7 @@ function SearchPage() {
               type="text"
               className="search-result-page-input"
               value={filters.clubTitle}
-              onChange={(e) => handleFilterChange('clubTitle', e.target.value)}
+              onChange={(e) => handleFilterChange("clubTitle", e.target.value)}
               placeholder="검색어를 입력하세요 (비우면 전체 조회)"
             />
           </div>
@@ -99,7 +99,7 @@ function SearchPage() {
               <label>지역 (시/군/구):</label>
               <select
                 value={filters.district}
-                onChange={(e) => handleFilterChange('district', e.target.value)}
+                onChange={(e) => handleFilterChange("district", e.target.value)}
                 disabled={!selectedCity}
               >
                 <option value="">전체</option>
@@ -120,7 +120,7 @@ function SearchPage() {
             <input
               type="date"
               value={filters.startDate}
-              onChange={(e) => handleFilterChange('startDate', e.target.value)}
+              onChange={(e) => handleFilterChange("startDate", e.target.value)}
             />
           </div>
 
@@ -128,7 +128,7 @@ function SearchPage() {
             <label>카테고리:</label>
             <select
               value={filters.category}
-              onChange={(e) => handleFilterChange('category', e.target.value)}
+              onChange={(e) => handleFilterChange("category", e.target.value)}
             >
               <option value="">전체</option>
               <option value="친목">친목</option>

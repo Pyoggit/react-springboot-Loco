@@ -1,5 +1,5 @@
-import React from 'react';
-import '@/css/member/circle/CircleListDetail.css';
+import React from "react";
+import "@/css/member/circle/CircleListDetail.css";
 
 const CircleListDetail = ({ mockPosts, onPostClick }) => {
   if (!mockPosts || mockPosts.length === 0)
@@ -16,7 +16,7 @@ const CircleListDetail = ({ mockPosts, onPostClick }) => {
                 src={
                   post.pictureUrl
                     ? post.pictureUrl
-                    : '/images/default-image.png'
+                    : "/images/default-image.png"
                 }
                 alt={post.circleName}
                 className="circle-image"
@@ -25,11 +25,11 @@ const CircleListDetail = ({ mockPosts, onPostClick }) => {
 
             <h3 className="post-title">{post.circleName}</h3>
             <p className="post-date">
-              📅{' '}
-              {new Date(post.circleDate).toLocaleDateString('ko-KR', {
-                year: 'numeric',
-                month: '2-digit',
-                day: '2-digit',
+              📅{" "}
+              {new Date(post.circleDate).toLocaleDateString("ko-KR", {
+                year: "numeric",
+                month: "2-digit",
+                day: "2-digit",
               })}
             </p>
             <p className="post-description">{post.circleDetail}</p>

@@ -1,33 +1,31 @@
-import React, { useState, useRef, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
-import axios from 'axios';
-import '@/css/member/circle/NewCircle.css';
+import React, { useState, useRef, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
+import axios from "axios";
+import "@/css/member/circle/NewCircle.css";
 
 const categories = [
-  '친목',
-  '스터디',
-  '취미',
-  '푸드/드링크',
-  '스포츠',
-  '여행/동행',
+  "친목",
+  "스터디",
+  "취미",
+  "푸드/드링크",
+  "스포츠",
+  "여행/동행",
 ];
 
 const NewCircle = () => {
   const [formData, setFormData] = useState({
-    userId: null, // ✅ userId 기본값 추가
-    title: '',
-    date: '',
-    time: '',
-    description: '',
-    category: '',
-    circleMaxMember: 10,
-    location: '',
+    title: "",
+    date: "",
+    time: "",
+    description: "",
+    category: "",
+    circleMaxMember: 10, // 기본 최대 인원 설정
+    location: "",
     coordinates: { lat: null, lng: null },
-    placeId: '',
-    pictureUrl: '',
+    placeId: "",
   });
 
-  const [selectedFile, setSelectedFile] = useState(null);
+  const [selectedFile, setSelectedFile] = useState(null); // ✅ 파일 저장
   const navigate = useNavigate();
   const inputRef = useRef(null);
   const fileInputRef = useRef(null);
@@ -38,7 +36,7 @@ const NewCircle = () => {
     const autoComplete = new window.google.maps.places.Autocomplete(
       inputRef.current
     );
-    autoComplete.addListener('place_changed', () => {
+    autoComplete.addListener("place_changed", () => {
       const place = autoComplete.getPlace();
       if (place.geometry) {
         setFormData((prev) => ({
@@ -54,43 +52,6 @@ const NewCircle = () => {
     });
   }, []);
 
-  /** ✅ userId를 localStorage에서 가져오기 (지연 로딩) */
-  useEffect(() => {
-    const fetchUserInfo = async () => {
-      const storedUserId = localStorage.getItem('userId');
-
-      if (!storedUserId) {
-        console.warn('⚠️ userId가 localStorage에 없음. 다시 가져옵니다.');
-        try {
-          const token = localStorage.getItem('token');
-          const response = await axios.get(
-            `${import.meta.env.VITE_API_URL}/api/users/me`,
-            {
-              headers: { Authorization: `Bearer ${token}` },
-            }
-          );
-
-          if (response.status === 200) {
-            const { userId } = response.data;
-            console.log('📌 서버에서 다시 가져온 userId:', userId);
-
-            localStorage.setItem('userId', userId);
-            setFormData((prev) => ({ ...prev, userId: userId }));
-          }
-        } catch (error) {
-          console.error('❌ userId 가져오기 실패:', error);
-          alert('로그인이 필요합니다.');
-          navigate('/login');
-        }
-      } else {
-        console.log('📌 localStorage에서 가져온 userId:', storedUserId);
-        setFormData((prev) => ({ ...prev, userId: Number(storedUserId) }));
-      }
-    };
-
-    fetchUserInfo();
-  }, []);
-
   /** ✅ 입력값 변경 핸들러 */
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -102,32 +63,29 @@ const NewCircle = () => {
     const file = e.target.files[0];
     if (!file) return;
 
-    const fileData = new FormData();
-    fileData.append('file', file);
-
-    console.log('📤 업로드할 파일 데이터:', fileData);
+    const formData = new FormData();
+    formData.append("file", file);
 
     try {
       const response = await axios.post(
         `${import.meta.env.VITE_API_URL}/api/circles/upload`,
-        fileData,
+        formData,
         {
           headers: {
-            'Content-Type': 'multipart/form-data',
+            "Content-Type": "multipart/form-data",
           },
         }
       );
 
       if (response.status === 200) {
-        console.log('✅ 파일 업로드 성공:', response.data.filePath);
         setFormData((prev) => ({
           ...prev,
-          pictureUrl: response.data.filePath,
+          pictureUrl: response.data.filePath, // ✅ 서버에서 반환된 업로드된 파일 URL 저장
         }));
       }
     } catch (error) {
-      console.error('❌ 파일 업로드 실패:', error);
-      alert('파일 업로드 실패');
+      console.error("❌ 파일 업로드 실패:", error);
+      alert("파일 업로드 실패");
     }
   };
 
@@ -140,59 +98,36 @@ const NewCircle = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    const token = localStorage.getItem('token');
+    const token = localStorage.getItem("token");
     if (!token) {
-      alert('로그인이 필요합니다.');
+      alert("로그인이 필요합니다.");
       return;
     }
 
     const formDataToSend = new FormData();
-
-    // ✅ JSON 데이터를 문자열로 변환하여 추가
-    const circleData = JSON.stringify({
-      userId: formData.userId,
-      circleName: formData.title,
-      circleCategory: formData.category,
-      circleDate: convertToTimestamp(formData.date, formData.time),
-      circleMaxMember: formData.circleMaxMember,
-      circleDetail: formData.description,
-      circleAddress: formData.location,
-      circleLat: formData.coordinates.lat,
-      circleLng: formData.coordinates.lng,
-      circlePlaceId: formData.placeId,
-    });
-
-    formDataToSend.append('circleData', circleData);
-
-    // ✅ 파일이 있는 경우 추가
-    if (selectedFile) {
-      formDataToSend.append('file', selectedFile);
-    }
-
     try {
       const response = await axios.post(
         `${import.meta.env.VITE_API_URL}/api/circles`,
         formDataToSend,
         {
           headers: {
-            'Content-Type': 'multipart/form-data',
+            "Content-Type": "multipart/form-data",
             Authorization: `Bearer ${token}`,
           },
         }
       );
 
       if (response.status === 200) {
-        alert('모임이 성공적으로 추가되었습니다!');
-        navigate('/circle');
+        alert("모임이 성공적으로 추가되었습니다!");
+        navigate("/circle");
       }
     } catch (error) {
-      console.error('❌ 모임 추가 실패:', error);
+      console.error("❌ 모임 추가 실패:", error);
       alert(
         `모임 생성 실패: ${error.response?.data?.message || error.message}`
       );
     }
   };
-
   return (
     <div className="new-circle-form-container">
       <h2>새로운 모임 추가</h2>
@@ -273,9 +208,13 @@ const NewCircle = () => {
           onChange={handleFileChange}
         />
 
-        {formData.pictureUrl && (
+        {selectedFile && (
           <div className="image-preview">
-            <img src={formData.pictureUrl} alt="미리보기" width="100" />
+            <img
+              src={URL.createObjectURL(selectedFile)}
+              alt="미리보기"
+              width="100"
+            />
           </div>
         )}
 

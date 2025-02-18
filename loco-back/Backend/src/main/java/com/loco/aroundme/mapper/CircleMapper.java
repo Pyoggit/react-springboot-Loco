@@ -51,21 +51,36 @@ public interface CircleMapper {
 	/** ✅ 사용자가 특정 모임에 참석했는지 확인 */
 	@Select("SELECT COUNT(*) FROM ENJOY WHERE CIRCLE_ID = #{circleId} AND USER_ID = #{userId}")
 	int isUserAttending(@Param("circleId") int circleId, @Param("userId") int userId);
-
-	// 카테고리별 모임 정보 검색
+	
+	//카테고리별 모임 정보 검색
 	@Select("SELECT * FROM CIRCLE WHERE CIRCLE_CATEGORY = #{category} ORDER BY CIRCLE_DATE DESC")
 	List<Circle> findCirclesByCategory(@Param("category") String category);
 
-	@Select({ "<script>", "SELECT * FROM CIRCLE WHERE 1=1", "<if test='clubTitle != null and clubTitle != \"\"'>",
-			" AND LOWER(CIRCLE_NAME) LIKE '%' || LOWER(#{clubTitle}) || '%'", "</if>",
-			"<if test='city != null and city != \"\"'>", " AND CIRCLE_ADDRESS LIKE '%' || #{city} || '%'", "</if>",
-			"<if test='district != null and district != \"\"'>", " AND CIRCLE_ADDRESS LIKE '%' || #{district} || '%'",
-			"</if>", "<if test='category != null and category != \"\" and category != \"all\"'>",
-			" AND CIRCLE_CATEGORY = #{category}", "</if>", "<if test='startDate != null and startDate != \"\"'>",
-			" AND TO_CHAR(CIRCLE_DATE, 'YYYY-MM-DD') >= #{startDate}", "</if>", "ORDER BY CIRCLE_DATE DESC",
-			"</script>" })
-	List<Circle> searchCircles(@Param("clubTitle") String clubTitle, @Param("city") String city,
-			@Param("district") String district, @Param("category") String category,
-			@Param("startDate") String startDate);
-
+	@Select({
+	    "<script>",
+	    "SELECT * FROM CIRCLE WHERE 1=1",
+	    "<if test='clubTitle != null and clubTitle != \"\"'>",
+	    " AND LOWER(CIRCLE_NAME) LIKE '%' || LOWER(#{clubTitle}) || '%'", 
+	    "</if>",
+	    "<if test='city != null and city != \"\"'>",
+	    " AND CIRCLE_ADDRESS LIKE '%' || #{city} || '%'",
+	    "</if>",
+	    "<if test='district != null and district != \"\"'>",
+	    " AND CIRCLE_ADDRESS LIKE '%' || #{district} || '%'",
+	    "</if>",
+	    "<if test='category != null and category != \"\" and category != \"all\"'>",
+	    " AND CIRCLE_CATEGORY = #{category}",
+	    "</if>",
+	    "<if test='startDate != null and startDate != \"\"'>",
+	    " AND TO_CHAR(CIRCLE_DATE, 'YYYY-MM-DD') >= #{startDate}",
+	    "</if>",
+	    "ORDER BY CIRCLE_DATE DESC",
+	    "</script>"
+	})
+	List<Circle> searchCircles(@Param("clubTitle") String clubTitle, 
+	                           @Param("city") String city, 
+	                           @Param("district") String district, 
+	                           @Param("category") String category, 
+	                           @Param("startDate") String startDate);
+	
 }
