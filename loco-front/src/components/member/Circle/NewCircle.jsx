@@ -52,6 +52,46 @@ const NewCircle = () => {
     });
   }, []);
 
+<<<<<<< HEAD
+=======
+  /** ✅ userId를 localStorage에서 가져오기 (지연 로딩) */
+  useEffect(() => {
+    const fetchUserInfo = async () => {
+      const storedUserId = localStorage.getItem('userId');
+
+      if (!storedUserId) {
+        console.warn('⚠️ userId가 localStorage에 없음. 다시 가져옵니다.');
+        try {
+          const token = localStorage.getItem('token');
+          const response = await axios.get(
+            `${import.meta.env.VITE_API_URL}/api/users/me`,
+            {
+              headers: { Authorization: `Bearer ${token}` },
+            }
+          );
+
+          if (response.status === 200) {
+            const { userId } = response.data;
+            console.log('📌 서버에서 다시 가져온 userId:', userId);
+
+            localStorage.setItem('userId', userId);
+            setFormData((prev) => ({ ...prev, userId: userId }));
+          }
+        } catch (error) {
+          console.error('❌ userId 가져오기 실패:', error);
+          alert('로그인이 필요합니다.');
+          navigate('/login');
+        }
+      } else {
+        console.log('📌 localStorage에서 가져온 userId:', storedUserId);
+        setFormData((prev) => ({ ...prev, userId: Number(storedUserId) }));
+      }
+    };
+
+    fetchUserInfo();
+  }, []);
+
+>>>>>>> b52434918c7b11a1631de2abd311291b53da2f8a
   /** ✅ 입력값 변경 핸들러 */
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -105,6 +145,7 @@ const NewCircle = () => {
     }
 
     const formDataToSend = new FormData();
+<<<<<<< HEAD
 
     if (selectedFile) {
       // ✅ 파일이 있는 경우만 추가
@@ -123,6 +164,29 @@ const NewCircle = () => {
     formDataToSend.append('circleLat', formData.coordinates.lat);
     formDataToSend.append('circleLng', formData.coordinates.lng);
     formDataToSend.append('circlePlaceId', formData.placeId);
+=======
+
+    // ✅ JSON 데이터를 문자열로 변환하여 추가
+    const circleData = JSON.stringify({
+      userId: formData.userId,
+      circleName: formData.title,
+      circleCategory: formData.category,
+      circleDate: convertToTimestamp(formData.date, formData.time),
+      circleMaxMember: formData.circleMaxMember,
+      circleDetail: formData.description,
+      circleAddress: formData.location,
+      circleLat: formData.coordinates.lat,
+      circleLng: formData.coordinates.lng,
+      circlePlaceId: formData.placeId,
+    });
+
+    formDataToSend.append('circleData', circleData);
+
+    // ✅ 파일이 있는 경우 추가
+    if (selectedFile) {
+      formDataToSend.append('file', selectedFile);
+    }
+>>>>>>> b52434918c7b11a1631de2abd311291b53da2f8a
 
     try {
       const response = await axios.post(
