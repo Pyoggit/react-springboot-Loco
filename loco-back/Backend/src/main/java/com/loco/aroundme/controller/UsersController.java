@@ -1,6 +1,7 @@
 package com.loco.aroundme.controller;
 
 import java.util.Map;
+import java.util.Optional;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -20,7 +21,9 @@ import org.springframework.web.multipart.MultipartFile;
 import com.loco.aroundme.common.security.jwt.JwtUtil;
 import com.loco.aroundme.domain.Users;
 import com.loco.aroundme.mapper.UsersMapper;
+import com.loco.aroundme.service.EmailService;
 import com.loco.aroundme.service.UsersService;
+import com.loco.aroundme.service.VerificationCodeService;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -35,6 +38,9 @@ public class UsersController {
 	private final UsersMapper usersMapper;
 	private final JwtUtil jwtUtil;
 	private final BCryptPasswordEncoder passwordEncoder;
+	private final EmailService emailService; 
+    private final VerificationCodeService verificationCodeService;
+
 
 	/**
 	 * 회원가입 API (경로: /api/users/signup) JSON 데이터는 Users 객체로, 프로필 사진은 MultipartFile로
@@ -356,5 +362,113 @@ public class UsersController {
 		return ResponseEntity.ok().header("Authorization", "Bearer " + newAccessToken) // ✅ 새 Access Token을 헤더로 반환
 				.body(Map.of("accessToken", newAccessToken));
 	}
+	
+	
+	/**
+     * ✅ 이메일 찾기 
+     */
+	@PostMapping("/find-email")
+	public ResponseEntity<?> findEmail(@RequestBody Map<String, String> request) {
+	    String name = request.get("name");
+	    String mobile = request.get("mobile");
+
+	    if (name == null || name.trim().isEmpty() || mobile == null || mobile.trim().isEmpty()) {
+	        return ResponseEntity.badRequest().body(Map.of("error", "이름과 휴대폰 번호는 필수 입력 사항입니다."));
+	    }
+
+	    Optional<String> foundEmail = usersService.findEmailByNameAndMobile(name, mobile);
+
+	    if (foundEmail.isPresent()) {
+	        // ✅ 이메일의 일부만 보여주기 (보안 강화)
+	        String email = foundEmail.get();
+	        String maskedEmail = maskEmail(email);
+
+	        return ResponseEntity.ok(Map.of("email", maskedEmail));
+	    } else {
+	        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(Map.of("error", "일치하는 계정을 찾을 수 없습니다."));
+	    }
+	}
+	
+	/**
+     * ✅ 이메일 찾기 - 일부만 노출
+     */
+	private String maskEmail(String email) {
+	    int atIndex = email.indexOf("@");
+	    if (atIndex <= 1) return "****" + email.substring(atIndex); // "a@email.com" -> "****@email.com"
+
+	    String firstPart = email.substring(0, 2);  // 앞 두 글자 유지
+	    return firstPart + "****" + email.substring(atIndex);
+	}
+
+	
+	/**
+     * ✅ 비밀번호 찾기 - 인증번호 요청 API
+     */
+    @PostMapping("/request-verification")
+    public ResponseEntity<?> requestVerification(@RequestBody Map<String, String> request) {
+        String name = request.get("name");
+        String email = request.get("email");
+
+        if (name == null || email == null || name.trim().isEmpty() || email.trim().isEmpty()) {
+            return ResponseEntity.badRequest().body(Map.of("error", "이름과 이메일을 입력하세요."));
+        }
+
+        boolean exists = usersService.existsByNameAndEmail(name, email);
+        if (!exists) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(Map.of("error", "일치하는 계정을 찾을 수 없습니다."));
+        }
+
+        // ✅ 인증번호 생성 및 저장
+        String verificationCode = verificationCodeService.generateCode(email);
+        emailService.sendVerificationCode(email, verificationCode);
+
+        return ResponseEntity.ok(Map.of("message", "인증번호가 이메일로 전송되었습니다."));
+    }
+
+    /**
+     * ✅ 비밀번호 찾기 - 인증번호 검증 API
+     */
+    @PostMapping("/verify-code")
+    public ResponseEntity<?> verifyCode(@RequestBody Map<String, String> request) {
+        String email = request.get("email");
+        String code = request.get("code");
+
+        if (email == null || code == null || email.trim().isEmpty() || code.trim().isEmpty()) {
+            return ResponseEntity.badRequest().body(Map.of("error", "이메일과 인증번호를 입력하세요."));
+        }
+
+        boolean isValid = verificationCodeService.isValidCode(email, code);
+        if (!isValid) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(Map.of("error", "인증번호가 올바르지 않습니다."));
+        }
+
+        verificationCodeService.removeCode(email); // 인증번호 사용 후 삭제
+
+        return ResponseEntity.ok(Map.of("message", "인증이 완료되었습니다."));
+    }
+
+    /**
+     * ✅ 비밀번호 찾기 - 임시 비밀번호 발급 API
+     */
+    @PostMapping("/reset-password")
+    public ResponseEntity<?> resetPassword(@RequestBody Map<String, String> request) {
+        String email = request.get("email");
+
+        if (email == null || email.trim().isEmpty()) {
+            return ResponseEntity.badRequest().body(Map.of("error", "이메일을 입력하세요."));
+        }
+
+        boolean exists = usersService.existsByEmail(email);
+        if (!exists) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(Map.of("error", "일치하는 계정을 찾을 수 없습니다."));
+        }
+
+        // ✅ 임시 비밀번호 생성 및 저장
+        String tempPassword = usersService.generateTemporaryPassword(email);
+        emailService.sendTemporaryPassword(email, tempPassword);
+
+        return ResponseEntity.ok(Map.of("message", "임시 비밀번호가 이메일로 전송되었습니다."));
+    }
+
 
 }

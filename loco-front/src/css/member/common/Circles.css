@@ -54,6 +54,24 @@
   color: #666;
 }
 
+.view-more {
+  display: block;
+  margin: 20px auto;
+  padding: 10px 20px;
+  border: 1px solid #333;
+  border-radius: 5px;
+  background-color: #fff;
+  font-size: 16px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: all 0.3s ease-in-out;
+}
+
+.view-more:hover {
+  background-color: rgba(177, 121, 241, 0.6);
+  color: white;
+}
+
 @media (max-width: 768px) {
   .circles-layout {
     flex-direction: column;

@@ -23,8 +23,14 @@ public interface UsersMapper {
 
     // ✅ 모든 사용자 조회
     List<Users> findAllUsers();
-    
- // ✅ 회원 삭제 메서드 추가
+
+    // ✅ 회원 삭제 메서드 추가
     void deleteUser(@Param("userEmail") String userEmail);
+
+    // ✅ 이름과 휴대폰 번호로 이메일 찾기
+    String findEmailByNameAndMobile(@Param("name") String name, 
+                                    @Param("mobile1") String mobile1, 
+                                    @Param("mobile2") String mobile2, 
+                                    @Param("mobile3") String mobile3);
 
 }

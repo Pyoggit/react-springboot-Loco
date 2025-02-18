@@ -108,6 +108,17 @@
 	<delete id="deleteUser" parameterType="String">
 		DELETE FROM USERS WHERE USER_EMAIL = #{userEmail}
 	</delete>
+	
+	<!-- 이름과 휴대폰 번호로 이메일 찾기 -->
+	<select id="findEmailByNameAndMobile" parameterType="map" resultType="String">
+	    SELECT USER_EMAIL
+	    FROM USERS
+	    WHERE USER_NAME = #{name}
+	    AND MOBILE1 = #{mobile1}
+	    AND MOBILE2 = #{mobile2}
+	    AND MOBILE3 = #{mobile3}
+	    FETCH FIRST 1 ROWS ONLY
+	</select>
 
 
 

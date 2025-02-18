@@ -9,7 +9,6 @@ import com.loco.aroundme.common.security.domain.CustomUser;
 import com.loco.aroundme.domain.Circle;
 import com.loco.aroundme.domain.Users;
 import com.loco.aroundme.mapper.CircleMapper;
-import com.loco.aroundme.mapper.UsersMapper;
 
 @Service
 public class CircleServiceImpl implements CircleService {
@@ -48,8 +47,6 @@ public class CircleServiceImpl implements CircleService {
 		circleMapper.deleteCircle(circleId);
 	}
 
-	
-
 	@Override
 	public Circle findCircleById(int circleId) { // 기존 getCircleById에서 변경
 		return circleMapper.findCircleById(circleId);
@@ -60,28 +57,50 @@ public class CircleServiceImpl implements CircleService {
 		circleMapper.updateCircle(circle);
 	}
 
-	 @Override
-	    public void attendCircle(int circleId, int userId) {
-	        if (circleMapper.isUserAttending(circleId, userId) == 0) {
-	            circleMapper.attendCircle(circleId, userId);
-	        }
-	    }
+	@Override
+	public void attendCircle(int circleId, int userId) {
+		if (circleMapper.isUserAttending(circleId, userId) == 0) {
+			circleMapper.attendCircle(circleId, userId);
+		}
+	}
 
-	    @Override
-	    public void cancelAttendance(int circleId, int userId) {
-	        circleMapper.cancelAttendance(circleId, userId);
-	    }
+	@Override
+	public void cancelAttendance(int circleId, int userId) {
+		circleMapper.cancelAttendance(circleId, userId);
+	}
 
-	    @Override
-	    public List<Users> getAttendeesByCircleId(int circleId) {
-	        return circleMapper.getAttendeesByCircleId(circleId);
-	    }
+	@Override
+	public List<Users> getAttendeesByCircleId(int circleId) {
+		return circleMapper.getAttendeesByCircleId(circleId);
+	}
 
-	    @Override
-	    public boolean isUserAttending(int circleId, int userId) {
-	        return circleMapper.isUserAttending(circleId, userId) > 0;
-	    }
-	
-	    
-	    
+	@Override
+	public boolean isUserAttending(int circleId, int userId) {
+		return circleMapper.isUserAttending(circleId, userId) > 0;
+	}
+
+	// 카테고리 찾기
+	@Override
+	public List<Circle> getCirclesByCategory(String category) {
+		System.out.println("🔎 데이터베이스에서 찾는 카테고리: " + category); // ✅ 로그 추가
+		return circleMapper.findCirclesByCategory(category);
+	}
+
+	@Override
+	public List<Circle> searchCircles(String clubTitle, String city, String district, String category,
+			String startDate) {
+		if (clubTitle == null)
+			clubTitle = "";
+		if (city == null)
+			city = "";
+		if (district == null)
+			district = "";
+		if (category == null || category.equals("all"))
+			category = "";
+		if (startDate == null)
+			startDate = "";
+
+		return circleMapper.searchCircles(clubTitle, city, district, category, startDate);
+	}
+
 }
