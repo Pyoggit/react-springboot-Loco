@@ -86,6 +86,7 @@ export default function ProductPage() {
           `${import.meta.env.VITE_API_URL}/api/market/products`
         );
         // 백엔드에서 반환하는 데이터 형식에 맞게 수정하세요.
+        console.log('✅ 상품 데이터 응답:', response.data); // 🚨 userName과 images 확인
         setProducts(response.data);
       } catch (error) {
         console.error('상품 목록 조회 실패:', error);
