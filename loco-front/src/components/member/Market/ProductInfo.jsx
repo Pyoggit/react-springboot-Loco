@@ -60,16 +60,7 @@ const ProductInfo = () => {
   }
 
   // ✅ 상품 등록자와 로그인한 사용자가 같은지 확인
-  const isOwner =
-    userId !== null &&
-    product.userId !== null &&
-    Number(userId) === Number(product.userId);
-  console.log(
-    '🔍 로그인한 userId:',
-    userId,
-    '상품 등록 userId:',
-    product.userId
-  );
+  const isOwner = userId !== null && Number(userId) === Number(product.userId);
   console.log('✅ isOwner:', isOwner);
 
   // 이미지 URL 설정 (기본 썸네일 포함)
