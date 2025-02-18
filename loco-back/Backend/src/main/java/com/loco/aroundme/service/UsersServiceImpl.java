@@ -2,9 +2,9 @@ package com.loco.aroundme.service;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.Date;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Random;
 import java.util.UUID;
 
 import org.springframework.http.HttpStatus;
@@ -33,6 +33,7 @@ public class UsersServiceImpl implements UsersService {
 	private final UsersMapper usersMapper;
 	private final BCryptPasswordEncoder passwordEncoder;
 	private static final String UPLOAD_DIR = "C:/upload/";
+	
 
 //	@Override
 //	@Transactional
@@ -344,30 +345,60 @@ public class UsersServiceImpl implements UsersService {
 
 	@Override
 	public Optional<String> findEmailByNameAndMobile(String name, String mobile) {
-		// TODO Auto-generated method stub
-		return Optional.empty();
+	    // ✅ 휴대폰 번호를 3개 필드로 나눠서 처리
+	    if (mobile.length() < 10) {
+	        return Optional.empty();
+	    }
+
+	    String mobile1 = mobile.substring(0, 3);  // 010
+	    String mobile2 = mobile.substring(3, 7);  // 중간 4자리
+	    String mobile3 = mobile.substring(7);     // 끝 4자리
+
+	    // ✅ Mapper를 호출하여 이메일 조회
+	    return Optional.ofNullable(usersMapper.findEmailByNameAndMobile(name, mobile1, mobile2, mobile3));
 	}
+
 
 
 	@Override
-	public boolean existsByNameAndEmail(String name, String email) {
-		// TODO Auto-generated method stub
-		return false;
-	}
+    public boolean existsByNameAndEmail(String name, String email) {
+        Users user = usersMapper.read(email);
+        return user != null && user.getUserName().equals(name);
+    }
 
 
 	@Override
-	public boolean existsByEmail(String email) {
-		// TODO Auto-generated method stub
-		return false;
-	}
+    public boolean existsByEmail(String email) {
+        return usersMapper.read(email) != null;
+    }
 
 
 	@Override
-	public String generateTemporaryPassword(String email) {
-		// TODO Auto-generated method stub
-		return null;
-	}
+    @Transactional
+    public String generateTemporaryPassword(String email) {
+        String tempPassword = generateRandomPassword();
+        String encryptedPassword = passwordEncoder.encode(tempPassword);
+
+        Users user = usersMapper.read(email);
+        if (user != null) {
+            user.setPassword(encryptedPassword);
+            usersMapper.updateUser(user);
+        }
+
+        return tempPassword;
+    }
+	
+	private String generateRandomPassword() {
+        String chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*";
+        StringBuilder sb = new StringBuilder();
+        Random random = new Random();
+
+        for (int i = 0; i < 10; i++) {
+            sb.append(chars.charAt(random.nextInt(chars.length())));
+        }
+
+        return sb.toString();
+    }
 
 
 	@Override
