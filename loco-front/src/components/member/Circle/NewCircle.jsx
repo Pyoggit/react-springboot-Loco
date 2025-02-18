@@ -56,18 +56,39 @@ const NewCircle = () => {
 
   /** ✅ userId를 localStorage에서 가져오기 (지연 로딩) */
   useEffect(() => {
-    setTimeout(() => {
+    const fetchUserInfo = async () => {
       const storedUserId = localStorage.getItem('userId');
-      console.log('📌 localStorage에서 가져온 userId:', storedUserId);
 
-      if (storedUserId) {
-        setFormData((prev) => ({ ...prev, userId: Number(storedUserId) })); // ✅ 숫자로 변환해서 저장
+      if (!storedUserId) {
+        console.warn('⚠️ userId가 localStorage에 없음. 다시 가져옵니다.');
+        try {
+          const token = localStorage.getItem('token');
+          const response = await axios.get(
+            `${import.meta.env.VITE_API_URL}/api/users/me`,
+            {
+              headers: { Authorization: `Bearer ${token}` },
+            }
+          );
+
+          if (response.status === 200) {
+            const { userId } = response.data;
+            console.log('📌 서버에서 다시 가져온 userId:', userId);
+
+            localStorage.setItem('userId', userId);
+            setFormData((prev) => ({ ...prev, userId: userId }));
+          }
+        } catch (error) {
+          console.error('❌ userId 가져오기 실패:', error);
+          alert('로그인이 필요합니다.');
+          navigate('/login');
+        }
       } else {
-        console.error('❌ userId가 LocalStorage에 없음');
-        alert('로그인이 필요합니다.');
-        navigate('/login'); // ✅ 로그인 페이지로 이동
+        console.log('📌 localStorage에서 가져온 userId:', storedUserId);
+        setFormData((prev) => ({ ...prev, userId: Number(storedUserId) }));
       }
-    }, 500); // ✅ 0.5초 딜레이 추가 (비동기 처리 보장)
+    };
+
+    fetchUserInfo();
   }, []);
 
   /** ✅ 입력값 변경 핸들러 */
@@ -120,21 +141,16 @@ const NewCircle = () => {
     e.preventDefault();
 
     const token = localStorage.getItem('token');
-    console.log('📌 저장된 토큰:', token);
-    console.log('📌 현재 formData:', formData);
-
     if (!token) {
       alert('로그인이 필요합니다.');
       return;
     }
 
-    if (!formData.userId) {
-      alert('사용자 정보가 없습니다. 다시 로그인해주세요.');
-      return;
-    }
+    const formDataToSend = new FormData();
 
-    const newCircleData = {
-      userId: formData.userId, // ✅ userId 값이 없으면 안 보냄
+    // ✅ JSON 데이터를 문자열로 변환하여 추가
+    const circleData = JSON.stringify({
+      userId: formData.userId,
       circleName: formData.title,
       circleCategory: formData.category,
       circleDate: convertToTimestamp(formData.date, formData.time),
@@ -144,24 +160,26 @@ const NewCircle = () => {
       circleLat: formData.coordinates.lat,
       circleLng: formData.coordinates.lng,
       circlePlaceId: formData.placeId,
-      pictureUrl: formData.pictureUrl,
-    };
+    });
 
-    console.log('📤 전송할 모임 데이터:', newCircleData);
+    formDataToSend.append('circleData', circleData);
+
+    // ✅ 파일이 있는 경우 추가
+    if (selectedFile) {
+      formDataToSend.append('file', selectedFile);
+    }
 
     try {
       const response = await axios.post(
         `${import.meta.env.VITE_API_URL}/api/circles`,
-        newCircleData,
+        formDataToSend,
         {
           headers: {
-            'Content-Type': 'application/json',
+            'Content-Type': 'multipart/form-data',
             Authorization: `Bearer ${token}`,
           },
         }
       );
-
-      console.log('✅ 모임 생성 응답:', response);
 
       if (response.status === 200) {
         alert('모임이 성공적으로 추가되었습니다!');
@@ -169,7 +187,6 @@ const NewCircle = () => {
       }
     } catch (error) {
       console.error('❌ 모임 추가 실패:', error);
-      console.log('⚠️ 서버 응답 데이터:', error.response?.data);
       alert(
         `모임 생성 실패: ${error.response?.data?.message || error.message}`
       );
