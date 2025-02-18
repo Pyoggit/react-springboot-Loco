@@ -44,7 +44,7 @@ const instance = axios.create({
 
 export default instance;
 
-//==============================================
+//================================================
 // import axios from "axios";
 
 // axios.defaults.withCredentials = true; // ✅ 쿠키 포함 요청

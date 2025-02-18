@@ -369,7 +369,7 @@ export default function Header() {
           </ul>
         </div>
       </div>
-      {/* 로그인한 경우에만 헤더에 채팅 아이콘 표시 */}
+      {/* 로그인한 경우에만 헤더에 채팅 아이콘 표시// */}
       {isLogin && (
         <div className="chat-icon" onClick={() => setShowChat(!showChat)}>
           <FontAwesomeIcon icon={faComments} size="2x" />
