@@ -3,9 +3,11 @@ package com.loco.aroundme.controller;
 import java.util.Map;
 import java.util.Optional;
 
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.web.bind.annotation.CookieValue;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -38,9 +40,8 @@ public class UsersController {
 	private final UsersMapper usersMapper;
 	private final JwtUtil jwtUtil;
 	private final BCryptPasswordEncoder passwordEncoder;
-	private final EmailService emailService; 
-    private final VerificationCodeService verificationCodeService;
-
+	private final EmailService emailService;
+	private final VerificationCodeService verificationCodeService;
 
 	/**
 	 * 회원가입 API (경로: /api/users/signup) JSON 데이터는 Users 객체로, 프로필 사진은 MultipartFile로
@@ -71,6 +72,24 @@ public class UsersController {
 	/**
 	 * 일반 사용자 로그인 API (경로: /api/users/login)
 	 */
+//	@PostMapping("/login")
+//	public ResponseEntity<?> login(@RequestBody Map<String, String> loginRequest) {
+//		String userEmail = loginRequest.get("email");
+//		String password = loginRequest.get("password");
+//
+//		Users user = usersMapper.read(userEmail);
+//		if (user == null || !passwordEncoder.matches(password, user.getPassword())) {
+//			return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(Map.of("error", "Invalid credentials"));
+//		}
+//
+//		String normalAccessToken = jwtUtil.generateAccessToken(user);
+//		String normalRefreshToken = jwtUtil.generateRefreshToken(user);
+//
+//		return ResponseEntity.ok(Map.of("normal_accessToken", normalAccessToken, // ✅ JSON 응답 추가
+//				"normal_refreshToken", normalRefreshToken, "user", Map.of("userId", user.getUserId(), "email",
+//						user.getUserEmail(), "userName", user.getUserName(), "role", "ROLE_USER")));
+//	}
+//	백엔든느authorization헤더랑 프론트는 쿠키 로 보내는 방식
 	@PostMapping("/login")
 	public ResponseEntity<?> login(@RequestBody Map<String, String> loginRequest) {
 		String userEmail = loginRequest.get("email");
@@ -84,26 +103,43 @@ public class UsersController {
 		String normalAccessToken = jwtUtil.generateAccessToken(user);
 		String normalRefreshToken = jwtUtil.generateRefreshToken(user);
 
-		return ResponseEntity.ok(Map.of("normal_accessToken", normalAccessToken, // ✅ JSON 응답 추가
-				"normal_refreshToken", normalRefreshToken, "user", Map.of("userId", user.getUserId(), "email",
+		// ✅ 응답 헤더에 Authorization 포함
+		return ResponseEntity.ok().header(HttpHeaders.AUTHORIZATION, "Bearer " + normalAccessToken)
+				.header(HttpHeaders.SET_COOKIE,
+						"normal_refreshToken=" + normalRefreshToken + "; Path=/; HttpOnly; Secure; SameSite=None")
+				.body(Map.of("message", "로그인 성공", "user", Map.of("userId", user.getUserId(), "email",
 						user.getUserEmail(), "userName", user.getUserName(), "role", "ROLE_USER")));
 	}
 
 	/**
 	 * ✅ 일반 사용자 & 카카오 사용자 로그아웃 API 경로: /api/users/logout
 	 */
+//	@PostMapping("/logout")
+//	public ResponseEntity<String> logout(@RequestHeader(value = "Authorization", required = false) String authHeader) {
+//		if (authHeader == null || !authHeader.startsWith("Bearer ")) {
+//			return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("No token found in headers");
+//		}
+//
+//		String token = authHeader.substring(7); // "Bearer " 제거 후 토큰만 추출
+//
+//		// ✅ JWT 블랙리스트에 추가 (선택 사항)
+//		jwtUtil.addToBlacklist(token);
+//
+//		return ResponseEntity.ok("✅ 로그아웃 성공!");
+//	}
+//	백엔든느authorization헤더랑 프론트는 쿠키 로 보내는 방식
 	@PostMapping("/logout")
 	public ResponseEntity<String> logout(@RequestHeader(value = "Authorization", required = false) String authHeader) {
 		if (authHeader == null || !authHeader.startsWith("Bearer ")) {
 			return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("No token found in headers");
 		}
 
-		String token = authHeader.substring(7); // "Bearer " 제거 후 토큰만 추출
+		String token = authHeader.substring(7);
+		jwtUtil.addToBlacklist(token); // ✅ 블랙리스트 추가
 
-		// ✅ JWT 블랙리스트에 추가 (선택 사항)
-		jwtUtil.addToBlacklist(token);
-
-		return ResponseEntity.ok("✅ 로그아웃 성공!");
+		return ResponseEntity.ok()
+				.header(HttpHeaders.SET_COOKIE, "refreshToken=; Path=/; HttpOnly; Secure; SameSite=None; Max-Age=0")
+				.body("✅ 로그아웃 성공!");
 	}
 
 	/**
@@ -183,11 +219,11 @@ public class UsersController {
 			return ResponseEntity.status(HttpStatus.NOT_FOUND).body(Map.of("error", "유저 정보를 찾을 수 없습니다."));
 		}
 
-		 // ✅ 프로필 이미지 URL 설정 (기본값 추가)
-	    String profileImage = (user.getSysUser() != null && !user.getSysUser().isEmpty())
-	        ? "/upload/" + user.getSysUser()  // ✅ 업로드된 이미지 사용
-	        : "/images/default-image.png";  // ✅ 기본 이미지
-	    
+		// ✅ 프로필 이미지 URL 설정 (기본값 추가)
+		String profileImage = (user.getSysUser() != null && !user.getSysUser().isEmpty())
+				? "/upload/" + user.getSysUser() // ✅ 업로드된 이미지 사용
+				: "http://localhost:8080/images/default-image.png"; // ✅ 절대 URL로 기본 이미지 반환
+
 		return ResponseEntity
 				.ok(Map.ofEntries(Map.entry("userId", user.getUserId()), Map.entry("email", user.getUserEmail()),
 						Map.entry("userName", user.getUserName()), Map.entry("role", user.getRoleId()),
@@ -305,170 +341,190 @@ public class UsersController {
 	}
 
 	@DeleteMapping("/delete")
-	public ResponseEntity<?> deleteUser(
-	        @RequestHeader("Authorization") String authorizationHeader,
-	        @RequestBody Map<String, String> requestBody) throws Exception {
+	public ResponseEntity<?> deleteUser(@RequestHeader("Authorization") String authorizationHeader,
+			@RequestBody Map<String, String> requestBody) throws Exception {
 
-	    if (authorizationHeader == null || !authorizationHeader.startsWith("Bearer ")) {
-	        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(Map.of("error", "토큰이 없습니다."));
-	    }
+		if (authorizationHeader == null || !authorizationHeader.startsWith("Bearer ")) {
+			return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(Map.of("error", "토큰이 없습니다."));
+		}
 
-	    String token = authorizationHeader.substring(7);
-	    if (!jwtUtil.validateToken(token)) {
-	        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(Map.of("error", "유효하지 않은 토큰"));
-	    }
+		String token = authorizationHeader.substring(7);
+		if (!jwtUtil.validateToken(token)) {
+			return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(Map.of("error", "유효하지 않은 토큰"));
+		}
 
-	    String userEmail = jwtUtil.getUserEmail(token);
-	    Users existingUser = usersMapper.read(userEmail);
+		String userEmail = jwtUtil.getUserEmail(token);
+		Users existingUser = usersMapper.read(userEmail);
 
-	    if (existingUser == null) {
-	        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(Map.of("error", "유저 정보를 찾을 수 없습니다."));
-	    }
+		if (existingUser == null) {
+			return ResponseEntity.status(HttpStatus.NOT_FOUND).body(Map.of("error", "유저 정보를 찾을 수 없습니다."));
+		}
 
-	    String inputPassword = requestBody.get("password");
-	    if (inputPassword == null || !passwordEncoder.matches(inputPassword, existingUser.getPassword())) {
-	        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(Map.of("error", "비밀번호가 올바르지 않습니다."));
-	    }
+		String inputPassword = requestBody.get("password");
+		if (inputPassword == null || !passwordEncoder.matches(inputPassword, existingUser.getPassword())) {
+			return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(Map.of("error", "비밀번호가 올바르지 않습니다."));
+		}
 
-	    usersService.deleteUser(userEmail);
-	    return ResponseEntity.ok(Map.of("message", "회원 탈퇴가 완료되었습니다."));
+		usersService.deleteUser(userEmail);
+		return ResponseEntity.ok(Map.of("message", "회원 탈퇴가 완료되었습니다."));
 	}
 
+//	@PostMapping("/auth/token/refresh")
+//	public ResponseEntity<?> refreshAccessToken(
+//			@RequestHeader(value = "Refresh-Token", required = false) String refreshToken) {
+//
+//		if (refreshToken == null) {
+//			return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(Map.of("error", "Refresh token missing"));
+//		}
+//
+//		if (jwtUtil.isBlacklisted(refreshToken)) {
+//			return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(Map.of("error", "Token is blacklisted"));
+//		}
+//
+//		if (!jwtUtil.validateToken(refreshToken)) {
+//			return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(Map.of("error", "Invalid refresh token"));
+//		}
+//
+//		String userEmail = jwtUtil.getUserEmail(refreshToken);
+//		Users user = usersMapper.read(userEmail);
+//
+//		if (user == null) {
+//			return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(Map.of("error", "User not found"));
+//		}
+//
+//		String newAccessToken = jwtUtil.generateAccessToken(user);
+//
+//		return ResponseEntity.ok().header("Authorization", "Bearer " + newAccessToken) // ✅ 새 Access Token을 헤더로 반환
+//				.body(Map.of("accessToken", newAccessToken));
+//	}
+	// 백엔드는 authroe~헤더 , 프론트는 쿠키
 	@PostMapping("/auth/token/refresh")
 	public ResponseEntity<?> refreshAccessToken(
-			@RequestHeader(value = "Refresh-Token", required = false) String refreshToken) {
-
+			@CookieValue(value = "refreshToken", required = false) String refreshToken) {
 		if (refreshToken == null) {
 			return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(Map.of("error", "Refresh token missing"));
 		}
 
-		if (jwtUtil.isBlacklisted(refreshToken)) {
-			return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(Map.of("error", "Token is blacklisted"));
-		}
-
-		if (!jwtUtil.validateToken(refreshToken)) {
+		if (jwtUtil.isBlacklisted(refreshToken) || !jwtUtil.validateToken(refreshToken)) {
 			return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(Map.of("error", "Invalid refresh token"));
 		}
 
 		String userEmail = jwtUtil.getUserEmail(refreshToken);
 		Users user = usersMapper.read(userEmail);
-
 		if (user == null) {
 			return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(Map.of("error", "User not found"));
 		}
 
 		String newAccessToken = jwtUtil.generateAccessToken(user);
 
-		return ResponseEntity.ok().header("Authorization", "Bearer " + newAccessToken) // ✅ 새 Access Token을 헤더로 반환
-				.body(Map.of("accessToken", newAccessToken));
+		return ResponseEntity.ok().header(HttpHeaders.AUTHORIZATION, "Bearer " + newAccessToken) // ✅ 새 액세스 토큰 반환
+				.body(Map.of("message", "토큰 재발급 성공"));
 	}
-	
-	
+
 	/**
-     * ✅ 이메일 찾기 
-     */
+	 * ✅ 이메일 찾기
+	 */
 	@PostMapping("/find-email")
 	public ResponseEntity<?> findEmail(@RequestBody Map<String, String> request) {
-	    String name = request.get("name");
-	    String mobile = request.get("mobile");
+		String name = request.get("name");
+		String mobile = request.get("mobile");
 
-	    if (name == null || name.trim().isEmpty() || mobile == null || mobile.trim().isEmpty()) {
-	        return ResponseEntity.badRequest().body(Map.of("error", "이름과 휴대폰 번호는 필수 입력 사항입니다."));
-	    }
+		if (name == null || name.trim().isEmpty() || mobile == null || mobile.trim().isEmpty()) {
+			return ResponseEntity.badRequest().body(Map.of("error", "이름과 휴대폰 번호는 필수 입력 사항입니다."));
+		}
 
-	    Optional<String> foundEmail = usersService.findEmailByNameAndMobile(name, mobile);
+		Optional<String> foundEmail = usersService.findEmailByNameAndMobile(name, mobile);
 
-	    if (foundEmail.isPresent()) {
-	        // ✅ 이메일의 일부만 보여주기 (보안 강화)
-	        String email = foundEmail.get();
-	        String maskedEmail = maskEmail(email);
+		if (foundEmail.isPresent()) {
+			// ✅ 이메일의 일부만 보여주기 (보안 강화)
+			String email = foundEmail.get();
+			String maskedEmail = maskEmail(email);
 
-	        return ResponseEntity.ok(Map.of("email", maskedEmail));
-	    } else {
-	        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(Map.of("error", "일치하는 계정을 찾을 수 없습니다."));
-	    }
+			return ResponseEntity.ok(Map.of("email", maskedEmail));
+		} else {
+			return ResponseEntity.status(HttpStatus.NOT_FOUND).body(Map.of("error", "일치하는 계정을 찾을 수 없습니다."));
+		}
 	}
-	
+
 	/**
-     * ✅ 이메일 찾기 - 일부만 노출
-     */
+	 * ✅ 이메일 찾기 - 일부만 노출
+	 */
 	private String maskEmail(String email) {
-	    int atIndex = email.indexOf("@");
-	    if (atIndex <= 1) return "****" + email.substring(atIndex); // "a@email.com" -> "****@email.com"
+		int atIndex = email.indexOf("@");
+		if (atIndex <= 1)
+			return "****" + email.substring(atIndex); // "a@email.com" -> "****@email.com"
 
-	    String firstPart = email.substring(0, 2);  // 앞 두 글자 유지
-	    return firstPart + "****" + email.substring(atIndex);
+		String firstPart = email.substring(0, 2); // 앞 두 글자 유지
+		return firstPart + "****" + email.substring(atIndex);
 	}
 
-	
 	/**
-     * ✅ 비밀번호 찾기 - 인증번호 요청 API
-     */
-    @PostMapping("/request-verification")
-    public ResponseEntity<?> requestVerification(@RequestBody Map<String, String> request) {
-        String name = request.get("name");
-        String email = request.get("email");
+	 * ✅ 비밀번호 찾기 - 인증번호 요청 API
+	 */
+	@PostMapping("/request-verification")
+	public ResponseEntity<?> requestVerification(@RequestBody Map<String, String> request) {
+		String name = request.get("name");
+		String email = request.get("email");
 
-        if (name == null || email == null || name.trim().isEmpty() || email.trim().isEmpty()) {
-            return ResponseEntity.badRequest().body(Map.of("error", "이름과 이메일을 입력하세요."));
-        }
+		if (name == null || email == null || name.trim().isEmpty() || email.trim().isEmpty()) {
+			return ResponseEntity.badRequest().body(Map.of("error", "이름과 이메일을 입력하세요."));
+		}
 
-        boolean exists = usersService.existsByNameAndEmail(name, email);
-        if (!exists) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(Map.of("error", "일치하는 계정을 찾을 수 없습니다."));
-        }
+		boolean exists = usersService.existsByNameAndEmail(name, email);
+		if (!exists) {
+			return ResponseEntity.status(HttpStatus.NOT_FOUND).body(Map.of("error", "일치하는 계정을 찾을 수 없습니다."));
+		}
 
-        // ✅ 인증번호 생성 및 저장
-        String verificationCode = verificationCodeService.generateCode(email);
-        emailService.sendVerificationCode(email, verificationCode);
+		// ✅ 인증번호 생성 및 저장
+		String verificationCode = verificationCodeService.generateCode(email);
+		emailService.sendVerificationCode(email, verificationCode);
 
-        return ResponseEntity.ok(Map.of("message", "인증번호가 이메일로 전송되었습니다."));
-    }
+		return ResponseEntity.ok(Map.of("message", "인증번호가 이메일로 전송되었습니다."));
+	}
 
-    /**
-     * ✅ 비밀번호 찾기 - 인증번호 검증 API
-     */
-    @PostMapping("/verify-code")
-    public ResponseEntity<?> verifyCode(@RequestBody Map<String, String> request) {
-        String email = request.get("email");
-        String code = request.get("code");
+	/**
+	 * ✅ 비밀번호 찾기 - 인증번호 검증 API
+	 */
+	@PostMapping("/verify-code")
+	public ResponseEntity<?> verifyCode(@RequestBody Map<String, String> request) {
+		String email = request.get("email");
+		String code = request.get("code");
 
-        if (email == null || code == null || email.trim().isEmpty() || code.trim().isEmpty()) {
-            return ResponseEntity.badRequest().body(Map.of("error", "이메일과 인증번호를 입력하세요."));
-        }
+		if (email == null || code == null || email.trim().isEmpty() || code.trim().isEmpty()) {
+			return ResponseEntity.badRequest().body(Map.of("error", "이메일과 인증번호를 입력하세요."));
+		}
 
-        boolean isValid = verificationCodeService.isValidCode(email, code);
-        if (!isValid) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(Map.of("error", "인증번호가 올바르지 않습니다."));
-        }
+		boolean isValid = verificationCodeService.isValidCode(email, code);
+		if (!isValid) {
+			return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(Map.of("error", "인증번호가 올바르지 않습니다."));
+		}
 
-        verificationCodeService.removeCode(email); // 인증번호 사용 후 삭제
+		verificationCodeService.removeCode(email); // 인증번호 사용 후 삭제
 
-        return ResponseEntity.ok(Map.of("message", "인증이 완료되었습니다."));
-    }
+		return ResponseEntity.ok(Map.of("message", "인증이 완료되었습니다."));
+	}
 
-    /**
-     * ✅ 비밀번호 찾기 - 임시 비밀번호 발급 API
-     */
-    @PostMapping("/reset-password")
-    public ResponseEntity<?> resetPassword(@RequestBody Map<String, String> request) {
-        String email = request.get("email");
+	/**
+	 * ✅ 비밀번호 찾기 - 임시 비밀번호 발급 API
+	 */
+	@PostMapping("/reset-password")
+	public ResponseEntity<?> resetPassword(@RequestBody Map<String, String> request) {
+		String email = request.get("email");
 
-        if (email == null || email.trim().isEmpty()) {
-            return ResponseEntity.badRequest().body(Map.of("error", "이메일을 입력하세요."));
-        }
+		if (email == null || email.trim().isEmpty()) {
+			return ResponseEntity.badRequest().body(Map.of("error", "이메일을 입력하세요."));
+		}
 
-        boolean exists = usersService.existsByEmail(email);
-        if (!exists) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(Map.of("error", "일치하는 계정을 찾을 수 없습니다."));
-        }
+		boolean exists = usersService.existsByEmail(email);
+		if (!exists) {
+			return ResponseEntity.status(HttpStatus.NOT_FOUND).body(Map.of("error", "일치하는 계정을 찾을 수 없습니다."));
+		}
 
-        // ✅ 임시 비밀번호 생성 및 저장
-        String tempPassword = usersService.generateTemporaryPassword(email);
-        emailService.sendTemporaryPassword(email, tempPassword);
+		// ✅ 임시 비밀번호 생성 및 저장
+		String tempPassword = usersService.generateTemporaryPassword(email);
+		emailService.sendTemporaryPassword(email, tempPassword);
 
-        return ResponseEntity.ok(Map.of("message", "임시 비밀번호가 이메일로 전송되었습니다."));
-    }
-
+		return ResponseEntity.ok(Map.of("message", "임시 비밀번호가 이메일로 전송되었습니다."));
+	}
 
 }
