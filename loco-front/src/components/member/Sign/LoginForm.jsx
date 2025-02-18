@@ -46,99 +46,55 @@ const LoginForm = () => {
   }, [cookies]);
 
   /** 로그인 처리 함수 */
-  // const handleSubmit = async (e) => {
-  //   e.preventDefault();
-  //   setError("");
-  //   setIsLoading(true);
-
-  //   try {
-  //     const response = await axios.post("/api/users/login", {
-  //       email: email.trim(),
-  //       password: password.trim(),
-  //     });
-
-  //     console.log("✅ 로그인 요청 후 응답:", response);
-
-  //     if (response.data.normal_accessToken || response.data.kakao_accessToken) {
-  //       localStorage.setItem(
-  //         "normal_accessToken",
-  //         response.data.normal_accessToken
-  //       );
-  //       localStorage.setItem(
-  //         "normal_refreshToken",
-  //         response.data.normal_refreshToken
-  //       );
-  //       localStorage.setItem(
-  //         "kakao_accessToken",
-  //         response.data.kakao_accessToken
-  //       );
-  //       localStorage.setItem(
-  //         "kakao_refreshToken",
-  //         response.data.kakao_refreshToken
-  //       );
-
-  //       console.log(
-  //         "✅ 저장된 토큰:",
-  //         localStorage.getItem("normal_accessToken"),
-  //         localStorage.getItem("normal_refreshToken"),
-  //         localStorage.getItem("kakao_accessToken"),
-  //         localStorage.getItem("kakao_refreshToken")
-  //       );
-
-  //       // ✅ 로그인 후 `userId` 가져오기
-  //       const userInfoResponse = await axios.get("/api/users/mypage", {
-  //         headers: {
-  //           Authorization: `Bearer ${
-  //             response.data.normal_accessToken ||
-  //             response.data.kakao_accessToken
-  //           }`,
-  //         },
-  //       });
-
-  //       console.log("📌 로그인 후 가져온 사용자 정보:", userInfoResponse.data);
-
-  //       if (userInfoResponse.data.userId) {
-  //         localStorage.setItem("userId", userInfoResponse.data.userId); // ✅ userId 저장
-  //         console.log("✅ 저장된 userId:", localStorage.getItem("userId"));
-  //       } else {
-  //         console.error("❌ userId 를 가져오지 못함:", userInfoResponse.data);
-  //       }
-  //     } else {
-  //       console.error(
-  //         "❌ 로그인 응답에 normal_accessToken || kakao_accessToken 없음!",
-  //         response.data
-  //       );
-  //     }
-
-  //     alert("로그인 성공!");
-  //     navigate("/");
-  //   } catch (error) {
-  //     console.error("❌ 로그인 실패:", error.response?.data || error.message);
-  //     setError("로그인 중 오류가 발생했습니다. 다시 시도해주세요.");
-  //   } finally {
-  //     setIsLoading(false);
-  //   }
-  // };
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError("");
     setIsLoading(true);
 
     try {
-      const response = await axios.post(
-        "/api/users/login",
-        {
-          email: email.trim(),
-          password: password.trim(),
-        },
-        { withCredentials: true }
-      ); // ✅ 쿠키 저장 허용
+      const response = await axios.post("/api/users/login", {
+        email: email.trim(),
+        password: password.trim(),
+      });
 
-      console.log("✅ 로그인 성공:", response);
+      console.log("✅ 로그인 요청 후 응답:", response);
 
-      if (response.headers.authorization) {
-        const normalAccessToken = response.headers.authorization.split(" ")[1];
-        localStorage.setItem("normal_accessToken", normalAccessToken); // ✅ 액세스 토큰은 로컬 스토리지에 저장
+      if (response.data.normal_accessToken) {
+        localStorage.setItem(
+          "normal_accessToken",
+          response.data.normal_accessToken
+        );
+        localStorage.setItem(
+          "normal_refreshToken",
+          response.data.normal_refreshToken
+        );
+
+        console.log(
+          "✅ 저장된 토큰:",
+          localStorage.getItem("normal_accessToken"),
+          localStorage.getItem("normal_refreshToken")
+        );
+
+        // ✅ 로그인 후 `userId` 가져오기
+        const userInfoResponse = await axios.get("/api/users/mypage", {
+          headers: {
+            Authorization: `Bearer ${response.data.normal_accessToken}`,
+          },
+        });
+
+        console.log("📌 로그인 후 가져온 사용자 정보:", userInfoResponse.data);
+
+        if (userInfoResponse.data.userId) {
+          localStorage.setItem("userId", userInfoResponse.data.userId); // ✅ userId 저장
+          console.log("✅ 저장된 userId:", localStorage.getItem("userId"));
+        } else {
+          console.error("❌ userId를 가져오지 못함:", userInfoResponse.data);
+        }
+      } else {
+        console.error(
+          "❌ 로그인 응답에 normal_accessToken 없음!",
+          response.data
+        );
       }
 
       alert("로그인 성공!");
