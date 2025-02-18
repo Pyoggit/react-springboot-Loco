@@ -28,4 +28,7 @@ public class Product {
 
 	// 상품 이미지 리스트 (연관관계)
 	private List<ProductPic> images;
+	
+	// 판매자 이름 (JOIN으로 가져올 데이터)
+    private String userName;
 }

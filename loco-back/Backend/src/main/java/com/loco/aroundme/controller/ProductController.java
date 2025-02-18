@@ -4,7 +4,6 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -111,27 +110,14 @@ public class ProductController {
 	@GetMapping("/products")
 	public ResponseEntity<List<Map<String, Object>>> getProducts() {
 		try {
-			log.info("🔹 상품 목록 조회 요청 수신");
+			log.info("🔹 상품 목록 조회 요청 (판매자 정보 포함)");
 
-			List<Product> products = productService.getProducts();
+			List<Map<String, Object>> products = productService.getProducts();
 
-			List<Map<String, Object>> productListWithSeller = products.stream().map(product -> {
-				Map<String, Object> productData = new HashMap<>();
-				productData.put("productId", product.getProductId());
-				productData.put("productName", product.getProductName());
-				productData.put("productCategory", product.getProductCategory());
-				productData.put("price", product.getPrice());
-				productData.put("images", product.getImages());
-				productData.put("userId", product.getUserId()); // ✅ 추가
+			// 🚨 응답 데이터 확인 (userName이 있는지 확인)
+			log.info("🔹 조회된 상품 목록: {}", products);
 
-				// ✅ 판매자 정보 가져오기
-				Users seller = usersMapper.readByUserId(product.getUserId());
-				productData.put("userName", (seller != null) ? seller.getUserName() : "알 수 없음");
-
-				return productData;
-			}).collect(Collectors.toList());
-
-			return ResponseEntity.ok(productListWithSeller);
+			return ResponseEntity.ok(products);
 		} catch (Exception e) {
 			log.error("❌ 상품 목록 조회 중 오류 발생", e);
 			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
@@ -208,13 +194,10 @@ public class ProductController {
 				return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
 			}
 
-			// ✅ 판매자 정보 가져오기
-			Users seller = usersMapper.readByUserId(product.getUserId());
-
-			// ✅ product + 판매자 이름 반환
+			// ✅ product 객체에서 userName 가져오기 (usersMapper 호출 필요 없음)
 			Map<String, Object> response = new HashMap<>();
 			response.put("product", product);
-			response.put("sellerName", seller != null ? seller.getUserName() : "알 수 없음");
+			response.put("sellerName", product.getUserName()); // ✅ userName 직접 사용
 
 			return ResponseEntity.ok(response);
 		} catch (Exception e) {
