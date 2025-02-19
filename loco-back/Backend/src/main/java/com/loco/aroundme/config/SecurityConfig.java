@@ -62,7 +62,7 @@ public class SecurityConfig {
                     "/api/users/mypage/**",
                     "/api/users/update"
                 ).hasAuthority("ROLE_USER") // ✅ USER 권한 필요
-                .requestMatchers("/api/adminpage/**").hasAuthority("ROLE_ADMIN") // ✅ ADMIN 권한 필요
+                .requestMatchers("/api/adminpage/**", "/api/admin/**").hasAuthority("ROLE_ADMIN") // ✅ ADMIN 권한 필요
                 .anyRequest().authenticated() // ✅ 그 외 요청은 로그인 필요
             )
             .exceptionHandling(ex -> ex.accessDeniedPage("/error/403"))
