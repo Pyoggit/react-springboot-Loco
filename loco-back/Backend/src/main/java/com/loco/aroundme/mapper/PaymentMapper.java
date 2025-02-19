@@ -18,4 +18,7 @@ public interface PaymentMapper {
 	/** ✅ 결제 승인 후 주문 상태 업데이트 */
 	void updateOrderStatus(@Param("orderId") String orderId, @Param("status") String status,
 			@Param("paymentKey") String paymentKey);
+
+	/** ✅ 특정 유저의 결제 내역 조회 */
+	List<Order> findPaymentsByUserId(@Param("userId") Long userId);
 }

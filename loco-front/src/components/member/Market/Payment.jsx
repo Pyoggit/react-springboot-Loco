@@ -5,6 +5,7 @@ import axios from 'axios';
 const Payment = ({ amount, orderName, productId }) => {
   const [userId, setUserId] = useState(null);
   const [userName, setUserName] = useState('고객'); // 기본값 설정
+  const paymentMethod = '카드'; // 기본 결제 방법 설정
 
   // ✅ 로그인한 사용자 정보 가져오기
   useEffect(() => {
@@ -42,16 +43,25 @@ const Payment = ({ amount, orderName, productId }) => {
         return;
       }
 
-      // ✅ 주문 생성 요청 (customerName 포함)
+      const token = localStorage.getItem('normal_accessToken');
+      if (!token) {
+        alert('로그인이 필요합니다.');
+        return;
+      }
+
+      // ✅ 서버에 `productName`을 정확히 전달
       const orderResponse = await axios.post(
         `${import.meta.env.VITE_API_URL}/api/payment/create-order`,
         {
           userId: userId,
-          customerName: customerName, // ✅ 구매자 이름 추가
+          customerName: customerName,
           productId: productId,
           productName: orderName,
           totalAmount: amount,
-          paymentMethod: '카드',
+          paymentMethod: paymentMethod,
+        },
+        {
+          headers: { Authorization: `Bearer ${token}` },
         }
       );
 
@@ -66,11 +76,11 @@ const Payment = ({ amount, orderName, productId }) => {
 
       // ✅ Toss Payments 결제 요청
       tossPayments
-        .requestPayment('카드', {
+        .requestPayment(paymentMethod, {
           amount: amount,
           orderId: orderId,
           orderName: orderName,
-          customerName: customerName, // ✅ 구매자 이름 반영
+          customerName: customerName,
           successUrl: `${window.location.origin}/market/payment-success?orderId=${orderId}&amount=${amount}&productId=${productId}`,
           failUrl: `${window.location.origin}/market/payment-fail?orderId=${orderId}`,
         })
@@ -80,6 +90,7 @@ const Payment = ({ amount, orderName, productId }) => {
         });
     } catch (error) {
       console.error('❌ 결제 요청 중 오류 발생:', error);
+      alert('결제 요청 중 오류가 발생했습니다.');
     }
   };
 

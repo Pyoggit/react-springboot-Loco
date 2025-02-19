@@ -1,5 +1,6 @@
 package com.loco.aroundme.service;
 
+import java.util.List;
 import java.util.UUID;
 
 import org.springframework.stereotype.Service;
@@ -24,20 +25,19 @@ public class PaymentServiceImpl implements PaymentService {
 	public void saveOrder(Order order) {
 		log.info("🛒 [주문 저장 요청] - {}", order);
 
-		// ✅ orderId가 null이면 새로 생성
 		if (order.getOrderId() == null) {
 			order.setOrderId("ORDER_" + UUID.randomUUID().toString().replace("-", "").substring(0, 10));
 		}
 
-		// ✅ paymentKey가 null이면 빈 문자열("")로 설정
 		if (order.getPaymentKey() == null) {
 			order.setPaymentKey("");
 		}
 
-		order.setStatus("PENDING"); // 기본 상태 설정
+		order.setStatus("PENDING");
 		paymentMapper.insertOrder(order);
 
-		log.info("✅ [주문 저장 완료] - Order ID: {}, 구매자: {}", order.getOrderId(), order.getCustomerName());
+		log.info("✅ [주문 저장 완료] - Order ID: {}, 상품명: {}, 구매자: {}", order.getOrderId(), order.getProductName(),
+				order.getCustomerName());
 	}
 
 	/** ✅ 주문 조회 (상품명 포함) */
@@ -46,15 +46,15 @@ public class PaymentServiceImpl implements PaymentService {
 	public Order getOrderWithProductName(String orderId) {
 		log.info("🔍 주문 조회: orderId={}", orderId);
 		Order order = paymentMapper.findOrderWithProductName(orderId);
-		if (order == null) {
-			log.warn("⚠️ 해당 주문을 찾을 수 없음: orderId={}", orderId);
+
+		if (order != null) {
+			log.info("✅ 주문 정보 조회 완료: orderId={}, productName={}", order.getOrderId(), order.getProductName());
 		}
+
 		return order;
 	}
 
-	/**
-	 * ✅ 결제 승인 후 주문 상태 업데이트
-	 */
+	/** ✅ 결제 승인 후 주문 상태 업데이트 */
 	@Override
 	@Transactional
 	public void updatePaymentStatus(String orderId, String status, String paymentKey) {
@@ -62,4 +62,20 @@ public class PaymentServiceImpl implements PaymentService {
 		paymentMapper.updateOrderStatus(orderId, status, paymentKey);
 		log.info("✅ [결제 상태 업데이트 완료] - Order ID: {}", orderId);
 	}
+
+	/** ✅ 특정 유저 결제 내역 조회 */
+	@Override
+	@Transactional(readOnly = true)
+	public List<Order> getPaymentsByUserId(Long userId) {
+		log.info("🔍 특정 유저 결제 내역 조회: userId={}", userId);
+		List<Order> orders = paymentMapper.findPaymentsByUserId(userId);
+
+		for (Order order : orders) {
+			log.info("🛒 주문 정보: orderId={}, productId={}, 상품명={}", order.getOrderId(), order.getProductId(),
+					order.getProductName());
+		}
+
+		return orders;
+	}
+
 }
