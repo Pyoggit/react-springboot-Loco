@@ -47,62 +47,68 @@ public class CircleServiceImpl implements CircleService {
 		circleMapper.deleteCircle(circleId);
 	}
 
-	
-
 	@Override
 	public Circle findCircleById(int circleId) { // 기존 getCircleById에서 변경
 		return circleMapper.findCircleById(circleId);
 	}
 
 	@Override
-	public void updateCircle(Circle circle) {
-		circleMapper.updateCircle(circle);
+	public void updateCircle(Long circleId, String circleName, String circleCategory, String circleDate,
+			int circleMaxMember, String circleDetail, String circleAddress, double circleLat, double circleLng,
+			String circlePlaceId, String pictureUrl) {
+		circleMapper.updateCircle(circleId, circleName, circleCategory, circleDate, circleMaxMember, circleDetail,
+				circleAddress, circleLat, circleLng, circlePlaceId, pictureUrl);
 	}
 
-	 @Override
-	    public void attendCircle(int circleId, int userId) {
-	        if (circleMapper.isUserAttending(circleId, userId) == 0) {
-	            circleMapper.attendCircle(circleId, userId);
-	        }
-	    }
+	@Override
+	public void attendCircle(int circleId, int userId) {
+		if (circleMapper.isUserAttending(circleId, userId) == 0) {
+			circleMapper.attendCircle(circleId, userId);
+		}
+	}
 
-	    @Override
-	    public void cancelAttendance(int circleId, int userId) {
-	        circleMapper.cancelAttendance(circleId, userId);
-	    }
+	@Override
+	public void cancelAttendance(int circleId, int userId) {
+		circleMapper.cancelAttendance(circleId, userId);
+	}
 
-	    @Override
-	    public List<Users> getAttendeesByCircleId(int circleId) {
-	        return circleMapper.getAttendeesByCircleId(circleId);
-	    }
+	@Override
+	public List<Users> getAttendeesByCircleId(int circleId) {
+		return circleMapper.getAttendeesByCircleId(circleId);
+	}
 
-	    @Override
-	    public boolean isUserAttending(int circleId, int userId) {
-	        return circleMapper.isUserAttending(circleId, userId) > 0;
-	    }
-	    
-	    //카테고리 찾기
-	    @Override
-	    public List<Circle> getCirclesByCategory(String category) {
-	        System.out.println("🔎 데이터베이스에서 찾는 카테고리: " + category); // ✅ 로그 추가
-	        return circleMapper.findCirclesByCategory(category);
-	    }
-	    
-	    @Override
-	    public List<Circle> searchCircles(String clubTitle, String city, String district, String category, String startDate) {
-	        if (clubTitle == null) clubTitle = "";
-	        if (city == null) city = "";
-	        if (district == null) district = "";
-	        if (category == null || category.equals("all")) category = "";
-	        if (startDate == null) startDate = "";
-	        
-	        return circleMapper.searchCircles(clubTitle, city, district, category, startDate);
-	    }
+	@Override
+	public boolean isUserAttending(int circleId, int userId) {
+		return circleMapper.isUserAttending(circleId, userId) > 0;
+	}
 
+	// 카테고리 찾기
+	@Override
+	public List<Circle> getCirclesByCategory(String category) {
+		System.out.println("🔎 데이터베이스에서 찾는 카테고리: " + category); // ✅ 로그 추가
+		return circleMapper.findCirclesByCategory(category);
+	}
 
+	@Override
+	public List<Circle> searchCircles(String clubTitle, String city, String district, String category,
+			String startDate) {
+		if (clubTitle == null)
+			clubTitle = "";
+		if (city == null)
+			city = "";
+		if (district == null)
+			district = "";
+		if (category == null || category.equals("all"))
+			category = "";
+		if (startDate == null)
+			startDate = "";
 
-	    
+		return circleMapper.searchCircles(clubTitle, city, district, category, startDate);
+	}
 
+	@Override
+	public String getCreatorEmailByCircleId(int circleId) {
+		return circleMapper.getCreatorEmailByCircleId(circleId);
+	}
 
-	
 }
