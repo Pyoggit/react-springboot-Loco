@@ -1,0 +1,59 @@
+.mypage-order-container {
+  width: 100%;
+  background: white;
+  border-radius: 10px;
+  padding: 20px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+}
+
+.mypage-order-header {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 15px;
+}
+
+.mypage-order-search-input {
+  padding: 8px;
+  border-radius: 5px;
+  border: 1px solid #ccc;
+  width: 200px;
+}
+
+.mypage-order-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.mypage-order-table th,
+.mypage-order-table td {
+  padding: 12px;
+  border: 1px solid #ddd;
+  text-align: center;
+}
+
+.mypage-order-table th {
+  background: rgba(177, 121, 241, 0.6);
+  color: white;
+  cursor: pointer;
+}
+
+.mypage-order-table th:hover {
+  background: rgba(177, 121, 241, 0.8);
+}
+
+.mypage-order-table input[type='checkbox'] {
+  transform: scale(1.2);
+}
+
+.pagination {
+  display: flex;
+  justify-content: center;
+  margin-top: 15px;
+}
+
+.pagination button {
+  padding: 5px 10px;
+  margin: 0 5px;
+  border: 1px solid #ddd;
+  cursor: pointer;
+}

@@ -48,24 +48,19 @@ public class ProductController {
 			@RequestPart(value = "images", required = false) List<MultipartFile> images,
 			@RequestHeader("Authorization") String token) {
 		try {
-			log.info("🔹 상품 등록 요청 수신");
-
 			Users user = validateUser(token);
-			if (user == null) {
+			if (user == null)
 				return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("로그인이 필요합니다.");
-			}
 
 			ObjectMapper objectMapper = new ObjectMapper();
 			Product product = objectMapper.readValue(productJson, Product.class);
 			product.setUserId(user.getUserId());
 
-			log.info("✅ 상품 등록 유저 ID: {}", user.getUserId());
-
 			productService.insertProduct(product, images);
 			return ResponseEntity.ok("상품이 성공적으로 등록되었습니다.");
 		} catch (Exception e) {
 			log.error("❌ 상품 등록 중 오류 발생", e);
-			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("상품 등록 중 오류 발생: " + e.getMessage());
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("상품 등록 중 오류 발생");
 		}
 	}
 
@@ -174,14 +169,11 @@ public class ProductController {
 		}
 	}
 
-	/** ✅ JWT 토큰을 이용하여 사용자 인증 및 정보 가져오기 */
+	// ** ✅ JWT 토큰을 이용한 사용자 인증 */
 	private Users validateUser(String token) {
-		if (token == null || !token.startsWith("Bearer ")) {
+		if (token == null || !token.startsWith("Bearer "))
 			return null;
-		}
-
-		String email = jwtUtil.getUserEmail(token.substring(7));
-		return usersMapper.read(email);
+		return usersMapper.read(jwtUtil.getUserEmail(token.substring(7)));
 	}
 
 	@GetMapping("/info/{productId}")
@@ -204,6 +196,17 @@ public class ProductController {
 			log.error("❌ 상품 조회 중 오류 발생", e);
 			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
 		}
+	}
+
+	/** ✅ 다수의 상품 ID로 상품 정보 조회 */
+	@PostMapping("/products-by-ids")
+	public ResponseEntity<List<Product>> getProductsByIds(@RequestBody List<Long> productIds) {
+		log.info("🔍 상품 ID 기반으로 상품 조회 요청: {}", productIds);
+		if (productIds == null || productIds.isEmpty())
+			return ResponseEntity.badRequest().body(Collections.emptyList());
+
+		List<Product> products = productService.getProductsByIds(productIds);
+		return ResponseEntity.ok(products);
 	}
 
 }

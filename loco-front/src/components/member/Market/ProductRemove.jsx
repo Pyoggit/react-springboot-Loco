@@ -18,7 +18,7 @@ const ListItem = ({
 
   // 썸네일 이미지 URL 생성
   const thumbnail =
-    images && images.length > 0
+    images && images.length > 0 && images[0].pictureUrl
       ? `${import.meta.env.VITE_API_URL}/upload/${images[0].pictureUrl}`
       : '/default-placeholder.png';
 
@@ -72,20 +72,56 @@ export default function ProductRemove() {
   useEffect(() => {
     const fetchProducts = async () => {
       try {
-        const token = localStorage.getItem('accessToken');
+        const token = localStorage.getItem('normal_accessToken'); // ✅ 토큰 키 통일
+        if (!token) {
+          alert('로그인이 필요합니다.');
+          navigate('/login');
+          return;
+        }
+
         const response = await axios.get(
           `${import.meta.env.VITE_API_URL}/api/market/my-products`,
           {
             headers: { Authorization: `Bearer ${token}` },
           }
         );
-        setItems(response.data);
+        console.log('✅ 내 상품 목록:', response.data);
+
+        // ✅ 상품에 이미지 정보가 포함되지 않은 경우 추가 요청
+        const productsWithImages = await Promise.all(
+          response.data.map(async (product) => {
+            if (!product.images || product.images.length === 0) {
+              try {
+                const imageResponse = await axios.get(
+                  `${import.meta.env.VITE_API_URL}/api/market/info/${
+                    product.productId
+                  }`
+                );
+                return {
+                  ...product,
+                  images: imageResponse.data.product.images,
+                };
+              } catch (error) {
+                console.error(
+                  `❌ 상품 ID ${product.productId}의 이미지 불러오기 실패`,
+                  error
+                );
+                return product; // 이미지가 없을 경우 기존 데이터 유지
+              }
+            }
+            return product;
+          })
+        );
+
+        setItems(productsWithImages);
       } catch (error) {
-        console.error('상품 목록 조회 실패:', error);
+        console.error('❌ 상품 목록 조회 실패:', error);
+        alert('상품 목록을 불러오는 중 오류가 발생했습니다.');
       }
     };
+
     fetchProducts();
-  }, []);
+  }, [navigate]);
 
   // ✅ 개별 상품 선택/해제
   const handleCheck = (productId) => {
@@ -104,18 +140,26 @@ export default function ProductRemove() {
     }
 
     try {
-      const token = localStorage.getItem('accessToken');
+      const token = localStorage.getItem('normal_accessToken'); // ✅ 토큰 키 통일
+      if (!token) {
+        alert('로그인이 필요합니다.');
+        navigate('/login');
+        return;
+      }
+
       await axios.delete(`${import.meta.env.VITE_API_URL}/api/market/remove`, {
         headers: { Authorization: `Bearer ${token}` },
         data: { productIds: selectedItems },
       });
 
-      // 삭제 후 리스트 갱신
-      setItems(items.filter((item) => !selectedItems.includes(item.productId)));
+      // ✅ 안전한 상태 업데이트
+      setItems((prevItems) =>
+        prevItems.filter((item) => !selectedItems.includes(item.productId))
+      );
       setSelectedItems([]);
       alert('선택한 상품이 삭제되었습니다.');
     } catch (error) {
-      console.error('상품 삭제 실패:', error);
+      console.error('❌ 상품 삭제 실패:', error);
       alert('상품 삭제 중 오류가 발생했습니다.');
     }
   };
@@ -123,7 +167,7 @@ export default function ProductRemove() {
   // ✅ 전체 선택/해제
   const handleSelectAll = () => {
     setSelectedItems(
-      selectedItems.length === items.length
+      selectedItems.length > 0 && selectedItems.length === items.length
         ? []
         : items.map((item) => item.productId)
     );

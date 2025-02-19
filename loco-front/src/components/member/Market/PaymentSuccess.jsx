@@ -7,9 +7,10 @@ export function PaymentSuccess() {
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
   const [isLoading, setIsLoading] = useState(true);
+  const [productName, setProductName] = useState('상품 정보 없음'); // ✅ 상품명 추가
 
   const orderId = searchParams.get('orderId');
-  const amount = parseInt(searchParams.get('amount'), 10); // ✅ 숫자로 변환
+  const amount = parseInt(searchParams.get('amount'), 10);
   const paymentKey = searchParams.get('paymentKey');
   const productId = searchParams.get('productId');
 
@@ -42,6 +43,25 @@ export function PaymentSuccess() {
       return;
     }
 
+    const token = localStorage.getItem('normal_accessToken');
+    if (!token) {
+      alert('로그인이 필요합니다.');
+      navigate('/login');
+      return;
+    }
+
+    // ✅ 상품명 가져오기
+    const fetchProductName = async () => {
+      try {
+        const response = await axios.get(
+          `${import.meta.env.VITE_API_URL}/api/market/product-name/${productId}`
+        );
+        setProductName(response.data);
+      } catch (error) {
+        console.error('❌ 상품명 조회 실패:', error);
+      }
+    };
+
     const sendPaymentData = async () => {
       try {
         const response = await axios.post(
@@ -55,6 +75,9 @@ export function PaymentSuccess() {
             paymentKey,
             customerName, // ✅ 주문자 이름 포함
             status: 'COMPLETED',
+          },
+          {
+            headers: { Authorization: `Bearer ${token}` }, // ✅ 인증 추가
           }
         );
 
@@ -71,6 +94,7 @@ export function PaymentSuccess() {
       }
     };
 
+    fetchProductName();
     sendPaymentData();
   }, [orderId, amount, paymentKey, productId, customerName, navigate]);
 
@@ -88,6 +112,9 @@ export function PaymentSuccess() {
             </p>
             <p>
               <strong>주문자:</strong> {customerName}
+            </p>
+            <p>
+              <strong>상품명:</strong> {productName}
             </p>
             <p>
               <strong>결제 금액:</strong> {amount.toLocaleString()}원

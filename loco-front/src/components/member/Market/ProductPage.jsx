@@ -48,7 +48,9 @@ const ListItem = ({
           <p className="product-name">상품명: {productName}</p>
           <p className="product-category">카테고리: {productCategory}</p>
           <p className="product-price">가격: {price.toLocaleString()}원</p>
-          <p className="product-seller">판매자: {userName}</p>{' '}
+          <p className="product-seller">
+            판매자: {userName || '알 수 없음'}
+          </p>{' '}
           {/* 판매자 정보 표시 */}
           <div className="product-item-button">
             <button onClick={handleDetailClick} className="team-button">
