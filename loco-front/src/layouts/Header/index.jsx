@@ -70,9 +70,8 @@ export default function Header() {
   const fetchUserInfo = async () => {
     const normalAccessToken = localStorage.getItem("normal_accessToken");
     const kakaoAccessToken = localStorage.getItem("kakao_accessToken");
-    const userId = localStorage.getItem("userId");
 
-    let accessToken = normalAccessToken || kakaoAccessToken || userId;
+    let accessToken = normalAccessToken || kakaoAccessToken;
 
     if (!accessToken) {
       console.warn("🚨 저장된 토큰 없음 → API 요청 안 보냄");
@@ -151,15 +150,12 @@ export default function Header() {
 
       const normalToken = localStorage.getItem("normal_accessToken");
       const kakaoToken = localStorage.getItem("kakao_accessToken");
-      const userIdvalue = localStorage.getItem("userId");
 
       let headers = {};
       if (normalToken) {
         headers.Authorization = `Bearer ${normalToken}`;
       } else if (kakaoToken) {
         headers.Authorization = `Bearer ${kakaoToken}`;
-      } else if (userIdvalue) {
-        headers.Authorization = `Bearer ${userIdvalue}`;
       }
 
       const response = await axios.post("/api/users/logout", {}, { headers });
@@ -171,7 +167,6 @@ export default function Header() {
         localStorage.removeItem("normal_refreshToken");
         localStorage.removeItem("kakao_accessToken");
         localStorage.removeItem("kakao_refreshToken");
-        localStorage.removeItem("userId");
 
         setLoginUser(null);
         setLogin(false);
@@ -209,9 +204,7 @@ export default function Header() {
                 backgroundImage: `url(${
                   loginUser?.profileImage?.startsWith("http")
                     ? loginUser?.profileImage
-                    : loginUser?.profileImage
-                    ? `http://localhost:8080${loginUser?.profileImage}` // ✅ 서버에서 제공하는 프로필 이미지
-                    : "/default-image.png" // ✅ 기본 프로필 이미지 (프론트엔드에 저장된 이미지)
+                    : `http://localhost:8080${loginUser?.profileImage}` // ✅ 여기서 서버 이미지 URL 설정됨
                 })`,
               }}
             ></div>

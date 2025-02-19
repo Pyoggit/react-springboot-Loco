@@ -115,10 +115,10 @@
 		FETCH FIRST 1 ROWS ONLY
 	</select>
 
-
-
-
-
+	<!-- 임시비밀번호로 업데이트 -->
+	<update id="updatePassword" parameterType="map">
+	    UPDATE USERS SET PASSWORD = #{password} WHERE USER_EMAIL = #{email}
+	</update>
 
 
 </mapper>

@@ -25,7 +25,11 @@ const FindPwForm = () => {
         navigate(`/find-password/verify?email=${email}`);
       }
     } catch (err) {
-      setError(err.response?.data || "인증번호 요청 실패");
+      if (err.response && err.response.data.error) {
+        setError(err.response.data.error); // ✅ 백엔드에서 받은 오류 메시지 사용
+      } else {
+        setError("인증번호 요청 실패");
+      }
     } finally {
       setLoading(false);
     }
