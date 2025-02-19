@@ -42,4 +42,8 @@ public interface ProductMapper {
 
 	// ✅ 상품 이미지 저장
 	void insertProductPics(@Param("productPics") List<ProductPic> productPics);
+
+	// ✅ 다수의 상품 ID로 상품 정보 조회 (상품명 조회 시 사용)
+    List<Product> findProductsByIds(@Param("productIds") List<Long> productIds);
+
 }

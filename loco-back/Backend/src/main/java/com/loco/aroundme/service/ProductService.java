@@ -25,4 +25,7 @@ public interface ProductService {
 
 	// ✅ 본인이 등록한 상품 삭제
 	void deleteProductsByUser(List<Long> productIds, Long userId);
+	
+	List<Product> getProductsByIds(List<Long> productIds);
+	
 }

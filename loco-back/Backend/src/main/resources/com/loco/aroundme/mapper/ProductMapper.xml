@@ -58,27 +58,30 @@
 	<!-- ✅ 특정 상품 상세 조회 -->
 	<select id="findProductById" parameterType="long"
 		resultMap="productResultMap">
-		SELECT p.*, u.USER_NAME AS userName
+		SELECT p.*, u.USER_NAME AS USER_NAME
 		FROM PRODUCT p
 		LEFT JOIN
 		USERS u ON p.USER_ID = u.USER_ID
 		WHERE p.PRODUCT_ID = #{productId}
 	</select>
 
-	<!-- ✅ 전체 상품 조회 (UserName 불필요) -->
+	<!-- ✅ 전체 상품 조회 -->
 	<select id="selectProducts" resultMap="productResultMap">
 		SELECT p.*, u.USER_NAME AS
-		userName
+		USER_NAME
 		FROM PRODUCT p
 		LEFT JOIN USERS u ON p.USER_ID = u.USER_ID
-		ORDER
-		BY p.PRODUCT_REGDATE DESC
+		ORDER BY p.PRODUCT_REGDATE DESC
 	</select>
 
 	<!-- ✅ 특정 유저가 등록한 상품 조회 -->
 	<select id="findProductsByUserId" parameterType="long"
 		resultMap="productResultMap">
-		SELECT * FROM PRODUCT WHERE USER_ID = #{userId}
+		SELECT p.*, u.USER_NAME AS USER_NAME
+		FROM PRODUCT p
+		LEFT JOIN
+		USERS u ON p.USER_ID = u.USER_ID
+		WHERE p.USER_ID = #{userId}
 	</select>
 
 	<!-- ✅ 최근 등록된 상품 ID 가져오기 -->
@@ -141,5 +144,15 @@
 			#{id}
 		</foreach>
 	</delete>
+
+	<!-- ✅ 다수의 상품 ID로 상품 정보 조회 -->
+	<select id="findProductsByIds" parameterType="list"
+		resultType="com.loco.aroundme.domain.Product">
+		SELECT * FROM PRODUCT WHERE PRODUCT_ID IN
+		<foreach collection="productIds" item="id" open="("
+			separator="," close=")">
+			#{id}
+		</foreach>
+	</select>
 
 </mapper>

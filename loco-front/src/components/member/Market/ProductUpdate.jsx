@@ -53,22 +53,22 @@ const ProductUpdate = () => {
           `${import.meta.env.VITE_API_URL}/api/market/info/${id}`
         );
         console.log('✅ 상품 정보:', response.data);
-        setProduct(response.data);
+        setProduct(response.data.product); // ✅ 여기서 product 객체만 저장
         setFormData({
-          name: response.data.productName,
-          content: response.data.description,
-          category: response.data.productCategory,
-          price: response.data.price,
-          address: response.data.productAddress,
+          name: response.data.product.productName,
+          content: response.data.product.description,
+          category: response.data.product.productCategory,
+          price: response.data.product.price,
+          address: response.data.product.productAddress,
           coordinates: {
-            lat: response.data.productLat,
-            lng: response.data.productLng,
+            lat: response.data.product.productLat,
+            lng: response.data.product.productLng,
           },
-          placeId: response.data.productPlaceId,
+          placeId: response.data.product.productPlaceId,
         });
 
         setExistingImages(
-          response.data.images.map(
+          response.data.product.images.map(
             (img) => `${import.meta.env.VITE_API_URL}/upload/${img.pictureUrl}`
           )
         );
@@ -90,7 +90,7 @@ const ProductUpdate = () => {
       console.log('🟢 로그인한 유저 ID:', userId);
       console.log('🟢 상품 등록자 ID:', product.userId);
 
-      if (product.userId !== userId) {
+      if (Number(product?.userId) !== Number(userId)) {
         alert('본인이 등록한 상품만 수정할 수 있습니다.');
         navigate('/market');
       }
@@ -100,6 +100,15 @@ const ProductUpdate = () => {
   if (loading) {
     return <div>데이터 로딩중...!</div>;
   }
+
+  /** ✅ 새로운 이미지 추가 시 기존 이미지와 병합하여 미리보기 반영 */
+  const handleFileChange = (e) => {
+    const files = Array.from(e.target.files);
+    setNewFiles(files);
+
+    const previewUrls = files.map((file) => URL.createObjectURL(file));
+    setExistingImages(previewUrls); // 새 이미지 미리보기 갱신
+  };
 
   /** ✅ 상품 수정 요청 */
   const handleUpdate = async () => {
@@ -124,9 +133,9 @@ const ProductUpdate = () => {
 
     console.log('🟢 수정 요청 전 accessToken 확인:', token);
     console.log('🟢 로그인한 유저 ID:', userId);
-    console.log('🟢 상품 등록자 ID:', product.userId);
+    console.log('🟢 상품 등록자 ID:', product?.userId);
 
-    if (userId !== product.userId) {
+    if (!userId || Number(userId) !== Number(product?.userId)) {
       alert('본인이 등록한 상품만 수정할 수 있습니다.');
       return;
     }
@@ -209,7 +218,7 @@ const ProductUpdate = () => {
           multiple
           name="images"
           ref={fileInputRef}
-          onChange={(e) => setNewFiles(Array.from(e.target.files))}
+          onChange={handleFileChange}
         />
         <div className="product-preview-container">
           {existingImages.map((image, index) => (

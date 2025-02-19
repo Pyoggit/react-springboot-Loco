@@ -1,6 +1,7 @@
 package com.loco.aroundme.service;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -11,9 +12,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.loco.aroundme.domain.Product;
 import com.loco.aroundme.domain.ProductPic;
-import com.loco.aroundme.domain.Users;
 import com.loco.aroundme.mapper.ProductMapper;
-import com.loco.aroundme.mapper.UsersMapper;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -25,7 +24,6 @@ public class ProductServiceImpl implements ProductService {
 
 	private final ProductMapper productMapper;
 	private final ProductPicService productPicService;
-	private final UsersMapper usersMapper;
 
 	@Override
 	@Transactional
@@ -93,6 +91,7 @@ public class ProductServiceImpl implements ProductService {
 		if (product != null) {
 			List<ProductPic> productPics = productMapper.getProductPics(productId);
 			product.setImages(productPics);
+			log.info("🔹 상품 ID: {}, 판매자: {}", product.getProductId(), product.getUserName()); // ✅ 추가 확인
 		}
 		return product;
 	}
@@ -101,7 +100,7 @@ public class ProductServiceImpl implements ProductService {
 	public List<Map<String, Object>> getProducts() {
 		log.info("🔹 전체 상품 목록 조회 요청");
 
-		List<Product> products = productMapper.selectProducts();
+		List<Product> products = productMapper.selectProducts(); // ✅ `userName` 포함
 		List<Map<String, Object>> productListWithDetails = new ArrayList<>();
 
 		for (Product product : products) {
@@ -117,6 +116,8 @@ public class ProductServiceImpl implements ProductService {
 			productData.put("images", productPics);
 
 			productListWithDetails.add(productData);
+
+			log.info("🔹 상품 ID: {}, 판매자: {}", product.getProductId(), product.getUserName()); // ✅ 디버깅 추가
 		}
 
 		return productListWithDetails;
@@ -140,4 +141,14 @@ public class ProductServiceImpl implements ProductService {
 		productMapper.deleteProducts(productIds);
 		log.info("✅ 본인이 등록한 상품 삭제 완료: {}", productIds);
 	}
+
+	@Override
+	public List<Product> getProductsByIds(List<Long> productIds) {
+		if (productIds == null || productIds.isEmpty()) {
+			return Collections.emptyList();
+		}
+		log.info("🔍 상품 ID 목록으로 상품 정보 조회: {}", productIds);
+		return productMapper.findProductsByIds(productIds);
+	}
+
 }

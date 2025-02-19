@@ -20,11 +20,22 @@ const ProductInfo = () => {
     if (loginUser) {
       try {
         const parsedUser = JSON.parse(loginUser);
-        console.log('✅ 로그인한 사용자 정보:', parsedUser);
-        setUserId(parsedUser.userId);
+
+        // 🚨 loginUser 객체에 userId가 있는지 확인
+        if (parsedUser && parsedUser.userId) {
+          console.log('✅ 로그인한 사용자 정보:', parsedUser);
+          setUserId(parsedUser.userId);
+        } else {
+          console.warn(
+            '⚠️ 로그인 사용자 정보에 userId가 없습니다:',
+            parsedUser
+          );
+        }
       } catch (error) {
         console.error('❌ 로그인 사용자 정보 파싱 오류:', error);
       }
+    } else {
+      console.warn('⚠️ localStorage에 loginUser가 없습니다.');
     }
   }, []);
 
@@ -60,7 +71,16 @@ const ProductInfo = () => {
   }
 
   // ✅ 상품 등록자와 로그인한 사용자가 같은지 확인
-  const isOwner = userId !== null && Number(userId) === Number(product.userId);
+  const isOwner =
+    userId !== null &&
+    product.userId !== null &&
+    Number(userId) === Number(product.userId);
+  console.log(
+    '🔍 로그인한 userId:',
+    userId,
+    '상품 등록 userId:',
+    product.userId
+  );
   console.log('✅ isOwner:', isOwner);
 
   // 이미지 URL 설정 (기본 썸네일 포함)
@@ -81,11 +101,24 @@ const ProductInfo = () => {
 
   /** ✅ 상품 삭제 버튼 클릭 시 */
   const handleDelete = async () => {
+    if (!userId || Number(userId) !== Number(product.userId)) {
+      alert('본인이 등록한 상품만 삭제할 수 있습니다.');
+      return;
+    }
+
     if (window.confirm('정말로 이 상품을 삭제하시겠습니까?')) {
       try {
+        const token = localStorage.getItem('normal_accessToken'); // ✅ 올바른 토큰 키 사용
+        if (!token) {
+          alert('로그인이 필요합니다.');
+          navigate('/login');
+          return;
+        }
+
         await axios.delete(
           `${import.meta.env.VITE_API_URL}/api/market/remove`,
           {
+            headers: { Authorization: `Bearer ${token}` }, // ✅ 인증 헤더 추가
             data: { productIds: [product.productId] },
           }
         );
