@@ -404,26 +404,27 @@ public class UsersController {
 	/**
      * ✅ 비밀번호 찾기 - 인증번호 요청 API
      */
-    @PostMapping("/request-verification")
-    public ResponseEntity<?> requestVerification(@RequestBody Map<String, String> request) {
-        String name = request.get("name");
-        String email = request.get("email");
+	@PostMapping("/request-verification")
+	public ResponseEntity<?> requestVerification(@RequestBody Map<String, String> request) {
+	    String name = request.get("name");
+	    String email = request.get("email");
 
-        if (name == null || email == null || name.trim().isEmpty() || email.trim().isEmpty()) {
-            return ResponseEntity.badRequest().body(Map.of("error", "이름과 이메일을 입력하세요."));
-        }
+	    if (name == null || email == null || name.trim().isEmpty() || email.trim().isEmpty()) {
+	        return ResponseEntity.badRequest().body(Map.of("error", "이름과 이메일을 입력하세요."));
+	    }
 
-        boolean exists = usersService.existsByNameAndEmail(name, email);
-        if (!exists) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(Map.of("error", "일치하는 계정을 찾을 수 없습니다."));
-        }
+	    boolean exists = usersService.existsByNameAndEmail(name, email);
+	    if (!exists) {
+	        return ResponseEntity.status(HttpStatus.NOT_FOUND)
+	                .body(Map.of("error", "회원 정보가 존재하지 않습니다.")); // ✅ 오류 메시지 추가
+	    }
 
-        // ✅ 인증번호 생성 및 저장
-        String verificationCode = verificationCodeService.generateCode(email);
-        emailService.sendVerificationCode(email, verificationCode);
+	    // ✅ 인증번호 생성 및 저장
+	    String verificationCode = verificationCodeService.generateCode(email);
+	    emailService.sendVerificationCode(email, verificationCode);
 
-        return ResponseEntity.ok(Map.of("message", "인증번호가 이메일로 전송되었습니다."));
-    }
+	    return ResponseEntity.ok(Map.of("message", "인증번호가 이메일로 전송되었습니다."));
+	}
 
     /**
      * ✅ 비밀번호 찾기 - 인증번호 검증 API
@@ -469,6 +470,5 @@ public class UsersController {
 
         return ResponseEntity.ok(Map.of("message", "임시 비밀번호가 이메일로 전송되었습니다."));
     }
-
 
 }

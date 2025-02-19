@@ -32,5 +32,7 @@ public interface UsersMapper {
                                     @Param("mobile1") String mobile1, 
                                     @Param("mobile2") String mobile2, 
                                     @Param("mobile3") String mobile3);
+    // ✅ 임시비밀번호로 업데이트
+    void updatePassword(@Param("email") String email, @Param("password") String password);
 
 }

@@ -374,19 +374,15 @@ public class UsersServiceImpl implements UsersService {
 
 
 	@Override
-    @Transactional
-    public String generateTemporaryPassword(String email) {
-        String tempPassword = generateRandomPassword();
-        String encryptedPassword = passwordEncoder.encode(tempPassword);
+	@Transactional
+	public String generateTemporaryPassword(String email) {
+	    String tempPassword = UUID.randomUUID().toString().substring(0, 10); // 10자리 랜덤 비밀번호
+	    String encodedPassword = passwordEncoder.encode(tempPassword); // ✅ 비밀번호 암호화
 
-        Users user = usersMapper.read(email);
-        if (user != null) {
-            user.setPassword(encryptedPassword);
-            usersMapper.updateUser(user);
-        }
+	    usersMapper.updatePassword(email, encodedPassword); // ✅ DB에 암호화된 비밀번호 저장
+	    return tempPassword; // 이메일로 보낼 평문 비밀번호 반환
+	}
 
-        return tempPassword;
-    }
 	
 	private String generateRandomPassword() {
         String chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*";
