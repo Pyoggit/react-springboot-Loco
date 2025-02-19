@@ -30,12 +30,22 @@ public interface CircleMapper {
 	@Select("SELECT * FROM CIRCLE WHERE CIRCLE_ID = #{circleId}")
 	Circle getCircleById(Long circleId);
 
-	void updateCircle(Circle circle); // XML에서 구현
+	void updateCircle(@Param("circleId") Long circleId, @Param("circleName") String circleName,
+			@Param("circleCategory") String circleCategory, @Param("circleDate") String circleDate,
+			@Param("circleMaxMember") int circleMaxMember, @Param("circleDetail") String circleDetail,
+			@Param("circleAddress") String circleAddress, @Param("circleLat") double circleLat,
+			@Param("circleLng") double circleLng, @Param("circlePlaceId") String circlePlaceId,
+			@Param("pictureUrl") String pictureUrl // ✅ 새 이미지 URL 추가
+	); // XML에서 구현
 
 	/** ✅ 특정 모임 조회 */
 	@Select("SELECT * FROM CIRCLE WHERE CIRCLE_ID = #{circleId}")
 	Circle findCircleById(@Param("circleId") int circleId);
 
+	@Select("SELECT U.USER_EMAIL FROM USERS U JOIN CIRCLE C ON U.USER_ID = C.USER_ID WHERE C.CIRCLE_ID = #{circleId}")
+	String getCreatorEmailByCircleId(@Param("circleId") int circleId);
+	
+	
 	/** ✅ 모임 참석 */
 	@Insert(" INSERT INTO ENJOY (ENJOY_ID, CIRCLE_ID, USER_ID) SELECT ENJOY_SEQ.NEXTVAL, #{circleId}, #{userId} FROM USERS WHERE USER_ID = #{userId}")
 	void attendCircle(@Param("circleId") int circleId, @Param("userId") int userId);
@@ -51,36 +61,21 @@ public interface CircleMapper {
 	/** ✅ 사용자가 특정 모임에 참석했는지 확인 */
 	@Select("SELECT COUNT(*) FROM ENJOY WHERE CIRCLE_ID = #{circleId} AND USER_ID = #{userId}")
 	int isUserAttending(@Param("circleId") int circleId, @Param("userId") int userId);
-	
-	//카테고리별 모임 정보 검색
+
+	// 카테고리별 모임 정보 검색
 	@Select("SELECT * FROM CIRCLE WHERE CIRCLE_CATEGORY = #{category} ORDER BY CIRCLE_DATE DESC")
 	List<Circle> findCirclesByCategory(@Param("category") String category);
 
-	@Select({
-	    "<script>",
-	    "SELECT * FROM CIRCLE WHERE 1=1",
-	    "<if test='clubTitle != null and clubTitle != \"\"'>",
-	    " AND LOWER(CIRCLE_NAME) LIKE '%' || LOWER(#{clubTitle}) || '%'", 
-	    "</if>",
-	    "<if test='city != null and city != \"\"'>",
-	    " AND CIRCLE_ADDRESS LIKE '%' || #{city} || '%'",
-	    "</if>",
-	    "<if test='district != null and district != \"\"'>",
-	    " AND CIRCLE_ADDRESS LIKE '%' || #{district} || '%'",
-	    "</if>",
-	    "<if test='category != null and category != \"\" and category != \"all\"'>",
-	    " AND CIRCLE_CATEGORY = #{category}",
-	    "</if>",
-	    "<if test='startDate != null and startDate != \"\"'>",
-	    " AND TO_CHAR(CIRCLE_DATE, 'YYYY-MM-DD') >= #{startDate}",
-	    "</if>",
-	    "ORDER BY CIRCLE_DATE DESC",
-	    "</script>"
-	})
-	List<Circle> searchCircles(@Param("clubTitle") String clubTitle, 
-	                           @Param("city") String city, 
-	                           @Param("district") String district, 
-	                           @Param("category") String category, 
-	                           @Param("startDate") String startDate);
-	
+	@Select({ "<script>", "SELECT * FROM CIRCLE WHERE 1=1", "<if test='clubTitle != null and clubTitle != \"\"'>",
+			" AND LOWER(CIRCLE_NAME) LIKE '%' || LOWER(#{clubTitle}) || '%'", "</if>",
+			"<if test='city != null and city != \"\"'>", " AND CIRCLE_ADDRESS LIKE '%' || #{city} || '%'", "</if>",
+			"<if test='district != null and district != \"\"'>", " AND CIRCLE_ADDRESS LIKE '%' || #{district} || '%'",
+			"</if>", "<if test='category != null and category != \"\" and category != \"all\"'>",
+			" AND CIRCLE_CATEGORY = #{category}", "</if>", "<if test='startDate != null and startDate != \"\"'>",
+			" AND TO_CHAR(CIRCLE_DATE, 'YYYY-MM-DD') >= #{startDate}", "</if>", "ORDER BY CIRCLE_DATE DESC",
+			"</script>" })
+	List<Circle> searchCircles(@Param("clubTitle") String clubTitle, @Param("city") String city,
+			@Param("district") String district, @Param("category") String category,
+			@Param("startDate") String startDate);
+
 }

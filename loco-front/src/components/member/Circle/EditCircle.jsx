@@ -29,8 +29,9 @@ const EditCircle = () => {
     location: post?.circleAddress || '',
     coordinates: { lat: post?.circleLat || null, lng: post?.circleLng || null },
     placeId: post?.circlePlaceId || '',
-    pictureData: post?.pictureUrl || '',
+    pictureUrl: post?.pictureUrl || '',
     pictureId: post?.pictureId || '',
+    newFile: null, // 새로 업로드할 파일 상태 추가
   });
 
   useEffect(() => {
@@ -65,20 +66,37 @@ const EditCircle = () => {
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
+  /** ✅ 파일 변경 핸들러 */
   const handleFileChange = (e) => {
     const file = e.target.files[0];
     if (!file) return;
 
-    const reader = new FileReader();
-    reader.readAsDataURL(file);
-    reader.onloadend = () => {
-      setFormData((prev) => ({
-        ...prev,
-        pictureData: reader.result,
-      }));
-    };
+    setFormData((prev) => ({
+      ...prev,
+      newFile: file, // 새 파일 저장
+    }));
   };
 
+  /** ✅ 이미지 URL 생성 함수 */
+  const getImageUrl = () => {
+    if (formData.newFile) {
+      return URL.createObjectURL(formData.newFile);
+    }
+    if (!formData.pictureUrl) {
+      return '/images/default-image.png';
+    }
+    if (formData.pictureUrl.startsWith('http')) {
+      return formData.pictureUrl;
+    }
+
+    // ✅ 캐싱 방지 (timestamp 추가)
+    const timestamp = new Date().getTime();
+    return `${import.meta.env.VITE_API_URL}${
+      formData.pictureUrl
+    }?t=${timestamp}`;
+  };
+
+  /** ✅ 모임 정보 업데이트 */
   const handleUpdate = async (e) => {
     e.preventDefault();
 
@@ -94,11 +112,12 @@ const EditCircle = () => {
     formDataToSend.append('circleLat', formData.coordinates.lat);
     formDataToSend.append('circleLng', formData.coordinates.lng);
     formDataToSend.append('circlePlaceId', formData.placeId);
+    formDataToSend.append('pictureId', formData.pictureId);
+    formDataToSend.append('pictureUrl', formData.pictureUrl);
 
-    if (fileInputRef.current.files.length > 0) {
-      formDataToSend.append('file', fileInputRef.current.files[0]);
-    } else {
-      formDataToSend.append('file', ''); // ✅ 파일이 없을 경우 빈 값 전달
+    // ✅ 파일이 선택된 경우에만 추가
+    if (formData.newFile) {
+      formDataToSend.append('file', formData.newFile);
     }
 
     try {
@@ -109,14 +128,27 @@ const EditCircle = () => {
         formDataToSend,
         {
           headers: {
-            'Content-Type': 'multipart/form-data',
-            Authorization: token ? `Bearer ${token}` : '', // ✅ 토큰이 없으면 빈 문자열
+            Authorization: token ? `Bearer ${token}` : '',
           },
         }
       );
 
       if (response.status === 200) {
         alert('모임 정보가 수정되었습니다.');
+
+        const updatedPost = {
+          ...post,
+          pictureUrl: response.data.pictureUrl, // ✅ 최신 pictureUrl 반영
+        };
+
+        // ✅ localStorage 업데이트 (최신 이미지 반영)
+        localStorage.setItem('selectedPost', JSON.stringify(updatedPost));
+
+        setFormData((prev) => ({
+          ...prev,
+          pictureUrl: response.data.pictureUrl,
+        }));
+
         navigate(`/circle/detail/${post.circleId}`);
       }
     } catch (error) {
@@ -209,21 +241,10 @@ const EditCircle = () => {
           ref={fileInputRef}
           onChange={handleFileChange}
         />
-        {formData.pictureData && (
-          <div className="image-preview">
-            <img
-              src={
-                formData.pictureData.startsWith('http')
-                  ? formData.pictureData
-                  : `${import.meta.env.VITE_API_URL}/uploads/${
-                      formData.pictureData
-                    }`
-              }
-              alt="미리보기"
-              width="100"
-            />
-          </div>
-        )}
+
+        <div className="image-preview">
+          <img src={getImageUrl()} alt="미리보기" width="100" />
+        </div>
 
         <button type="submit" className="submit-button">
           모임 수정

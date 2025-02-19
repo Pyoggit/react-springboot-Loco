@@ -126,7 +126,7 @@ public class SecurityConfig {
 
 			@Override
 			public void addResourceHandlers(ResourceHandlerRegistry registry) {
-				// ✅ `/upload/**` 경로를 `file:uploads/` 폴더와 연결
+				// ✅ `/upload/**` 경로를 `file:upload/` 폴더와 연결
 				registry.addResourceHandler("/upload/**").addResourceLocations("file:///c:/upload/");
 			}
 		};

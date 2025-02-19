@@ -6,32 +6,19 @@
 
 	<!-- 모임 등록 -->
 	<!-- id 시퀀스, userId, maxmember, member, circleStatus 넣어주세용 -->
-	<insert id="insertCircle"
-		parameterType="com.loco.aroundme.domain.Circle">
-		INSERT INTO CIRCLE (
-		CIRCLE_ID, USER_ID, CIRCLE_NAME, CIRCLE_DATE,
-		CIRCLE_CATEGORY, CIRCLE_DETAIL,
-		CIRCLE_REGDATE, CIRCLE_ADDRESS,
-		CIRCLE_LAT, CIRCLE_LNG,
-		CIRCLE_PLACE_ID,
-		CIRCLE_MAXMEMBER, PICTURE_ID,
-		PICTURE_URL
-		) VALUES (
-		CIRCLE_SEQ.NEXTVAL, #{userId},
-		#{circleName},
-		#{circleDate, jdbcType=TIMESTAMP},
-		#{circleCategory},
-		#{circleDetail},
-		CURRENT_TIMESTAMP,
-		#{circleAddress},
-		#{circleLat},
-		#{circleLng},
-		#{circlePlaceId},
-		#{circleMaxMember, jdbcType=INTEGER}, <!-- ✅ INT 타입으로 명시 -->
-		#{pictureId, jdbcType=VARCHAR},
-		#{pictureUrl, jdbcType=CLOB}
-		)
-	</insert>
+	<insert id="insertCircle" parameterType="com.loco.aroundme.domain.Circle">
+    INSERT INTO CIRCLE (
+        CIRCLE_ID, USER_ID, CIRCLE_NAME, CIRCLE_CATEGORY, CIRCLE_DATE,
+        CIRCLE_MAXMEMBER, CIRCLE_MEMBER, CIRCLE_DETAIL, CIRCLE_ADDRESS,
+        CIRCLE_LAT, CIRCLE_LNG, CIRCLE_PLACE_ID, PICTURE_ID, PICTURE_URL
+    ) VALUES (
+        Circle_SEQ.NEXTVAL, #{userId}, #{circleName}, #{circleCategory},
+        TO_TIMESTAMP(#{circleDate}, 'YYYY-MM-DD HH24:MI:SS'),
+        #{circleMaxMember}, #{circleMember},
+        #{circleDetail}, #{circleAddress}, #{circleLat}, #{circleLng},
+        #{circlePlaceId}, #{pictureId}, #{pictureUrl}
+    )
+</insert>
 
 	<!-- ✅ 특정 날짜의 모임 조회 -->
 	<select id="findCirclesByDate" parameterType="string"
@@ -58,24 +45,25 @@
 		#{circleId}
 		AND <![CDATA[CIRCLE_MEMBER < CIRCLE_MAXMEMBER]]>
 	</update>
-	
+
 
 	<!-- ✅ 모임 정보 업데이트 -->
-	<update id="updateCircle"
-		parameterType="com.loco.aroundme.domain.Circle">
-		UPDATE CIRCLE
-		SET CIRCLE_NAME = #{circleName},
-		CIRCLE_CATEGORY = #{circleCategory},
-		CIRCLE_DATE = TO_TIMESTAMP(#{circleDate}, 'YYYY-MM-DD HH24:MI:SS'),
-		CIRCLE_MAXMEMBER = #{circleMaxMember, jdbcType=INTEGER},
-		CIRCLE_DETAIL = #{circleDetail},
-		CIRCLE_ADDRESS = #{circleAddress},
-		CIRCLE_LAT = #{circleLat},
-		CIRCLE_LNG = #{circleLng},
-		CIRCLE_PLACE_ID = #{circlePlaceId},
-		PICTURE_URL = #{pictureUrl}
-		WHERE CIRCLE_ID = #{circleId}
-	</update>
+	<update id="updateCircle">
+    UPDATE circle
+    SET 
+        circle_name = #{circleName},
+        circle_category = #{circleCategory},
+        circle_date = #{circleDate},
+        circle_maxmember = #{circleMaxMember},
+        circle_detail = #{circleDetail},
+        circle_address = #{circleAddress},
+        circle_lat = #{circleLat},
+        circle_lng = #{circleLng},
+        circle_place_id = #{circlePlaceId},
+        picture_url = #{pictureUrl}
+    WHERE circle_id = #{circleId}
+</update>
+
 </mapper>
 
 
