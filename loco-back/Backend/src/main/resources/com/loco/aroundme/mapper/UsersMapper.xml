@@ -69,13 +69,15 @@
 
 
 	<!-- 관리자 모드에서 모든 유저정보 가져오기 위한 쿼리문 -->
-	<select id="findAllUsers"
-		resultType="com.loco.aroundme.domain.Users"> 
-		SELECT USER_ID, PROVIDER, PROVIDER_ID, USER_EMAIL,
-		PASSWORD, ROLE_ID, USER_NAME, GENDER, MOBILE1, MOBILE2, MOBILE3,
-		BIRTH, ADDRESS1, ADDRESS2, USER_REGDATE, ORIGIN_USER, SYS_USER FROM
-		USERS ORDER BY USER_ID DESC
+	<select id="findAllUsers" resultType="com.loco.aroundme.domain.Users">
+	    SELECT 
+	        USER_ID, PROVIDER, PROVIDER_ID, USER_EMAIL, 
+	        ROLE_ID, USER_NAME, GENDER, MOBILE1, MOBILE2, MOBILE3,
+	        BIRTH, ADDRESS1, ADDRESS2, USER_REGDATE, ORIGIN_USER, SYS_USER
+	    FROM USERS
+	    ORDER BY USER_ID DESC
 	</select>
+
 
 
 	<!-- 회원 정보 업데이트 (프로필 이미지 포함) -->

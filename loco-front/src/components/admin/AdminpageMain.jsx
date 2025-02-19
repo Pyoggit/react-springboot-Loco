@@ -1,4 +1,3 @@
-// 파일명: src/components/admin/AdminpageMain.jsx
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import "@/css/admin/AdminpageMain.css";
@@ -18,25 +17,29 @@ const AdminpageMain = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    // 수정: 일반 accessToken이 아니라 admin_accessToken을 확인
-    const accessToken = localStorage.getItem("admin_accessToken");
+    // ✅ 수정: 'admin_accessToken' → 'admin_token' 으로 변경
+    const accessToken = localStorage.getItem("admin_token");
 
     if (!accessToken) {
-      alert("로그인이 필요합니다.");
-      navigate("/adminpage/login"); // 관리자 전용 로그인 페이지로 이동
+      alert("❌ 관리자 로그인이 필요합니다.");
+      navigate("/admin/login"); // ✅ 관리자 로그인 페이지로 이동
       return;
     }
 
-    // JWT 디코딩하여 role 확인
+    // ✅ JWT 디코딩하여 role 확인
     try {
       const tokenPayload = JSON.parse(atob(accessToken.split(".")[1]));
-      if (tokenPayload.role !== "ROLE_ADMIN") {
-        alert("관리자만 접근 가능합니다.");
-        navigate("/"); // 접근 금지 시 홈 또는 다른 페이지로 이동
+
+      if (!tokenPayload.role || !tokenPayload.role.includes("ADMIN")) {
+        alert("❌ 관리자 권한이 없습니다.");
+        navigate("/"); // ✅ 접근 금지 시 홈 또는 다른 페이지로 이동
+        return;
       }
     } catch (error) {
-      console.error("JWT 파싱 오류:", error);
-      navigate("/login");
+      console.error("🚨 JWT 파싱 오류:", error);
+      alert("❌ 잘못된 토큰입니다. 다시 로그인하세요.");
+      localStorage.removeItem("admin_token"); // ✅ 잘못된 토큰 삭제
+      navigate("/admin/login"); // ✅ 로그인 페이지로 이동
     }
   }, [navigate]);
 

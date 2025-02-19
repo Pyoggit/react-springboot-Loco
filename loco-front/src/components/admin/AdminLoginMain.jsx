@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import axios from "axios";
+import axios from "@/utils/AxiosConfig";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faCircleUser,
@@ -22,36 +22,35 @@ const AdminLoginMain = () => {
     setError("");
 
     try {
-      // 관리자 로그인 엔드포인트 호출 (/api/adminpage/login)
-      const response = await axios.post(
-        "http://localhost:8080/api/adminpage/login",
-        { email, password }
-      );
+      // ✅ 수정: axios 인스턴스를 사용하여 요청
+      const response = await axios.post("/api/adminpage/login", {
+        email,
+        password,
+      });
+
       const accessToken = response.data.accessToken;
 
-      // 관리자 전용 토큰 키로 저장
-      localStorage.setItem("admin_accessToken", accessToken);
+      if (!accessToken) {
+        throw new Error("토큰이 응답에서 누락되었습니다.");
+      }
 
-      alert("관리자 로그인 성공!");
+      // ✅ 관리자 토큰 저장
+      localStorage.setItem("admin_token", accessToken);
+
+      alert("✅ 관리자 로그인 성공!");
       navigate("/adminpage");
     } catch (error) {
       console.error(
-        "관리자 로그인 실패:",
+        "🚨 관리자 로그인 실패:",
         error.response?.data || error.message
       );
-      setError("로그인 실패: 이메일 또는 비밀번호를 확인하세요.");
+      setError("❌ 로그인 실패: 이메일 또는 비밀번호를 확인하세요.");
     }
   };
 
   return (
     <div className="admin-login-wrap">
       <div className="admin-login-container">
-        <img
-          src="/src/assets/images/headerLogo.png"
-          alt="관리자 로고"
-          className="admin-logo"
-          onClick={() => navigate("/")}
-        />
         <h2 className="admin-login-title">관리자 로그인</h2>
         <form className="admin-login-form" onSubmit={handleSubmit}>
           <div className="admin-input-group">
