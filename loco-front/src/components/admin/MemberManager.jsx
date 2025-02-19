@@ -13,14 +13,27 @@ const MemberManager = () => {
 
   // 관리자 페이지에서 모든 회원 정보를 불러옴
   useEffect(() => {
-    axios
-      .get("/api/admin/members")
-      .then((response) => {
+    const fetchData = async () => {
+      try {
+        const token = localStorage.getItem("admin_token"); // ✅ 관리자 토큰 가져오기
+        if (!token) {
+          console.error("🚨 관리자 토큰이 없습니다. 로그인 필요");
+          return;
+        }
+
+        const response = await axios.get("/api/admin/members", {
+          headers: {
+            Authorization: `Bearer ${token}`, // ✅ 관리자 토큰 추가
+          },
+        });
+
         setMembers(response.data);
-      })
-      .catch((error) => {
+      } catch (error) {
         console.error("회원 정보 가져오기 실패:", error);
-      });
+      }
+    };
+
+    fetchData();
   }, []);
 
   const totalPages = Math.ceil(members.length / itemsPerPage);
