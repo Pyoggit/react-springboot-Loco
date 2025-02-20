@@ -11,19 +11,26 @@ const Qna = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const postsPerPage = 10;
   const nav = useNavigate();
+  const userName = localStorage.getItem("userName");
 
   // ✅ 게시글 목록 불러오기
+
+  const fetchPosts = async () => {
+    try {
+      const response = await axios.get(
+        `${import.meta.env.VITE_API_URL}/api/board/report`
+      );
+      setPosts(response.data);
+    } catch (error) {
+      console.error("게시글 불러오기 실패:", error);
+    }
+  };
+
   useEffect(() => {
-    const fetchPosts = async () => {
-      try {
-        const response = await axios.get(
-          `${import.meta.env.VITE_API_URL}/api/board/qna`
-        );
-        setPosts(response.data);
-      } catch (error) {
-        console.error("게시글 불러오기 실패:", error);
-      }
-    };
+    console.log(
+      "***********************************✅ 저장된 userId:",
+      localStorage.getItem("userId")
+    );
 
     fetchPosts();
   }, []);
@@ -114,7 +121,7 @@ const Qna = () => {
               onClick={() => nav(`/board/${item.type}/${item.boardId}`)}
             >
               <span className="notice-board-title">{item.title}</span>
-              <span className="notice-board-writer">{item.writer}</span>
+              <span className="notice-board-writer">{userName}</span>
               <span className="notice-board-date">
                 {new Date(item.boardRegdate).toLocaleDateString()}
               </span>
