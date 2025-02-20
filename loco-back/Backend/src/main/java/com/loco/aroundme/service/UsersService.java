@@ -1,5 +1,6 @@
 package com.loco.aroundme.service;
 
+import java.io.IOException;
 import java.util.Optional;
 
 import org.apache.ibatis.annotations.Param;
@@ -39,6 +40,9 @@ public interface UsersService {
 
 	void deleteUser(String userEmail) throws Exception;
 
+	Users getUserInfo(Long userId); 
+
+
 	Users findByEmail(String email);
 
 	Optional<String> findEmailByNameAndMobile(String name, String mobile);
@@ -50,4 +54,6 @@ public interface UsersService {
 	String generateTemporaryPassword(String email);
 
 	String uploadProfileImage(Users user, MultipartFile profileImage) throws Exception;
+
+	String updateProfileImage(Users user, MultipartFile profileImage) throws Exception;
 }

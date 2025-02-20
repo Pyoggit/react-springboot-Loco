@@ -45,18 +45,22 @@ public class SecurityConfig {
                     "/api/circles/**", 
                     "/api/market/**",
                     "/api/board/**",
-                    "/api/payment/",
+                    "/api/payment/**",
                     "/upload/**", 
                     "/api/auth/**",
                     "/api/users/request-verification", 
                     "/api/users/verify-code", 
                     "/api/users/reset-password",
-                    "/api/adminpage/login"
+                    "/api/adminpage/login",
+                    "/api/adminpage/login",
+                    "/api/chat/room",
+                    "/api/chat/rooms/**"
                 ).permitAll() // ✅ 누구나 접근 가능
                 .requestMatchers(
                     "/api/users/mypage/**",
                     "/api/users/update",
-                    "/api/users/logout"
+                    "/api/users/logout",
+                    "/api/user/me"
                 ).authenticated() // ✅ 로그인 필요
                 .requestMatchers(
                     "/api/users/mypage/**",
@@ -96,7 +100,7 @@ public class SecurityConfig {
 	@Bean
 	CorsConfigurationSource corsConfigurationSource() {
 		CorsConfiguration configuration = new CorsConfiguration();
-		configuration.setAllowedOrigins(List.of("http://localhost:5173")); // ✅ 프론트엔드 도메인 허용
+		configuration.setAllowedOriginPatterns(List.of("http://localhost:5173")); // ✅ 프론트엔드 도메인 허용
 		configuration.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS")); // ✅ HTTP 메서드 허용
 		configuration.setAllowedHeaders(List.of("*")); // ✅ 모든 헤더 허용
 		configuration.setAllowCredentials(true); // ✅ 쿠키 허용
@@ -126,9 +130,18 @@ public class SecurityConfig {
 
 			@Override
 			public void addResourceHandlers(ResourceHandlerRegistry registry) {
-				// ✅ `/upload/**` 경로를 `file:upload/` 폴더와 연결
-				registry.addResourceHandler("/upload/**").addResourceLocations("file:///c:/upload/");
+			    // ✅ 업로드된 파일 접근 가능하게 설정
+			    registry.addResourceHandler("/upload/**")
+			            .addResourceLocations("file:///C:/upload/")
+			            .setCachePeriod(3600) // 1시간 캐시
+			            .resourceChain(true);
+
+			    // ✅ 기본 프로필 이미지 경로 추가
+			    registry.addResourceHandler("/images/**")
+			            .addResourceLocations("classpath:/static/images/");
 			}
+
+
 		};
 	}
     
@@ -137,9 +150,9 @@ public class SecurityConfig {
     public CorsFilter corsFilter() {
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         CorsConfiguration config = new CorsConfiguration();
-        config.addAllowedOriginPattern(""); // ✅ 모든 도메인 허용
-        config.addAllowedMethod(""); // ✅ 모든 HTTP 메서드 허용 (POST 포함)
-        config.addAllowedHeader("*"); // ✅ 모든 헤더 허용
+        config.setAllowedOriginPatterns(List.of("http://localhost:5173"));
+        config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS")); // ✅ 모든 HTTP 메서드 허용 (POST 포함)
+        config.setAllowedHeaders(List.of("*")); // ✅ 모든 헤더 허용
         config.setAllowCredentials(true); // ✅ 쿠키 포함 허용
         source.registerCorsConfiguration("/**", config);
         return new CorsFilter(source);
