@@ -11,10 +11,17 @@ const categories = [
   '스포츠',
   '여행/동행',
 ];
+// ✅ 카카오 / 일반 로그인 토큰 가져오기
+const getAuthToken = () => {
+  return (
+    localStorage.getItem('normal_accessToken') ||
+    localStorage.getItem('kakao_accessToken')
+  );
+};
 
 const NewCircle = () => {
   const [formData, setFormData] = useState({
-    userId: null, // ✅ userId 기본값 추가
+    userId: '', // ✅ userId 기본값 추가
     title: '',
     date: '',
     time: '',
@@ -62,20 +69,26 @@ const NewCircle = () => {
       if (!storedUserId) {
         console.warn('⚠️ userId가 localStorage에 없음. 다시 가져옵니다.');
         try {
-          const token = localStorage.getItem('token');
+          const token = getAuthToken();
+          if (!token) {
+            console.warn('🚨 로그인 토큰 없음 → API 요청 안 보냄');
+            return;
+          }
+
           const response = await axios.get(
             `${import.meta.env.VITE_API_URL}/api/users/me`,
-            {
-              headers: { Authorization: `Bearer ${token}` },
-            }
+            { headers: { Authorization: `Bearer ${token}` } }
           );
 
+          console.log('token: ', token);
           if (response.status === 200) {
             const { userId } = response.data;
             console.log('📌 서버에서 다시 가져온 userId:', userId);
 
             localStorage.setItem('userId', userId);
             setFormData((prev) => ({ ...prev, userId: userId }));
+
+            console.log('📌 NewCircle에서 가져온 userId:', userId);
           }
         } catch (error) {
           console.error('❌ userId 가져오기 실패:', error);
@@ -109,11 +122,15 @@ const NewCircle = () => {
     fileData.append('file', file);
 
     try {
+      const token = getAuthToken(); // ✅ 토큰 가져오기 추가
       const response = await axios.post(
         `${import.meta.env.VITE_API_URL}/api/circles/upload`,
         fileData,
         {
-          headers: { 'Content-Type': 'multipart/form-data' },
+          headers: {
+            'Content-Type': 'multipart/form-data',
+            Authorization: `Bearer ${token}`, // ✅ 추가된 부분
+          },
         }
       );
 
@@ -121,7 +138,7 @@ const NewCircle = () => {
         console.log('✅ 파일 업로드 성공:', response.data);
         setFormData((prev) => ({
           ...prev,
-          pictureId: response.data.pictureId, // ✅ pictureId 저장
+          pictureId: response.data.pictureId,
           pictureUrl: response.data.pictureUrl,
         }));
       }
@@ -130,6 +147,7 @@ const NewCircle = () => {
       alert('파일 업로드 실패');
     }
   };
+
   /** ✅ 날짜 + 시간 → "yyyy-MM-dd HH:mm:ss" 형식으로 변환 */
   const convertToTimestamp = (date, time) => {
     const formattedDate = `${date} ${time}:00`;
@@ -140,13 +158,12 @@ const NewCircle = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    const token = localStorage.getItem('token');
+    const token = getAuthToken(); // ✅ 변경된 부분
     if (!token) {
       alert('로그인이 필요합니다.');
       return;
     }
 
-    // ✅ JSON 데이터를 Blob으로 변환
     const circleData = {
       userId: formData.userId,
       circleName: formData.title,
@@ -163,7 +180,7 @@ const NewCircle = () => {
     const formDataToSend = new FormData();
     formDataToSend.append(
       'circleData',
-      new Blob([JSON.stringify(circleData)], { type: 'application/json' }) // ✅ JSON 데이터를 Blob으로 변환
+      new Blob([JSON.stringify(circleData)], { type: 'application/json' })
     );
 
     if (selectedFile) {

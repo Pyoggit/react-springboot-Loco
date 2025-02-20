@@ -14,15 +14,20 @@ const CircleMain = () => {
   const navigate = useNavigate();
   const [selectedDate, setSelectedDate] = useState(new Date());
   const [circles, setCircles] = useState([]); // ✅ 백엔드에서 가져온 모임 데이터 저장
+  const [selectedCategory, setSelectedCategory] = useState('전체'); // ✅ 선택한 카테고리 상태 추가
 
-  /** ✅ 1. 선택한 날짜의 모임 데이터 가져오기 */
+  /** ✅ 1. 선택한 날짜와 카테고리의 모임 데이터 가져오기 */
   const fetchCircles = async () => {
     try {
       const token = localStorage.getItem('token');
       const formattedDate = selectedDate.toISOString().split('T')[0];
+      const categoryQuery =
+        selectedCategory === '전체' ? '' : `&category=${selectedCategory}`;
 
       const response = await axios.get(
-        `${import.meta.env.VITE_API_URL}/api/circles?date=${formattedDate}`,
+        `${
+          import.meta.env.VITE_API_URL
+        }/api/circles?date=${formattedDate}${categoryQuery}`,
         {
           headers: {
             'Content-Type': 'application/json',
@@ -38,10 +43,10 @@ const CircleMain = () => {
     }
   };
 
-  // ✅ 선택한 날짜가 변경되면 모임 데이터를 불러옴
+  // ✅ 선택한 날짜와 카테고리가 변경되면 모임 데이터를 불러옴
   useEffect(() => {
     fetchCircles();
-  }, [selectedDate]);
+  }, [selectedDate, selectedCategory]);
 
   /** ✅ 2. 새로운 모임 추가 시 기존 데이터와 합치기 */
   const handleAddCircle = (newCircle) => {
@@ -76,10 +81,13 @@ const CircleMain = () => {
         selectedDate={selectedDate}
         onDateChange={setSelectedDate}
       />
-      <Category />
+      <Category
+        selectedCategory={selectedCategory}
+        setSelectedCategory={setSelectedCategory}
+      />
       <CircleList />
 
-      {/* ✅ 선택한 날짜에 맞는 모임을 CircleListDetail에 전달 */}
+      {/* ✅ 선택한 날짜와 카테고리에 맞는 모임을 CircleListDetail에 전달 */}
       <CircleListDetail
         mockPosts={circles.length > 0 ? circles : []}
         selectedDate={selectedDate}

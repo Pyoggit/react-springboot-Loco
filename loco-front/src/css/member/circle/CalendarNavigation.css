@@ -22,7 +22,7 @@
   padding: 8px;
   border-radius: 50%;
   cursor: pointer;
-  background-color: #f0f0f0;
+  background-color: white;
   color: #333;
 }
 
@@ -40,9 +40,9 @@
 }
 
 .sunday {
-  color: red;
+  color: rgb(255, 115, 115);
 }
 
 .saturday {
-  color: blue;
+  color: rgb(118, 118, 255);
 }

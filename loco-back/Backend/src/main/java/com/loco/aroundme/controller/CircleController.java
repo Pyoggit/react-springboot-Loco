@@ -62,28 +62,31 @@ public class CircleController {
 
 	/** ✅ 1. 특정 날짜의 모임 리스트 반환 */
 	@GetMapping
-	public ResponseEntity<?> getCirclesByDate(@RequestParam(required = false) String date) {
-		try {
-			System.out.println("📅 요청된 날짜: " + date);
+	public ResponseEntity<?> getCirclesByDate(
+		    @RequestParam(required = false) String date,
+		    @RequestParam(required = false) String category  // ✅ 카테고리 추가
+		) {
+		    try {
+		        System.out.println("📌 요청된 날짜: " + date);
+		        System.out.println("📌 요청된 카테고리: " + category);
 
-			List<Circle> circles;
-			if (date != null && !date.isEmpty()) {
-				circles = circleService.getCirclesByDate(date);
-			} else {
-				circles = circleService.getAllCircles();
-			}
+		        List<Circle> circles;
+		        if (date != null && !date.isEmpty()) {
+		            if (category != null && !category.isEmpty()) {
+		                circles = circleService.getCirclesByCategory(category);
+		            } else {
+		                circles = circleService.getCirclesByDate(date);
+		            }
+		        } else {
+		            circles = circleService.getAllCircles();
+		        }
 
-			// ✅ 데이터 확인
-			for (Circle circle : circles) {
-				System.out.println("📥 조회된 모임 데이터: " + circle.getCircleName() + ", 이미지: " + circle.getPictureUrl());
-			}
-
-			return ResponseEntity.ok(circles);
-		} catch (Exception e) {
-			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-					.body("{\"message\": \"모임 데이터를 불러오는 중 오류 발생: " + e.getMessage() + "\"}");
+		        return ResponseEntity.ok(circles);
+		    } catch (Exception e) {
+		        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+		            .body("{\"message\": \"모임 데이터를 불러오는 중 오류 발생: " + e.getMessage() + "\"}");
+		    }
 		}
-	}
 
 	/** ✅ 1. 모임 생성 & 파일 업로드 */
 	@PostMapping(consumes = { MediaType.MULTIPART_FORM_DATA_VALUE })
