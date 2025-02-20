@@ -1,5 +1,7 @@
 package com.loco.aroundme.controller;
 
+import java.util.Collections;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
@@ -9,6 +11,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -22,8 +25,10 @@ import org.springframework.web.multipart.MultipartFile;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.loco.aroundme.common.security.jwt.JwtUtil;
+import com.loco.aroundme.domain.Circle;
 import com.loco.aroundme.domain.Users;
 import com.loco.aroundme.mapper.UsersMapper;
+import com.loco.aroundme.service.CircleService;
 import com.loco.aroundme.service.EmailService;
 import com.loco.aroundme.service.UsersService;
 import com.loco.aroundme.service.VerificationCodeService;
@@ -43,6 +48,7 @@ public class UsersController {
 	private final BCryptPasswordEncoder passwordEncoder;
 	private final EmailService emailService;
 	private final VerificationCodeService verificationCodeService;
+	private final CircleService circleService;
 
 	/**
 	 * 회원가입 API (경로: /api/users/signup) JSON 데이터는 Users 객체로, 프로필 사진은 MultipartFile로
@@ -208,12 +214,12 @@ public class UsersController {
 			return ResponseEntity.status(HttpStatus.NOT_FOUND).body(Map.of("error", "유저 정보를 찾을 수 없습니다."));
 		}
 		// ✅ 프로필 이미지 URL 처리
-	    String profileImage;
-	    if (user.getSysUser() != null && user.getSysUser().startsWith("http")) {
-	        profileImage = user.getSysUser();  // 카카오 URL 그대로 사용
-	    } else {
-	        profileImage = "http://localhost:8080/upload/" + user.getSysUser(); // 일반 사용자는 /upload/ 추가
-	    }
+		String profileImage;
+		if (user.getSysUser() != null && user.getSysUser().startsWith("http")) {
+			profileImage = user.getSysUser(); // 카카오 URL 그대로 사용
+		} else {
+			profileImage = "http://localhost:8080/upload/" + user.getSysUser(); // 일반 사용자는 /upload/ 추가
+		}
 
 		// ✅ 프로필 이미지 URL 설정 (기본값 추가)
 //	    String profileImage = (user.getSysUser() != null && !user.getSysUser().isEmpty())
@@ -528,6 +534,17 @@ public class UsersController {
 		emailService.sendTemporaryPassword(email, tempPassword);
 
 		return ResponseEntity.ok(Map.of("message", "임시 비밀번호가 이메일로 전송되었습니다."));
+	}
+
+	// Circle 마이 페이지
+	@GetMapping("/{userId}/attending-circles")
+	public ResponseEntity<List<Circle>> getAttendingCircles(@PathVariable Long userId) {
+		try {
+			List<Circle> attendingCircles = circleService.getAttendingCircles(userId);
+			return ResponseEntity.ok(attendingCircles);
+		} catch (Exception e) {
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(Collections.emptyList());
+		}
 	}
 
 }

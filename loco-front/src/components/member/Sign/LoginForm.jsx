@@ -193,96 +193,97 @@
 
 // export default LoginForm;
 
-import React, { useState, useRef, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
-import KakaoLoginBtn from "./KakaoLoginBtn";
-import GoogleLoginBtn from "./GoogleLoginBtn";
-import axios from "@/utils/AxiosConfig";
-import { useCookies } from "react-cookie";
-import "@/css/member/sign/LoginForm.css";
+import React, { useState, useRef, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
+import KakaoLoginBtn from './KakaoLoginBtn';
+import GoogleLoginBtn from './GoogleLoginBtn';
+import axios from '@/utils/AxiosConfig';
+import { useCookies } from 'react-cookie';
+import '@/css/member/sign/LoginForm.css';
 
 const LoginForm = () => {
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [error, setError] = useState("");
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [error, setError] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const emailInputRef = useRef(null);
   const passwordInputRef = useRef(null);
   const navigate = useNavigate();
   const [cookies, setCookie] = useCookies([
-    "normal_accessToken",
-    "normal_refreshToken",
+    'normal_accessToken',
+    'normal_refreshToken',
   ]);
 
   useEffect(() => {
-    console.log("✅ 현재 저장된 쿠키 (document.cookie):", document.cookie);
-    console.log("✅ 현재 저장된 쿠키 (useCookies):", cookies);
+    console.log('✅ 현재 저장된 쿠키 (document.cookie):', document.cookie);
+    console.log('✅ 현재 저장된 쿠키 (useCookies):', cookies);
   }, [cookies]);
 
   /** 로그인 처리 함수 */
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setError("");
+    setError('');
     setIsLoading(true);
 
     try {
-      const response = await axios.post("/api/users/login", {
+      const response = await axios.post('/api/users/login', {
         email: email.trim(),
         password: password.trim(),
       });
 
-      console.log("✅ 로그인 요청 후 응답:", response);
+      console.log('✅ 로그인 요청 후 응답:', response);
 
       if (response.data.normal_accessToken) {
         localStorage.setItem(
-          "normal_accessToken",
+          'normal_accessToken',
           response.data.normal_accessToken
         );
         localStorage.setItem(
-          "normal_refreshToken",
+          'normal_refreshToken',
           response.data.normal_refreshToken
         );
 
         console.log(
-          "✅ 저장된 토큰:",
-          localStorage.getItem("normal_accessToken")
+          '✅ 저장된 토큰:',
+          localStorage.getItem('normal_accessToken')
         );
 
         // ✅ 로그인 후 `userId` 가져오기
-        const userInfoResponse = await axios.get("/api/users/mypage", {
+        const userInfoResponse = await axios.get('/api/users/mypage', {
           headers: {
             Authorization: `Bearer ${response.data.normal_accessToken}`,
           },
         });
 
-        console.log("📌 로그인 후 가져온 사용자 정보:", userInfoResponse.data);
+        console.log('📌 로그인 후 가져온 사용자 정보:', userInfoResponse.data);
         console.log(
-          "📌 유저 프로필 sysFile:",
+          '📌 유저 프로필 sysFile:',
           userInfoResponse.data.profileImage
         );
 
         if (userInfoResponse.data.userId) {
-          localStorage.setItem("userId", userInfoResponse.data.userId);
+          localStorage.setItem('userId', userInfoResponse.data.userId);
+          localStorage.setItem('userName', userInfoResponse.data.userName);
         }
 
         if (userInfoResponse.data.profileImage) {
           localStorage.setItem(
-            "profileImage",
+            'profileImage',
             userInfoResponse.data.profileImage
           );
         }
 
-        alert("로그인 성공!");
-        navigate("/");
+        alert('로그인 성공!');
+        navigate('/');
       } else {
         console.error(
-          "❌ 로그인 응답에 normal_accessToken 없음!",
+          '❌ 로그인 응답에 normal_accessToken 없음!',
           response.data
         );
       }
     } catch (error) {
-      console.error("❌ 로그인 실패:", error.response?.data || error.message);
-      setError("로그인 중 오류가 발생했습니다. 다시 시도해주세요.");
+      console.error('❌ 로그인 실패:', error.response?.data || error.message);
+      setError('로그인 중 오류가 발생했습니다. 다시 시도해주세요.');
     } finally {
       setIsLoading(false);
     }
@@ -324,7 +325,7 @@ const LoginForm = () => {
 
             <br />
             <button type="submit" className="login-btn" disabled={isLoading}>
-              {isLoading ? "로그인 중..." : "로그인"}
+              {isLoading ? '로그인 중...' : '로그인'}
             </button>
           </div>
         </form>
@@ -337,15 +338,15 @@ const LoginForm = () => {
 
         <div className="bottom-sec">
           <div className="find-email-pw">
-            <div className="find-email" onClick={() => navigate("/find/email")}>
+            <div className="find-email" onClick={() => navigate('/find/email')}>
               이메일 찾기
             </div>
-            <div className="find-pw" onClick={() => navigate("/find-password")}>
+            <div className="find-pw" onClick={() => navigate('/find-password')}>
               비밀번호 찾기
             </div>
           </div>
 
-          <div className="signup-link" onClick={() => navigate("/signup")}>
+          <div className="signup-link" onClick={() => navigate('/signup')}>
             회원가입
           </div>
         </div>

@@ -38,4 +38,12 @@ public interface CircleService {
 	List<Circle> searchCircles(String clubTitle, String city, String district, String category, String startDate);
 
 	String getCreatorEmailByCircleId(int circleId);
+
+	Circle getCircleById(int circleId); // ✅ 모임 상세 조회 메서드 추가
+
+	List<Circle> getAllCirclesForAdmin(); // ✅ 모든 모임 리스트 조회
+	
+	List<Circle> getAttendingCircles(Long userId);//마이페이지
+	
+	
 }

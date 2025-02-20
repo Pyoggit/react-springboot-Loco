@@ -1,0 +1,50 @@
+.mypage-circle {
+  max-width: 800px;
+  margin: 40px auto;
+  padding: 20px;
+  background-color: #ffffff;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  border-radius: 10px;
+  text-align: center;
+}
+
+.mypage-circle h2 {
+  font-size: 24px;
+  margin-bottom: 20px;
+  color: #333;
+}
+
+/* ✅ 테이블 스타일 */
+.circle-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 20px;
+}
+
+.circle-table thead {
+  background-color: #ecb7ff;
+  color: white;
+}
+
+.circle-table th,
+.circle-table td {
+  padding: 12px;
+  border: 1px solid #ddd;
+  text-align: center;
+}
+
+.circle-table tbody tr:nth-child(even) {
+  background-color: #f8f9fa;
+}
+
+.circle-table tbody tr:hover {
+  background-color: #e2e6ea;
+  transition: 0.3s;
+}
+
+/* ✅ "참석한 모임 없음" 문구 */
+.no-posts {
+  color: #6c757d;
+  font-size: 16px;
+  margin-top: 20px;
+}
