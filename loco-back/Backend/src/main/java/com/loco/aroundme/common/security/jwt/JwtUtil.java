@@ -235,14 +235,18 @@ public class JwtUtil {
 	
 	/** ✅ 토큰에서 사용자 ID 추출 (기존 getUserId와 동일한 기능) 나종호가 건드림 테스트해보려고함 */
     public Integer getUserIdFromToken(String token) {
-        try {
-            Claims claims = Jwts.parserBuilder().setSigningKey(getSigningKey()).build()
-                    .parseClaimsJws(token.replace("Bearer ", "")).getBody();
-            return Integer.parseInt(claims.getSubject());
+    	try {
+            System.out.println("🔍 [DEBUG] Token received: " + token); // ✅ 토큰 로그 출력
+            Claims claims = Jwts.parser()
+                .setSigningKey(secretKey)
+                .parseClaimsJws(token.replace("Bearer ", "")) // ✅ "Bearer " 제거 후 파싱
+                .getBody();
+            int userId = (int) claims.get("userId");
+            System.out.println("✅ [SUCCESS] Extracted userId: " + userId); // ✅ 추출된 userId 확인
+            return userId;
         } catch (Exception e) {
-            log.error("🚨 JWT에서 userId 추출 실패: {}", e.getMessage());
-            return null;
+            System.err.println("❌ [ERROR] Invalid token: " + e.getMessage()); // ❌ 에러 로그 출력
+            throw new RuntimeException("Invalid token", e);
         }
     }
-
 }

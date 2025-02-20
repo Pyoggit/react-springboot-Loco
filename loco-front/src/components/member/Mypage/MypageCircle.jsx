@@ -1,82 +1,76 @@
-// import { React, useState } from "react";
-// import { Link, Route, Routes } from "react-router-dom";
-// import "@/css/member/mypage/MypageCircle.css";
+import React, { useEffect, useState } from 'react';
+import axios from 'axios';
+import '@/css/member/Circle/MypageCircle.css';
 
-// export default function MypageCircle() {
-//   return <div>MypageCircle</div>;
-// }
-
-import React, { useEffect, useState } from "react";
-import { Link, Route, Routes } from "react-router-dom";
-import "@/css/member/circle/CircleListDetail.css";
-
-const MypageCircle = ({ mockPosts, selectedDate, onPostClick }) => {
+const MypageCircle = () => {
   const [userCircles, setUserCircles] = useState([]);
 
-  useEffect(() => {
-    // ✅ 로컬스토리지에서 사용자가 속한 모임 정보 가져오기
-    const storedCircles = localStorage.getItem("userCircles");
-    if (storedCircles) {
-      setUserCircles(JSON.parse(storedCircles));
+  const fetchUserCircles = async () => {
+    const userId = localStorage.getItem('userId');
+    const token = localStorage.getItem('normal_accessToken'); // ✅ JWT 토큰 가져오기
+
+    if (!userId) {
+      console.error('❌ 로그인한 사용자 ID가 없습니다.');
+      return;
     }
+    if (!token) {
+      console.error('❌ JWT 토큰이 없습니다. 로그인이 필요합니다.');
+      return;
+    }
+
+    try {
+      console.log('📌 내가 참석한 모임 목록 불러오기...');
+      const response = await axios.get(
+        `${import.meta.env.VITE_API_URL}/api/users/${userId}/attending-circles`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`, // ✅ JWT 토큰 포함
+          },
+        }
+      );
+
+      console.log('✅ 참석한 모임 목록 응답:', response.data);
+      setUserCircles(response.data);
+    } catch (error) {
+      console.error('❌ 참석한 모임 목록 가져오기 실패:', error);
+      if (error.response) {
+        console.error('📌 서버 응답 상태 코드:', error.response.status);
+        console.error('📌 서버 응답 데이터:', error.response.data);
+      }
+    }
+  };
+
+  useEffect(() => {
+    fetchUserCircles();
   }, []);
 
-  if (!mockPosts || !selectedDate)
-    return <p className="no-posts">📭 표시할 모임이 없습니다.</p>;
-
-  const formattedSelectedDate = selectedDate.toISOString().split("T")[0];
-
-  // ✅ 사용자가 속한 모임만 필터링
-  const filteredPosts = mockPosts.filter((post) => {
-    if (!post.circleDate || !userCircles.includes(post.circleId)) return false;
-    const postDate = new Date(post.circleDate).toISOString().split("T")[0];
-    return postDate === formattedSelectedDate;
-  });
-
   return (
-    <div className="content-section">
-      <div className="mock-post-container">
-        {filteredPosts.length > 0 ? (
-          filteredPosts.map((post) => (
-            <div key={post.circleId} className="post-card">
-              {/* ✅ 이미지 추가 */}
-              <div className="post-image">
-                <img
-                  src={
-                    post.pictureUrl
-                      ? post.pictureUrl
-                      : "/images/default-image.png"
-                  }
-                  alt={post.circleName}
-                  className="circle-image"
-                />
-              </div>
-
-              <h3 className="post-title">{post.circleName}</h3>
-              <p className="post-date">
-                📅{" "}
-                {new Date(post.circleDate).toLocaleDateString("ko-KR", {
-                  year: "numeric",
-                  month: "2-digit",
-                  day: "2-digit",
-                })}
-              </p>
-              <p className="post-time">🕒 {post.circleDate.split(" ")[1]}</p>
-              <p className="post-description">{post.circleDetail}</p>
-              <div>
-                <button
-                  className="button-detail"
-                  onClick={() => onPostClick(post)}
-                >
-                  상세보기
-                </button>
-              </div>
-            </div>
-          ))
-        ) : (
-          <p className="no-posts">해당 날짜에 모임이 없습니다.</p>
-        )}
-      </div>
+    <div className="mypage-circle">
+      <h2>내가 참석한 모임</h2>
+      {userCircles.length > 0 ? (
+        <table className="circle-table">
+          <thead>
+            <tr>
+              <th>모임방 코드</th>
+              <th>모임방 제목</th>
+              <th>날짜</th>
+              <th>장소</th>
+            </tr>
+          </thead>
+          <tbody>
+            {userCircles.map((circle) => (
+              <tr key={circle.circleId}>
+                <td>{circle.circleId}</td>
+                <td>{circle.circleName}</td>
+                <td>{circle.circleDate}</td>
+                <td>{circle.circleAddress}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      ) : (
+        <p className="no-posts">참석한 모임이 없습니다.</p>
+      )}
     </div>
   );
 };

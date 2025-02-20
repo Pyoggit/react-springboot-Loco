@@ -6,6 +6,8 @@ import org.apache.ibatis.annotations.Delete;
 import org.apache.ibatis.annotations.Insert;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
+import org.apache.ibatis.annotations.Result;
+import org.apache.ibatis.annotations.Results;
 import org.apache.ibatis.annotations.Select;
 
 import com.loco.aroundme.common.security.domain.CustomUser;
@@ -20,6 +22,12 @@ public interface CircleMapper {
 	/* 모든 모임 조회 */
 	List<Circle> findAllCircles();
 
+	@Select("SELECT C.*, U.USER_NAME AS creatorName, U.USER_EMAIL AS creatorEmail "
+			+ "FROM CIRCLE C JOIN USERS U ON C.USER_ID = U.USER_ID")
+	@Results({ @Result(property = "creatorName", column = "creatorName"),
+			@Result(property = "creatorEmail", column = "creatorEmail") })
+	List<Circle> adminFindAllCircles(); // ✅ 메서드 이름 수정
+
 	/* 새로운 모임 추가 */
 	void insertCircle(Circle circle);
 
@@ -27,8 +35,12 @@ public interface CircleMapper {
 
 	void updateMemberCount(@Param("circleId") Long circleId);
 
-	@Select("SELECT * FROM CIRCLE WHERE CIRCLE_ID = #{circleId}")
-	Circle getCircleById(Long circleId);
+	// 조회
+	@Select("SELECT C.*, U.USER_ID AS createdById FROM CIRCLE C " + "JOIN USERS U ON C.USER_ID = U.USER_ID "
+			+ "WHERE C.CIRCLE_ID = #{circleId}")
+	@Results({ @Result(property = "createdById", column = "createdById") // ✅ 추가된 부분
+	})
+	Circle findCircleById(@Param("circleId") int circleId);
 
 	void updateCircle(@Param("circleId") Long circleId, @Param("circleName") String circleName,
 			@Param("circleCategory") String circleCategory, @Param("circleDate") String circleDate,
@@ -38,16 +50,13 @@ public interface CircleMapper {
 			@Param("pictureUrl") String pictureUrl // ✅ 새 이미지 URL 추가
 	); // XML에서 구현
 
-	/** ✅ 특정 모임 조회 */
-	@Select("SELECT * FROM CIRCLE WHERE CIRCLE_ID = #{circleId}")
-	Circle findCircleById(@Param("circleId") int circleId);
-
+	/* ✅ 모임 생성자의 이메일 가져오기 */
 	@Select("SELECT U.USER_EMAIL FROM USERS U JOIN CIRCLE C ON U.USER_ID = C.USER_ID WHERE C.CIRCLE_ID = #{circleId}")
 	String getCreatorEmailByCircleId(@Param("circleId") int circleId);
-	
-	
+
 	/** ✅ 모임 참석 */
-	@Insert(" INSERT INTO ENJOY (ENJOY_ID, CIRCLE_ID, USER_ID) SELECT ENJOY_SEQ.NEXTVAL, #{circleId}, #{userId} FROM USERS WHERE USER_ID = #{userId}")
+	@Insert("INSERT INTO ENJOY (ENJOY_ID, CIRCLE_ID, USER_ID) "
+			+ "SELECT ENJOY_SEQ.NEXTVAL, #{circleId}, #{userId} FROM USERS WHERE USER_ID = #{userId}")
 	void attendCircle(@Param("circleId") int circleId, @Param("userId") int userId);
 
 	/** ✅ 모임 참석 취소 */
@@ -62,10 +71,11 @@ public interface CircleMapper {
 	@Select("SELECT COUNT(*) FROM ENJOY WHERE CIRCLE_ID = #{circleId} AND USER_ID = #{userId}")
 	int isUserAttending(@Param("circleId") int circleId, @Param("userId") int userId);
 
-	// 카테고리별 모임 정보 검색
+	/** ✅ 카테고리별 모임 정보 검색 */
 	@Select("SELECT * FROM CIRCLE WHERE CIRCLE_CATEGORY = #{category} ORDER BY CIRCLE_DATE DESC")
 	List<Circle> findCirclesByCategory(@Param("category") String category);
 
+	/** ✅ 모임 검색 기능 (제목, 지역, 카테고리, 날짜) */
 	@Select({ "<script>", "SELECT * FROM CIRCLE WHERE 1=1", "<if test='clubTitle != null and clubTitle != \"\"'>",
 			" AND LOWER(CIRCLE_NAME) LIKE '%' || LOWER(#{clubTitle}) || '%'", "</if>",
 			"<if test='city != null and city != \"\"'>", " AND CIRCLE_ADDRESS LIKE '%' || #{city} || '%'", "</if>",
@@ -78,4 +88,9 @@ public interface CircleMapper {
 			@Param("district") String district, @Param("category") String category,
 			@Param("startDate") String startDate);
 
+	@Select("SELECT C.* FROM CIRCLE C JOIN ENJOY E ON C.CIRCLE_ID = E.CIRCLE_ID WHERE E.USER_ID = #{userId}")
+	List<Circle> findAttendingCircles(@Param("userId") Long userId);
+
+	@Select("SELECT C.* FROM CIRCLE C JOIN ENJOY E ON C.CIRCLE_ID = E.CIRCLE_ID WHERE E.USER_ID = #{userId}")
+	List<Circle> findAttendingCirclesByUserId(@Param("userId") Long userId);
 }
