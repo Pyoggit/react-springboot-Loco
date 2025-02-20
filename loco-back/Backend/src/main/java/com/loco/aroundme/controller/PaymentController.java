@@ -9,9 +9,11 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -26,6 +28,7 @@ import com.loco.aroundme.domain.Order;
 import com.loco.aroundme.domain.Users;
 import com.loco.aroundme.mapper.UsersMapper;
 import com.loco.aroundme.service.PaymentService;
+import com.loco.aroundme.service.ProductService;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -38,6 +41,7 @@ import lombok.extern.slf4j.Slf4j;
 public class PaymentController {
 
 	private final PaymentService paymentService;
+	private final ProductService productService;
 	private final UsersMapper usersMapper;
 	private final JwtUtil jwtUtil; // ✅ JWT 유틸 추가
 
@@ -54,8 +58,12 @@ public class PaymentController {
 				order.setOrderId("ORDER_" + UUID.randomUUID().toString().replace("-", "").substring(0, 10));
 			}
 
-			log.info("🛒 [주문 생성 요청] - 주문 ID: {}, 상품 ID: {}, 상품명: {}, 구매자: {}", order.getOrderId(), order.getProductId(),
-					order.getProductName(), order.getCustomerName());
+			// ✅ 상품 판매자 정보 조회 (추가)
+			String sellerName = productService.getSellerNameByProductId(order.getProductId());
+			order.setSellerName(sellerName);
+
+			log.info("🛒 [주문 생성 요청] - 주문 ID: {}, 상품 ID: {}, 상품명: {}, 구매자: {}, 판매자: {}", order.getOrderId(),
+					order.getProductId(), order.getProductName(), order.getCustomerName(), order.getSellerName());
 
 			paymentService.saveOrder(order);
 
@@ -130,15 +138,55 @@ public class PaymentController {
 
 	/** ✅ JWT 토큰을 이용한 사용자 인증 */
 	private Users validateUser(String token) {
-		if (token == null || !token.startsWith("Bearer ")) {
+		if (token == null || !token.startsWith("Bearer ")) // {
 			return null;
-		}
+		return usersMapper.read(jwtUtil.getUserEmail(token.substring(7)));
+	}
+//		}
+//		try {
+//			String email = jwtUtil.getUserEmail(token.substring(7));
+//			return usersMapper.read(email);
+//		} catch (Exception e) {
+//			log.error("❌ 토큰 검증 실패: {}", e.getMessage());
+//			return null;
+//		}
+//	}
+
+	/** ✅ 전체 주문 목록 조회 API */
+	@GetMapping("/all-orders")
+	public ResponseEntity<?> getAllOrders(@RequestHeader(value = "Authorization", required = false) String token) {
 		try {
-			String email = jwtUtil.getUserEmail(token.substring(7));
-			return usersMapper.read(email);
+			log.info("🔹 전체 주문 목록 조회 요청");
+
+			List<Map<String, Object>> orders = paymentService.getAllOrders();
+
+			if (orders.isEmpty()) {
+				return ResponseEntity.status(HttpStatus.NO_CONTENT).body("주문 내역이 없습니다.");
+			}
+			log.info("🔹 조회된 주문 목록: {}", orders);
+
+			return ResponseEntity.ok(orders);
 		} catch (Exception e) {
-			log.error("❌ 토큰 검증 실패: {}", e.getMessage());
-			return null;
+			log.error("❌ 주문 목록 조회 중 오류 발생", e);
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("서버 오류 발생");
+		}
+	}
+
+	@DeleteMapping("/remove-orders")
+	public ResponseEntity<?> deleteOrders(@RequestBody Map<String, List<String>> request,
+			@RequestHeader("Authorization") String token) {
+		try {
+			List<String> orderIds = request.get("orderIds");
+			log.info("🗑 주문 삭제 요청: {}", orderIds);
+			if (orderIds == null || orderIds.isEmpty()) {
+				return ResponseEntity.status(400).body("삭제할 주문이 없습니다.");
+			}
+
+			paymentService.deleteOrders(orderIds);
+			return ResponseEntity.ok(Map.of("success", true, "message", "주문이 삭제되었습니다."));
+		} catch (Exception e) {
+			log.error("❌ 주문 삭제 실패:", e);
+			return ResponseEntity.status(500).body("주문 삭제 중 오류 발생");
 		}
 	}
 }

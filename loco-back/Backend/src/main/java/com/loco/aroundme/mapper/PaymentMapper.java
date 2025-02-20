@@ -1,6 +1,7 @@
 package com.loco.aroundme.mapper;
 
 import java.util.List;
+import java.util.Map;
 
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
@@ -21,4 +22,10 @@ public interface PaymentMapper {
 
 	/** ✅ 특정 유저의 결제 내역 조회 */
 	List<Order> findPaymentsByUserId(@Param("userId") Long userId);
+
+	// ✅ 전체 주문 내역 조회
+	List<Map<String, Object>> getAllOrders();
+
+	// ✅ 주문 삭제 (새롭게 추가)
+	void deleteOrders(@Param("orderIds") List<String> orderIds);
 }

@@ -15,6 +15,7 @@ public class Order {
 	private String orderId; // 주문 고유 식별자
     private Long userId; // 사용자 ID
     private String customerName; // ✅ 구매자 이름 추가
+    private String sellerName; // ✅ 판매자 이름 추가 
     private Long productId; // ✅ 상품 ID (FK) - NULL 방지
     private String productName;
     private String paymentMethod; // 결제 방법

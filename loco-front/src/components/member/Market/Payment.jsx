@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { loadTossPayments } from '@tosspayments/payment-sdk';
 import axios from 'axios';
 
-const Payment = ({ amount, orderName, productId }) => {
+const Payment = ({ amount, orderName, productId, sellerName }) => {
   const [userId, setUserId] = useState(null);
   const [userName, setUserName] = useState('고객'); // 기본값 설정
   const paymentMethod = '카드'; // 기본 결제 방법 설정
@@ -55,6 +55,7 @@ const Payment = ({ amount, orderName, productId }) => {
         {
           userId: userId,
           customerName: customerName,
+          sellerName: sellerName,
           productId: productId,
           productName: orderName,
           totalAmount: amount,
@@ -80,6 +81,7 @@ const Payment = ({ amount, orderName, productId }) => {
           amount: amount,
           orderId: orderId,
           orderName: orderName,
+          sellerName: sellerName,
           customerName: customerName,
           successUrl: `${window.location.origin}/market/payment-success?orderId=${orderId}&amount=${amount}&productId=${productId}`,
           failUrl: `${window.location.origin}/market/payment-fail?orderId=${orderId}`,
