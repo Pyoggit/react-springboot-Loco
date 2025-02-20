@@ -31,4 +31,5 @@ public class Product {
 	
 	// 판매자 이름 (JOIN으로 가져올 데이터)
     private String userName;
+    private String userEmail;
 }

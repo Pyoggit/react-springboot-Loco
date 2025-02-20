@@ -12,16 +12,33 @@
   margin-bottom: 15px;
 }
 
-.admin-pay-search-input {
+/* .admin-pay-search-input {
   padding: 8px;
   border-radius: 5px;
   border: 1px solid #ccc;
   width: 200px;
+} */
+
+/* ✅ 검색 입력창 스타일 */
+.admin-pay-header input[type='text'] {
+  padding: 8px;
+  border-radius: 5px;
+  border: 1px solid #ccc;
+  width: 250px;
+  font-size: 14px;
+  transition: all 0.2s ease-in-out;
+}
+
+.admin-pay-header input[type='text']:focus {
+  border-color: rgba(177, 121, 241, 0.8);
+  box-shadow: 0 0 5px rgba(177, 121, 241, 0.5);
+  outline: none;
 }
 
 .admin-pay-table {
   width: 100%;
   border-collapse: collapse;
+  text-align: center;
 }
 
 .admin-pay-table th,
@@ -40,19 +57,93 @@
   background: rgba(177, 121, 241, 0.8);
 }
 
-.admin-pay-table input[type="checkbox"] {
+.admin-pay-table input[type='checkbox'] {
   transform: scale(1.2);
+}
+
+/* ✅ 체크박스 스타일 개선 */
+.admin-pay-table input[type='checkbox'] {
+  width: 12px;
+  height: 12px;
+  cursor: pointer;
+  accent-color: rgba(177, 121, 241, 0.8); /* 체크 색상 */
+  border-radius: 4px;
+  transition: all 0.2s ease-in-out;
+}
+
+/* ✅ 체크박스에 마우스를 올렸을 때 */
+.admin-pay-table input[type='checkbox']:hover {
+  box-shadow: 0 0 5px rgba(177, 121, 241, 0.6);
+}
+
+/* ✅ 체크박스가 활성화되었을 때 */
+.admin-pay-table input[type='checkbox']:checked {
+  background-color: rgba(177, 121, 241, 0.8);
+  border: none;
+}
+
+/* ✅ 삭제 버튼 스타일 */
+.admin-pay-delete-btn {
+  background-color: rgba(230, 74, 74, 0.9);
+  color: white;
+  padding: 10px 15px;
+  border: none;
+  border-radius: 5px;
+  font-size: 12px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background-color 0.2s ease-in-out;
+}
+
+.admin-pay-delete-btn:hover {
+  background-color: rgba(200, 50, 50, 1);
+}
+
+.admin-pay-delete-btn:disabled {
+  background-color: #ccc;
+  cursor: not-allowed;
 }
 
 .pagination {
   display: flex;
   justify-content: center;
-  margin-top: 15px;
+  align-items: center;
+  margin-top: 20px;
+  gap: 8px; /* 버튼 간격 */
 }
 
 .pagination button {
-  padding: 5px 10px;
-  margin: 0 5px;
-  border: 1px solid #ddd;
+  padding: 8px 12px;
+  border: none;
+  border-radius: 6px;
+  font-size: 14px;
+  font-weight: bold;
   cursor: pointer;
+  transition: all 0.2s ease-in-out;
+  background-color: #b179f1; /* 기본 배경색 */
+  color: white;
+}
+
+.pagination button:hover {
+  background-color: #9655d7; /* 호버 시 더 진한 보라색 */
+}
+
+.pagination button:disabled {
+  background-color: #ccc;
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+.pagination .page-number {
+  font-size: 14px;
+  font-weight: bold;
+  color: #333;
+  padding: 8px 12px;
+  border-radius: 6px;
+  background: rgba(177, 121, 241, 0.2);
+}
+
+.pagination .current-page {
+  background: rgba(177, 121, 241, 0.8);
+  color: white;
 }

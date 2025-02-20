@@ -50,18 +50,7 @@ export function PaymentSuccess() {
       return;
     }
 
-    // ✅ 상품명 가져오기
-    const fetchProductName = async () => {
-      try {
-        const response = await axios.get(
-          `${import.meta.env.VITE_API_URL}/api/market/product-name/${productId}`
-        );
-        setProductName(response.data);
-      } catch (error) {
-        console.error('❌ 상품명 조회 실패:', error);
-      }
-    };
-
+    /** ✅ 결제 승인 후 주문 상태 업데이트 */
     const sendPaymentData = async () => {
       try {
         const response = await axios.post(
@@ -82,7 +71,7 @@ export function PaymentSuccess() {
         );
 
         if (response.data.success) {
-          setIsLoading(false);
+          console.log('✅ 결제 승인 및 저장 완료');
         } else {
           alert('결제 정보 저장 중 오류가 발생했습니다.');
           navigate('/market');
@@ -94,8 +83,30 @@ export function PaymentSuccess() {
       }
     };
 
-    fetchProductName();
-    sendPaymentData();
+    /** ✅ 결제 정보 저장 후 상품명 가져오기 */
+    const fetchProductName = async () => {
+      try {
+        const numericProductId = Number(productId);
+        const response = await axios.get(
+          `${
+            import.meta.env.VITE_API_URL
+          }/api/market/product-name/${numericProductId}`
+        );
+        setProductName(response.data);
+        console.log('✅ 상품명 조회 성공:', response.data);
+      } catch (error) {
+        console.error('❌ 상품명 조회 실패:', error);
+      }
+    };
+
+    /** ✅ 순서: 결제 승인 후 상품명 조회 */
+    const processPaymentSuccess = async () => {
+      await sendPaymentData(); // 🛑 먼저 결제 정보 저장 완료!
+      await fetchProductName(); // ✅ 결제 정보 저장 후 상품명 조회
+      setIsLoading(false);
+    };
+
+    processPaymentSuccess();
   }, [orderId, amount, paymentKey, productId, customerName, navigate]);
 
   return (

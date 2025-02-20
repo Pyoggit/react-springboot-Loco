@@ -100,7 +100,7 @@ public class ProductServiceImpl implements ProductService {
 	public List<Map<String, Object>> getProducts() {
 		log.info("🔹 전체 상품 목록 조회 요청");
 
-		List<Product> products = productMapper.selectProducts(); // ✅ `userName` 포함
+		List<Product> products = productMapper.selectProducts();
 		List<Map<String, Object>> productListWithDetails = new ArrayList<>();
 
 		for (Product product : products) {
@@ -109,15 +109,15 @@ public class ProductServiceImpl implements ProductService {
 			productData.put("productName", product.getProductName());
 			productData.put("productCategory", product.getProductCategory());
 			productData.put("price", product.getPrice());
-			productData.put("userName", product.getUserName()); // ✅ 이제 정상적으로 가져옴!
+			productData.put("userName", product.getUserName()); // ✅ 판매자 이름
+			productData.put("userEmail", product.getUserEmail()); // ✅ 판매자 이메일 추가
+			productData.put("productRegdate", product.getProductRegdate()); // ✅ 등록일 추가
 
 			// ✅ 이미지 정보 가져오기
 			List<ProductPic> productPics = productMapper.getProductPics(product.getProductId());
 			productData.put("images", productPics);
 
 			productListWithDetails.add(productData);
-
-			log.info("🔹 상품 ID: {}, 판매자: {}", product.getProductId(), product.getUserName()); // ✅ 디버깅 추가
 		}
 
 		return productListWithDetails;
@@ -149,6 +149,27 @@ public class ProductServiceImpl implements ProductService {
 		}
 		log.info("🔍 상품 ID 목록으로 상품 정보 조회: {}", productIds);
 		return productMapper.findProductsByIds(productIds);
+	}
+
+	@Override
+	public String getProductNameById(Long productId) {
+		log.info("🔍 상품명 조회 요청: productId={}", productId);
+		String productName = productMapper.getProductNameById(productId);
+
+		if (productName == null) {
+			log.warn("❌ 해당 상품 ID에 대한 상품명이 존재하지 않음: {}", productId);
+			return "상품 정보 없음";
+		}
+
+		log.info("✅ 상품명 조회 성공: {}", productName);
+		return productName;
+	}
+
+	@Override
+    @Transactional(readOnly = true)
+	public String getSellerNameByProductId(Long productId) {
+		log.info("🔍 [상품 판매자 조회 요청] - 상품 ID: {}", productId);
+		return productMapper.getSellerNameByProductId(productId);
 	}
 
 }

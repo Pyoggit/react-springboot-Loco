@@ -1,6 +1,7 @@
 package com.loco.aroundme.service;
 
 import java.util.List;
+import java.util.Map;
 
 import com.loco.aroundme.domain.Order;
 
@@ -16,4 +17,10 @@ public interface PaymentService {
 
 	/** ✅ 특정 유저의 결제 내역 조회 */
 	List<Order> getPaymentsByUserId(Long userId);
+	
+	// ✅ 전체 주문 내역 조회
+	List<Map<String, Object>> getAllOrders();
+	
+	 // ✅ 주문 삭제 (새롭게 추가)
+    void deleteOrders(List<String> orderIds);
 }

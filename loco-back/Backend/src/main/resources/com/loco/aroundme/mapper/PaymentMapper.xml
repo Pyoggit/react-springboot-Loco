@@ -6,16 +6,16 @@
 		parameterType="com.loco.aroundme.domain.Order">
 		INSERT INTO ORDERS (
 		ORDER_ID, USER_ID, CUSTOMER_NAME,
-		PRODUCT_ID, PRODUCT_NAME,
-		PAYMENT_METHOD, TOTAL_AMOUNT, STATUS,
-		ORDER_DATE, PAYMENT_KEY
+		SELLER_NAME,
+		PRODUCT_ID, PRODUCT_NAME, PAYMENT_METHOD, TOTAL_AMOUNT,
+		STATUS, ORDER_DATE, PAYMENT_KEY
 		) VALUES (
 		#{orderId}, #{userId},
-		#{customerName}, #{productId}, #{productName},
-		#{paymentMethod},
-		#{totalAmount}, #{status}, SYSTIMESTAMP,
-		#{paymentKey,
-		jdbcType=VARCHAR}
+		#{customerName}, #{sellerName},
+		#{productId}, #{productName},
+		#{paymentMethod}, #{totalAmount},
+		#{status}, SYSTIMESTAMP,
+		#{paymentKey, jdbcType=VARCHAR}
 		)
 	</insert>
 
@@ -49,10 +49,33 @@
 		SELECT
 		o.ORDER_ID, o.USER_ID, o.CUSTOMER_NAME, o.PRODUCT_ID,
 		o.PRODUCT_NAME, -- ✅ 상품명 직접 반환
-		o.PAYMENT_METHOD, o.TOTAL_AMOUNT, o.STATUS, o.ORDER_DATE, o.PAYMENT_KEY
+		o.PAYMENT_METHOD, o.TOTAL_AMOUNT,
+		o.STATUS, o.ORDER_DATE, o.PAYMENT_KEY
 		FROM ORDERS o
-		WHERE o.USER_ID = #{userId}
+		WHERE o.USER_ID =
+		#{userId}
 		ORDER BY o.ORDER_DATE DESC
 	</select>
+
+	<!-- ✅ 전체 주문 내역 조회 -->
+	<select id="getAllOrders" resultType="map">
+		SELECT
+		ORDER_ID,
+		PRODUCT_NAME,
+		TOTAL_AMOUNT AS PRICE,
+		TO_CHAR(ORDER_DATE, 'YYYY-MM-DD') AS ORDER_DATE,
+		CUSTOMER_NAME,
+		SELLER_NAME
+		FROM ORDERS
+		ORDER BY ORDER_DATE DESC
+	</select>
+
+	<delete id="deleteOrders">
+		DELETE FROM ORDERS WHERE ORDER_ID IN
+		<foreach collection="orderIds" item="id" open="("
+			separator="," close=")">
+			#{id}
+		</foreach>
+	</delete>
 
 </mapper>
