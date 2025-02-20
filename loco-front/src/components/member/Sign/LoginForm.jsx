@@ -206,6 +206,7 @@ const LoginForm = () => {
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const [isLoading, setIsLoading] = useState(false);
+  const [userEmail, setUserEmail] = useState(null);
   const emailInputRef = useRef(null);
   const passwordInputRef = useRef(null);
   const navigate = useNavigate();
@@ -219,6 +220,36 @@ const LoginForm = () => {
     console.log('✅ 현재 저장된 쿠키 (useCookies):', cookies);
   }, [cookies]);
 
+  const fetchUserEmail = async (userId, token) => {
+    try {
+      const response = await axios.get(
+        `${import.meta.env.VITE_API_URL}/api/users/${userId}`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+
+      if (response.data.email) {
+        localStorage.setItem('userEmail', response.data.email);
+        console.log('✅ 저장된 이메일:', localStorage.getItem('userEmail'));
+      } else {
+        console.error('❌ 이메일을 가져오지 못함:', response.data);
+      }
+    } catch (error) {
+      console.error('❌ 이메일 가져오기 실패:', error);
+    }
+  };
+  useEffect(() => {
+    const storedEmail = localStorage.getItem('userEmail');
+    if (storedEmail) {
+      setUserEmail(storedEmail);
+      console.log('✅ 로그인한 유저 이메일:', storedEmail);
+    } else {
+      console.log('❌ 저장된 이메일 없음');
+    }
+  }, []);
   /** 로그인 처리 함수 */
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -234,6 +265,8 @@ const LoginForm = () => {
       console.log('✅ 로그인 요청 후 응답:', response);
 
       if (response.data.normal_accessToken) {
+        const accessToken = response.data.normal_accessToken;
+        localStorage.setItem('normal_accessToken', accessToken);
         localStorage.setItem(
           'normal_accessToken',
           response.data.normal_accessToken
@@ -245,7 +278,8 @@ const LoginForm = () => {
 
         console.log(
           '✅ 저장된 토큰:',
-          localStorage.getItem('normal_accessToken')
+          localStorage.getItem('normal_accessToken'),
+          localStorage.getItem('normal_refreshToken')
         );
 
         // ✅ 로그인 후 `userId` 가져오기
@@ -254,7 +288,7 @@ const LoginForm = () => {
             Authorization: `Bearer ${response.data.normal_accessToken}`,
           },
         });
-
+        const userData = userInfoResponse.data;
         console.log('📌 로그인 후 가져온 사용자 정보:', userInfoResponse.data);
         console.log(
           '📌 유저 프로필 sysFile:',
@@ -264,6 +298,8 @@ const LoginForm = () => {
         if (userInfoResponse.data.userId) {
           localStorage.setItem('userId', userInfoResponse.data.userId);
           localStorage.setItem('userName', userInfoResponse.data.userName);
+
+          fetchUserEmail(userData.userId, accessToken);
         }
 
         if (userInfoResponse.data.profileImage) {
