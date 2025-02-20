@@ -10,11 +10,10 @@ const ProductInfo = () => {
   const { id } = useParams();
   const navigate = useNavigate();
   const [product, setProduct] = useState(null);
-  const [sellerName, setSellerName] = useState(""); // ✅ 판매자 이름 추가
+  const [sellerName, setSellerName] = useState("");
   const [loading, setLoading] = useState(true);
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
-  const [userId, setUserId] = useState(null); // ✅ 로그인한 사용자 ID 저장
-  const [chatButtonVisible, setChatButtonVisible] = useState(false);
+  const [userId, setUserId] = useState(null);
   const { setActiveRoomId } = useContext(ChatContext);
 
   /** ✅ 로그인한 사용자 정보 가져오기 */
@@ -38,7 +37,7 @@ const ProductInfo = () => {
       });
   }, []);
 
-  /** ✅ 상품 정보 가져오기 (판매자 이름 포함) */
+  /** ✅ 상품 정보 가져오기 */
   useEffect(() => {
     const fetchProduct = async () => {
       try {
@@ -48,7 +47,7 @@ const ProductInfo = () => {
         console.log("✅ 상품 정보:", response.data);
 
         setProduct(response.data.product);
-        setSellerName(response.data.sellerName || "알 수 없음"); // ✅ 판매자 이름 저장
+        setSellerName(response.data.sellerName || "알 수 없음");
       } catch (error) {
         console.error("❌ 상품 정보를 불러오는 중 오류 발생:", error);
         alert("존재하지 않는 상품입니다.");
@@ -70,7 +69,8 @@ const ProductInfo = () => {
   }
 
   // ✅ 상품 등록자와 로그인한 사용자가 같은지 확인
-  const isOwner = userId && product.userId && userId === Number(product.userId);
+  const isOwner =
+    userId && product.userId && Number(userId) === Number(product.userId);
   console.log(
     "🔍 로그인한 userId:",
     userId,
@@ -79,7 +79,7 @@ const ProductInfo = () => {
   );
   console.log("✅ isOwner:", isOwner);
 
-  // 이미지 URL 설정 (기본 썸네일 포함)
+  // 이미지 URL 설정
   const images =
     product.images && product.images.length > 0
       ? product.images.map(
@@ -97,7 +97,7 @@ const ProductInfo = () => {
 
   /** ✅ 상품 삭제 버튼 클릭 시 */
   const handleDelete = async () => {
-    if (!userId || Number(userId) !== Number(product.userId)) {
+    if (!isOwner) {
       alert("본인이 등록한 상품만 삭제할 수 있습니다.");
       return;
     }
@@ -128,12 +128,7 @@ const ProductInfo = () => {
     }
   };
 
-  /** 판매자 클릭 시 채팅 버튼 표시 */
-  const handleSellerClick = () => {
-    setChatButtonVisible(true);
-  };
-
-  /** 판매자와 채팅 시작 */
+  /** ✅ 판매자와 채팅 시작 */
   const startChatWithSeller = async () => {
     if (!userId) {
       alert("로그인이 필요합니다.");
@@ -166,7 +161,6 @@ const ProductInfo = () => {
         }
       );
       console.log("채팅방 생성 성공:", response.data);
-      // 채팅방 생성 성공 시 전역 상태에 roomId 저장
       setActiveRoomId(response.data.roomId);
       alert(
         "채팅방이 생성되었습니다. 헤더의 채팅 아이콘을 눌러 채팅창을 열어주세요."
@@ -201,21 +195,7 @@ const ProductInfo = () => {
           <p className="product-info-price">
             {product.price.toLocaleString()}원
           </p>
-          <p className="product-info-seller">
-            판매자:{" "}
-            <span
-              onClick={handleSellerClick}
-              className="seller-name"
-              style={{ fontWeight: chatButtonVisible ? "bold" : "normal" }}
-            >
-              {sellerName}
-            </span>
-          </p>
-          {chatButtonVisible && (
-            <button className="chat-button" onClick={startChatWithSeller}>
-              채팅하기
-            </button>
-          )}
+          <p className="product-info-seller">판매자: {sellerName}</p>
 
           <div className="product-info-map-container">
             <p className="product-info-location">
@@ -230,7 +210,6 @@ const ProductInfo = () => {
             뒤로가기
           </button>
 
-          {/*  본인이 등록한 상품일 경우에만 수정 및 삭제 버튼 표시 */}
           {isOwner ? (
             <>
               <button
@@ -244,12 +223,17 @@ const ProductInfo = () => {
               </button>
             </>
           ) : (
-            <Payment
-              amount={product.price}
-              productId={product.productId}
-              orderName={product.productName}
-              sellerName={sellerName}
-            />
+            <>
+              <button className="team-button" onClick={startChatWithSeller}>
+                채팅하기
+              </button>
+              <Payment
+                amount={product.price}
+                productId={product.productId}
+                orderName={product.productName}
+                sellerName={sellerName}
+              />
+            </>
           )}
         </div>
       </div>

@@ -4,11 +4,25 @@ export const ChatContext = createContext();
 
 export const ChatProvider = ({ children }) => {
   const [unreadCount, setUnreadCount] = useState(0);
-  // activeRoomId: 현재 열려있는 채팅방 ID (헤더 팝업에서 사용)
-  const [activeRoomId, setActiveRoomId] = useState(null);
+  const [activeRoomId, _setActiveRoomId] = useState(null);
 
-  const incrementUnread = () => setUnreadCount((prev) => prev + 1);
-  const resetUnread = () => setUnreadCount(0);
+  const setActiveRoomId = (roomId) => {
+    console.log(`🔄 setActiveRoomId 변경: ${roomId}`);
+    _setActiveRoomId(roomId);
+  };
+
+  const incrementUnread = () => {
+    console.log("🔔 incrementUnread 실행! 기존 카운트:", unreadCount);
+    setUnreadCount((prev) => {
+      console.log("📈 새 unreadCount:", prev + 1);
+      return prev + 1;
+    });
+  };
+
+  const resetUnread = () => {
+    console.log("🔄 resetUnread 실행! 초기화");
+    setUnreadCount(0);
+  };
 
   return (
     <ChatContext.Provider

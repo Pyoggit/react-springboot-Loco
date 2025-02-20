@@ -455,16 +455,18 @@ public class UsersController {
 	}
 
 	/**
-	 * ✅ 이메일 찾기 - 일부만 노출
+	 * ✅ 이메일 일부 마스킹 (앞 2글자 + 마지막 1글자 유지)
 	 */
 	private String maskEmail(String email) {
-		int atIndex = email.indexOf("@");
-		if (atIndex <= 1)
-			return "****" + email.substring(atIndex); // "a@email.com" -> "****@email.com"
+	    int atIndex = email.indexOf("@");
+	    if (atIndex <= 3) 
+	        return "****" + email.substring(atIndex); // 너무 짧은 경우 기본 마스킹 처리
 
-		String firstPart = email.substring(0, 2); // 앞 두 글자 유지
-		return firstPart + "****" + email.substring(atIndex);
+	    String firstTwo = email.substring(0, 2); // 앞 두 글자 유지
+	    String lastChar = email.substring(atIndex - 1, atIndex); // '@' 앞 한 글자 유지
+	    return firstTwo + "***" + lastChar + email.substring(atIndex);
 	}
+
 
 	/**
 	 * ✅ 비밀번호 찾기 - 인증번호 요청 API

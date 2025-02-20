@@ -22,56 +22,21 @@ export default function Header() {
   const [loginUser, setLoginUser] = useState(null);
   const [showChat, setShowChat] = useState(false);
   const [chatRooms, setChatRooms] = useState([]);
+  const [showNotification, setShowNotification] = useState(false);
 
-  const { unreadCount, activeRoomId, setActiveRoomId } =
-    useContext(ChatContext);
+  const {
+    unreadCount,
+    activeRoomId,
+    setActiveRoomId,
+    newMessageAlert,
+    setNewMessageAlert,
+  } = useContext(ChatContext);
 
   const MAIN_PATH = () => "/";
   const LOGIN_PATH = () => "/login";
   const SEARCH_PATH = () => "/search";
-  // const USER_PATH = (userEmail) => `/user/${userEmail}`;
-  // const USER_PATH = (userEmail) => `/mypage/${userEmail}`;
   const USER_PATH = () => "/mypage";
 
-  // const fetchUserInfo = async () => {
-  //   // ✅ 먼저 로컬스토리지에서 normal & kakao 토큰 가져오기
-  //   const normalAccessToken = localStorage.getItem("normal_accessToken");
-  //   const kakaoAccessToken = localStorage.getItem("kakao_accessToken");
-
-  //   let tokenType = "";
-  //   let accessToken = "";
-
-  //   if (normalAccessToken) {
-  //     tokenType = "normal";
-  //     accessToken = normalAccessToken;
-  //   } else if (kakaoAccessToken) {
-  //     tokenType = "kakao";
-  //     accessToken = kakaoAccessToken;
-  //   } else {
-  //     console.warn("🚨 저장된 토큰 없음 → API 요청 안 보냄");
-  //     setLogin(false);
-  //     setLoginUser(null);
-  //     return;
-  //   }
-
-  //   try {
-  //     console.log(`📌 ${tokenType} Authorization 헤더 추가: `, accessToken);
-
-  //     const response = await axios.get("/api/users/mypage", {
-  //       headers: {
-  //         Authorization: `Bearer ${accessToken}`, // ✅ 헤더에 토큰 추가
-  //       },
-  //     });
-
-  //     console.log("📌 로그인 상태 확인:", response.data);
-  //     setLoginUser(response.data);
-  //     setLogin(true);
-  //   } catch (error) {
-  //     console.error("🚨 로그인 토큰 없음 → 로그인 상태 초기화", error);
-  //     setLogin(false);
-  //     setLoginUser(null);
-  //   }
-  // };
   const fetchUserInfo = async () => {
     const normalAccessToken = localStorage.getItem("normal_accessToken");
     const kakaoAccessToken = localStorage.getItem("kakao_accessToken");
@@ -135,6 +100,19 @@ export default function Header() {
     setActiveRoomId(roomId);
     setShowChat(true); // 팝업 열기
   };
+
+  useEffect(() => {
+    if (newMessageAlert) {
+      console.log("🔔 새 메시지 알림:", newMessageAlert);
+      setShowNotification(true);
+
+      // 5초 후 알림 사라지게 하기
+      setTimeout(() => {
+        setShowNotification(false);
+        setNewMessageAlert(null);
+      }, 5000);
+    }
+  }, [newMessageAlert, setNewMessageAlert]);
 
   const handleLogout = async () => {
     try {
@@ -412,6 +390,14 @@ export default function Header() {
                   currentUserId={loginUser?.userId}
                   currentUserName={loginUser?.userName}
                 />
+              </div>
+            )}
+            {newMessageAlert && (
+              <div className="chat-notification">
+                <p>
+                  <strong>{newMessageAlert.senderName}</strong>:{" "}
+                  {newMessageAlert.content}
+                </p>
               </div>
             )}
           </div>

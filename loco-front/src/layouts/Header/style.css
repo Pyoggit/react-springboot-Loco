@@ -343,6 +343,41 @@
   background-color: #f9f9f9;
 }
 
+.chat-badge {
+  background: red;
+  color: white;
+  border-radius: 50%;
+  padding: 5px 10px;
+  font-size: 12px;
+  position: absolute;
+  top: 10px;
+  right: 10px;
+}
+
+.chat-notification {
+  position: fixed;
+  bottom: 80px;
+  right: 20px;
+  background: #ffeb3b;
+  color: black;
+  padding: 10px;
+  border-radius: 5px;
+  box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+  animation: fadein 0.5s;
+  z-index: 9999;
+}
+
+@keyframes fadein {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
 /* 반응형 미디어 쿼리 */
 @media (max-width: 768px) {
   .header-container {

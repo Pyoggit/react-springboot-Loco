@@ -7,36 +7,55 @@ const ChatRoomPopup = ({ roomId, currentUserId, currentUserName }) => {
   const [messages, setMessages] = useState([]);
   const [inputMessage, setInputMessage] = useState("");
   const messagesEndRef = useRef(null);
-  const { activeRoomId, resetUnread, incrementUnread } =
+  const { activeRoomId, resetUnread, incrementUnread, setActiveRoomId } =
     useContext(ChatContext);
   const subscriptionRef = useRef(null);
 
   useEffect(() => {
     if (!roomId) return;
-    // 채팅창이 열릴 때 unread 카운트 초기화
-    resetUnread();
+
+    console.log("📡 WebSocket 연결 시도...");
+
+    stompClient.onConnect = () => {
+      console.log("✅ WebSocket 연결 성공!");
+      subscribe();
+    };
+
+    stompClient.onWebSocketError = (error) => {
+      console.error("❌ WebSocket 연결 오류:", error);
+    };
+
+    stompClient.onStompError = (frame) => {
+      console.error("❌ STOMP 오류:", frame);
+    };
+
     const subscribePath = `/topic/room.${roomId}`;
 
     const subscribe = () => {
-      // 구독을 수행하고 subscription 객체를 ref에 저장
+      console.log(`✅ WebSocket 구독 중... ${subscribePath}`);
+
       subscriptionRef.current = stompClient.subscribe(
         subscribePath,
         (message) => {
           const received = JSON.parse(message.body);
+          console.log("📩 새 메시지 수신:", received);
+
           setMessages((prev) => [...prev, received]);
-          // 만약 현재 활성 채팅방이 아니라면 unread count 증가
-          if (activeRoomId !== roomId) {
+
+          // ✅ 현재 활성 채팅방이 아니라면 알림 증가
+          console.log(
+            `🔍 현재 활성 채팅방: ${activeRoomId}, 메시지 roomId: ${received.roomId}`
+          );
+
+          if (activeRoomId !== received.roomId) {
+            console.log("🔔 새 메시지 알림! (incrementUnread 실행)");
             incrementUnread();
           }
         }
       );
     };
 
-    // 연결되어 있지 않다면 onConnect 콜백 내부에서 구독
     if (!stompClient.active) {
-      stompClient.onConnect = () => {
-        subscribe();
-      };
       stompClient.activate();
     } else {
       subscribe();
@@ -50,14 +69,17 @@ const ChatRoomPopup = ({ roomId, currentUserId, currentUserName }) => {
   }, [roomId, activeRoomId, resetUnread, incrementUnread]);
 
   useEffect(() => {
+    console.log(`📌 채팅방 활성화: ${roomId}`);
+    setActiveRoomId(roomId);
+    resetUnread(); // ✅ 채팅방을 열면 unread 초기화
+  }, [roomId]);
+
+  useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages]);
 
   const sendMessage = () => {
-    if (inputMessage.trim() === "" || !currentUserId) {
-      console.warn("메시지를 입력하세요.");
-      return;
-    }
+    if (inputMessage.trim() === "" || !currentUserId) return;
 
     const messagePayload = {
       senderId: currentUserId,
@@ -72,10 +94,8 @@ const ChatRoomPopup = ({ roomId, currentUserId, currentUserName }) => {
         destination: "/app/chat/send",
         body: JSON.stringify(messagePayload),
       });
-      console.log("메시지 전송 성공:", messagePayload);
     } catch (error) {
-      console.error("메시지 전송 실패:", error);
-      alert("메시지를 전송할 수 없습니다.");
+      console.error("❌ 메시지 전송 실패:", error);
     }
     setInputMessage("");
   };
