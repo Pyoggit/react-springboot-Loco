@@ -14,14 +14,19 @@
   border-radius: 5px;
 }
 
-.new-button {
+.circle-new-button {
   font-size: 16px;
   font-weight: 900;
   border: none;
   border-radius: 5px;
   flex: 0.3;
+  background-color: rgba(177, 121, 241, 0.6);
+  color: white;
+  border-color: rgba(177, 121, 241, 0.6);
 }
 
 .menubar > Button:hover {
-  background-color: rgb(172, 171, 171);
+  background-color: rgba(231, 121, 241, 0.6);
+  color: white;
+  border-color: rgba(177, 121, 241, 0.6);
 }

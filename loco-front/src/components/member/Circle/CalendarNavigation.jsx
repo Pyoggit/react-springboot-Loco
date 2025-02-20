@@ -38,7 +38,7 @@ const CalendarNavigation = ({ selectedDate, onDateChange }) => {
         className="calendar-nav-button"
         onClick={() => handleDateTransition(-1)}
       >
-        {'<'}
+        {'◀'}
       </button>
 
       <div
@@ -75,7 +75,7 @@ const CalendarNavigation = ({ selectedDate, onDateChange }) => {
         className="calendar-nav-button"
         onClick={() => handleDateTransition(1)}
       >
-        {'>'}
+        {'▶'}
       </button>
     </div>
   );

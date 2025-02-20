@@ -113,7 +113,7 @@ const CircleDetail = () => {
       alert('로그인이 필요합니다!');
       return navigate('/login');
     }
-
+    alert('참석 되었습니다!');
     try {
       await axios.post(
         `${import.meta.env.VITE_API_URL}/api/circles/${post.circleId}/attend`,
@@ -131,7 +131,7 @@ const CircleDetail = () => {
       alert('로그인이 필요합니다!');
       return navigate('/login');
     }
-
+    alert('참석 취소 되었습니다!');
     try {
       await axios.delete(
         `${import.meta.env.VITE_API_URL}/api/circles/${post.circleId}/cancel`,
@@ -309,7 +309,7 @@ const CircleDetail = () => {
           !isCreator &&
           (isAttending ? (
             <button
-              className="circle-attend-btn cancel"
+              className="circle-attend-btn-cancel"
               onClick={handleCancelAttendance}
             >
               참석 취소
@@ -341,10 +341,13 @@ const CircleDetail = () => {
             creatorEmail &&
             storedEmail === creatorEmail && (
               <div className="admin-buttons">
-                <button className="edit-btn" onClick={handleEditCircle}>
+                <button className="circle-edit-btn" onClick={handleEditCircle}>
                   <FontAwesomeIcon icon={faEdit} /> 수정
                 </button>
-                <button className="delete-btn" onClick={handleDeleteCircle}>
+                <button
+                  className="circle-delete-btn"
+                  onClick={handleDeleteCircle}
+                >
                   <FontAwesomeIcon icon={faTrash} /> 삭제
                 </button>
               </div>
