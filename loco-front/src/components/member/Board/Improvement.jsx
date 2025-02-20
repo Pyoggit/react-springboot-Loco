@@ -18,7 +18,7 @@ const Improvement = () => {
   const fetchPosts = async () => {
     try {
       const response = await axios.get(
-        `${import.meta.env.VITE_API_URL}/api/board/report`
+        `${import.meta.env.VITE_API_URL}/api/board/improvement`
       );
       setPosts(response.data);
     } catch (error) {
