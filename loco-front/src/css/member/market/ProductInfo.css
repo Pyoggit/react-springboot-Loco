@@ -184,6 +184,30 @@
   border: none;
 }
 
+.seller-name {
+  cursor: pointer;
+  transition: font-weight 0.3s ease-in-out;
+}
+
+.seller-name:hover {
+  font-weight: bold;
+}
+
+.chat-button {
+  background-color: rgba(177, 121, 241);
+  color: white;
+  border: none;
+  padding: 8px 12px;
+  margin-top: 10px;
+  cursor: pointer;
+  border-radius: 5px;
+  transition: background-color 0.2s ease-in-out;
+}
+
+.chat-button:hover {
+  background: linear-gradient(to left, #fbc2eb, #a6c1ee);
+}
+
 /* 반응형 스타일 */
 @media (max-width: 600px) {
   .product-info {
