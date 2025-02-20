@@ -28,4 +28,8 @@ public interface ProductService {
 	
 	List<Product> getProductsByIds(List<Long> productIds);
 	
+	// ✅ 상품 ID로 상품명 조회 (새로 추가)
+    String getProductNameById(Long productId);
+    
+    String getSellerNameByProductId(Long productId);
 }

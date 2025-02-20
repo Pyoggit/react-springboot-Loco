@@ -209,4 +209,34 @@ public class ProductController {
 		return ResponseEntity.ok(products);
 	}
 
+	@GetMapping("/product-name/{productId}")
+	public ResponseEntity<String> getProductNameById(@PathVariable String productId) {
+		try {
+			log.info("🔍 상품명 조회 요청: productId={}", productId);
+
+			// ✅ productId가 숫자인지 확인하고 변환
+			Long numericProductId;
+			try {
+				numericProductId = Long.parseLong(productId);
+			} catch (NumberFormatException e) {
+				log.error("❌ 잘못된 productId 형식: {}", productId);
+				return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("잘못된 상품 ID 형식입니다.");
+			}
+
+			// ✅ 상품명 조회
+			String productName = productService.getProductNameById(numericProductId);
+
+			if (productName == null) {
+				log.warn("❌ 해당 상품 ID에 대한 상품명이 존재하지 않음: {}", numericProductId);
+				return ResponseEntity.status(HttpStatus.NOT_FOUND).body("해당 상품이 존재하지 않습니다.");
+			}
+
+			log.info("✅ 상품명 조회 성공: {}", productName);
+			return ResponseEntity.ok(productName);
+		} catch (Exception e) {
+			log.error("❌ 상품명 조회 중 서버 오류 발생: {}", e.getMessage());
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("상품명 조회 중 오류가 발생했습니다.");
+		}
+	}
+
 }
