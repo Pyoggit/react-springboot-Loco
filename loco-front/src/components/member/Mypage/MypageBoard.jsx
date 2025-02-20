@@ -9,60 +9,50 @@
 
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import "@/css/member/board/Notice.css"; // 기존 스타일 파일 사용
+import axios from "axios";
+import "@/css/member/board/Notice.css";
 
 const MypageBoard = () => {
-  const [userPosts, setUserPosts] = useState([]);
-  const [selectedType, setSelectedType] = useState(""); // ""이면 전체 글 표시
+  const [posts, setPosts] = useState([]);
+  const [selectedType, setSelectedType] = useState(""); // 빈 값이면 게시판 미선택 상태
   const [currentPage, setCurrentPage] = useState(1);
   const postsPerPage = 10;
   const navigate = useNavigate();
 
+  const userName = localStorage.getItem("userName");
+
+  // 선택한 타입에 따라 게시글 목록 불러오기
   useEffect(() => {
-    // 로컬스토리지에서 사용자가 작성한 글 가져오기
-    const storedUserPosts = localStorage.getItem("userPosts");
-    if (storedUserPosts) {
-      setUserPosts(JSON.parse(storedUserPosts));
+    if (selectedType) {
+      axios
+        .get(`${import.meta.env.VITE_API_URL}/api/board/${selectedType}`)
+        .then((response) => {
+          setPosts(response.data);
+          setCurrentPage(1); // 타입 변경 시 페이지 초기화
+        })
+        .catch((error) => {
+          console.error("게시글 불러오기 실패:", error);
+          setPosts([]);
+        });
+    } else {
+      // 타입 미선택이면 빈 배열 또는 별도 API 호출
+      setPosts([]);
     }
-  }, []);
+  }, [selectedType]);
 
-  // 선택된 타입에 따라 글 필터링 (selectedType이 비어있으면 전체 글)
-  const filteredPosts =
-    selectedType === ""
-      ? userPosts
-      : userPosts.filter((post) => post.type === selectedType);
-
+  // 페이지네이션 계산
   const indexOfLastPost = currentPage * postsPerPage;
   const indexOfFirstPost = indexOfLastPost - postsPerPage;
-  const currentPosts = filteredPosts.slice(indexOfFirstPost, indexOfLastPost);
+  const currentPosts = posts.slice(indexOfFirstPost, indexOfLastPost);
+  const totalPages = Math.ceil(posts.length / postsPerPage);
 
   const paginate = (pageNumber) => setCurrentPage(pageNumber);
   const goToPrevPage = () => currentPage > 1 && setCurrentPage(currentPage - 1);
   const goToNextPage = () =>
-    currentPage < Math.ceil(filteredPosts.length / postsPerPage) &&
-    setCurrentPage(currentPage + 1);
+    currentPage < totalPages && setCurrentPage(currentPage + 1);
 
-  const pageNumbers = Array.from(
-    { length: Math.ceil(filteredPosts.length / postsPerPage) },
-    (_, i) => i + 1
-  );
-
-  // type 선택 시 페이지 초기화
   const handleTypeChange = (e) => {
     setSelectedType(e.target.value);
-    setCurrentPage(1);
-  };
-
-  // 게시글 삭제 핸들러: 삭제 확인 후 해당 게시글을 상태와 로컬스토리지에서 제거
-  const handleDelete = (id) => {
-    if (window.confirm("정말로 이 게시글을 삭제하시겠습니까?")) {
-      const updatedPosts = userPosts.filter(
-        (post) => (post.id || post.code) !== id
-      );
-      setUserPosts(updatedPosts);
-      localStorage.setItem("userPosts", JSON.stringify(updatedPosts));
-      alert("게시글이 삭제되었습니다.");
-    }
   };
 
   return (
@@ -76,7 +66,7 @@ const MypageBoard = () => {
             value={selectedType}
             onChange={handleTypeChange}
           >
-            <option value="">전체</option>
+            <option value="">선택하세요</option>
             <option value="freeboard">자유</option>
             <option value="notice">공지사항</option>
             <option value="report">신고</option>
@@ -94,40 +84,27 @@ const MypageBoard = () => {
             <th>작성자</th>
             <th>작성일</th>
             <th>조회수</th>
-            <th>관리</th>
           </tr>
         </thead>
         <tbody>
           {currentPosts.length > 0 ? (
             currentPosts.map((post) => (
               <tr
-                key={post.id || post.code}
+                key={post.boardId}
                 onClick={() =>
-                  navigate(`/board/${post.type}/view/${post.id || post.code}`)
+                  navigate(`/board/${selectedType}/view/${post.boardId}`)
                 }
               >
                 <td>{post.title}</td>
-                <td>{post.writer}</td>
-                <td>
-                  {new Date(post.createdDate || post.date).toLocaleDateString()}
-                </td>
+                <td>{userName}</td>
+                <td>{new Date(post.boardRegdate).toLocaleDateString()}</td>
                 <td>{post.views}</td>
-                <td>
-                  <button
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      handleDelete(post.id || post.code);
-                    }}
-                  >
-                    삭제
-                  </button>
-                </td>
               </tr>
             ))
           ) : (
             <tr>
-              <td colSpan="5" className="no-posts">
-                작성한 글이 없습니다.
+              <td colSpan="4" className="no-posts">
+                게시글이 없습니다.
               </td>
             </tr>
           )}
@@ -138,7 +115,7 @@ const MypageBoard = () => {
         <button onClick={goToPrevPage} disabled={currentPage === 1}>
           이전
         </button>
-        {pageNumbers.map((number) => (
+        {Array.from({ length: totalPages }, (_, i) => i + 1).map((number) => (
           <button
             key={number}
             onClick={() => paginate(number)}
@@ -147,12 +124,7 @@ const MypageBoard = () => {
             {number}
           </button>
         ))}
-        <button
-          onClick={goToNextPage}
-          disabled={
-            currentPage === Math.ceil(filteredPosts.length / postsPerPage)
-          }
-        >
+        <button onClick={goToNextPage} disabled={currentPage === totalPages}>
           다음
         </button>
       </div>

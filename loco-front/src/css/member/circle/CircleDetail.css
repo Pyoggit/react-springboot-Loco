@@ -140,3 +140,49 @@
 .edit-button:hover {
   background-color: #3f3f3f;
 }
+.admin-buttons {
+  display: flex;
+  justify-content: space-around;
+  padding: 20px;
+}
+.circle-edit-btn {
+  background-color: #ff87d9d5;
+  color: white;
+  padding: 10px 15px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+
+  width: 120px;
+  margin-top: 15px;
+}
+.circle-delete-btn {
+  background-color: #ff87d9d5;
+  color: white;
+  padding: 10px 15px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  width: 120px;
+  margin-top: 15px;
+}
+.circle-attend-btn-cancel {
+  background-color: #ff87a9d5;
+  color: white;
+  padding: 10px 15px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  width: 120px;
+  margin-top: 15px;
+}
+.circle-attend-btn {
+  background-color: #c787ffd5;
+  color: white;
+  padding: 10px 15px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  width: 120px;
+  margin-top: 15px;
+}

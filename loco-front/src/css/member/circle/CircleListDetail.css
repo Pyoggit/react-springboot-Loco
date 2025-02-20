@@ -1,5 +1,5 @@
 .button-detail {
-  background-color: #006bdec1;
+  background-color: #b999ffc1;
   color: white;
   padding: 10px 15px;
   border: none;
@@ -57,4 +57,23 @@
   display: flex;
   justify-content: space-between;
   margin-top: 15px;
+}
+.no-posts {
+  padding: 0 30px;
+  display: flex;
+  justify-content: center;
+  font-size: xx-large;
+}
+.post-button {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+}
+.like-count-container {
+  display: flex;
+  flex-direction: row;
+}
+.like-count {
+  padding-left: 5px;
+  padding-top: 7px;
 }
