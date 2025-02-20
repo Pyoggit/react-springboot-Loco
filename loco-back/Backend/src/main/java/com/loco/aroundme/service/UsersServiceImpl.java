@@ -31,128 +31,12 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class UsersServiceImpl implements UsersService {
 
-//	void registerUser(Users user, MultipartFile profileImage) throws Exception; // JSON 대신 Users 객체 받음
-//	Users findByEmail(String email);
 
 	private final UsersMapper usersMapper;
 	private final BCryptPasswordEncoder passwordEncoder;
 	private static final String UPLOAD_DIR = "C:/upload/";
 	private static final String BASE_IMAGE_URL = "http://localhost:8080/upload/"; // ✅ 기본 이미지 URL 설정
-//	@Value("${file.upload.path}")
-//	private String uploadPath; // ✅ 환경변수에서 값 로드
 
-//	@Override
-//	@Transactional
-//	public void registerUser(Users user, MultipartFile profileImage) throws Exception {
-//		if (user == null || user.getUserEmail() == null || user.getUserEmail().trim().isEmpty()) {
-//			throw new IllegalArgumentException("User 정보가 유효하지 않습니다.");
-//		}
-//
-//		if (user.getPassword() == null || user.getPassword().trim().isEmpty()) {
-//			user.setPassword("1234"); // 기본비밀번호 설정
-//		}
-//		user.setPassword(passwordEncoder.encode(user.getPassword())); // 비밀번호 암호화
-//
-//		log.info("비밀번호 값 1: {}", user.getPassword());
-//
-//		if (user.getRoleId() == null) {
-//			user.setRoleId(2L);
-//		}
-//		user.setUserRegDate(new Date());
-//
-//		// 카카오에서 받은 프로필 이미지가 있는 경우 처리
-//		if (user.getOriginUser() == null || user.getOriginUser().isEmpty()) {
-//			if (user.getSysUser() != null && !user.getSysUser().isEmpty()) {
-//				user.setOriginUser(user.getSysUser()); // 카카오 이미지 URL 저장
-//			} else {
-//				user.setOriginUser("default-profile.png");
-//			}
-//		}
-//
-//		try {
-//			if (profileImage != null && !profileImage.isEmpty()) {
-//				String originalFilename = profileImage.getOriginalFilename();
-//
-//				// 파일명이 null이거나 확장자가 없는 경우 예외 처리
-//				if (originalFilename == null || !originalFilename.contains(".")) {
-//					throw new IllegalArgumentException("유효하지 않은 파일명입니다.");
-//				}
-//
-//				// 확장자 추출
-//				String extension = originalFilename.substring(originalFilename.lastIndexOf(".")).toLowerCase();
-//
-//				// 허용된 확장자 목록
-//				if (!isAllowedExtension(extension)) {
-//					throw new IllegalArgumentException("허용되지 않은 파일 형식입니다.");
-//				}
-//
-//				// 저장할 파일명 생성
-//				String uniqueFileName = UUID.randomUUID().toString() + extension;
-//
-//				File file = new File(UPLOAD_DIR + uniqueFileName);
-//				profileImage.transferTo(file);
-//
-//				user.setOriginUser(originalFilename);
-//				user.setSysUser(uniqueFileName);
-//			} else {
-//				// 여기서 user.getOriginUser() 값이 있다면, 그대로 사용하도록 변경!
-//				if (user.getOriginUser() == null || user.getOriginUser().isEmpty()) {
-//					user.setOriginUser("default-profile.png");
-//					user.setSysUser("default-profile.png");
-//				}
-//			}
-//
-//			usersMapper.insertUser(user);
-//			log.info("사용자 저장 완료: {}, 프로필 이미지={}", user.getUserEmail(), user.getOriginUser());
-//
-//		} catch (IOException e) {
-//			log.error("파일 업로드 중 오류 발생: {}", e.getMessage());
-//			throw new RuntimeException("파일 업로드에 실패하였습니다.");
-//		} catch (Exception e) {
-//			log.error("회원가입 중 오류 발생: {}", e.getMessage());
-//			throw new RuntimeException("회원가입 중 오류가 발생했습니다.");
-//		}
-//	}
-//	@Override
-//	@Transactional
-//	public void registerUser(Users user, MultipartFile profileImage) throws Exception {
-//	    try {
-//	        if (user == null || user.getUserEmail() == null || user.getUserEmail().trim().isEmpty()) {
-//	            throw new IllegalArgumentException("User 정보가 유효하지 않습니다.");
-//	        }
-//
-//	        if (user.getPassword() == null || user.getPassword().trim().isEmpty()) {
-//	            user.setPassword("1234");
-//	        }
-//	        user.setPassword(passwordEncoder.encode(user.getPassword()));
-//
-//	        if (user.getRoleId() == null) {
-//	            user.setRoleId(2L);
-//	        }
-//
-//	        if (profileImage != null && !profileImage.isEmpty()) {
-//	            user.setOriginUser(profileImage.getOriginalFilename()); // ✅ 원본 파일명 저장!
-//	            uploadProfileImage(user, profileImage); // ✅ 업로드 실행
-//	        } else {
-//	            user.setOriginUser("default-image.png");
-//	            user.setSysUser("default-image.png");
-//	        }
-//
-//
-//	        usersMapper.insertUser(user);
-//	        log.info("✅ 사용자 저장 완료: {}, 프로필 이미지={}", user.getUserEmail(), user.getOriginUser());
-//
-//	    } catch (IllegalArgumentException e) {
-//	        log.error("🚨 유효하지 않은 입력값: {}", e.getMessage());
-//	        throw new IllegalArgumentException("입력값이 올바르지 않습니다: " + e.getMessage());
-//	    } catch (IOException e) {
-//	        log.error("🚨 파일 업로드 실패: {}", e.getMessage());
-//	        throw new RuntimeException("파일 업로드 중 오류가 발생했습니다.");
-//	    } catch (Exception e) {
-//	        log.error("🚨 회원가입 중 알 수 없는 오류 발생: {}", e.getMessage());
-//	        throw new RuntimeException("회원가입 처리 중 오류가 발생했습니다.");
-//	    }
-//	}@Override
 	@Override
 	@Transactional
 	public void registerUser(Users user, MultipartFile profileImage) throws Exception {
@@ -194,27 +78,6 @@ public class UsersServiceImpl implements UsersService {
 	}
 
 
-//	@Override
-//	public Users read(String email) {
-//		if (email == null || email.trim().isEmpty()) {
-//			throw new IllegalArgumentException("이메일은 필수 입력 사항입니다.");
-//		}
-//
-//		Users user = usersMapper.read(email);
-//
-//		if (user != null) {
-//			log.info("📌 가져온 유저 정보: {}", user);
-//			log.info("📌 가져온 profileImage 값: {}", user.getSysUser());
-//
-//			if (user.getSysUser() != null && !user.getSysUser().isEmpty()) {
-//				user.setSysUser(getProfileImageUrl(user.getSysUser())); // ✅ 프로필 이미지 URL 변환
-//			} else {
-//				user.setSysUser("http://localhost:8080/upload/default-profile.png"); // 기본 이미지
-//			}
-//		}
-//
-//		return user;
-//	}
 	@Override
 	public Users read(String email) {
 	    if (email == null || email.trim().isEmpty()) {
@@ -232,12 +95,14 @@ public class UsersServiceImpl implements UsersService {
 	            user.setSysUser(user.getSysUser()); 
 	        } else {
 	            // ✅ 일반 사용자라면 `/upload/` 추가
-	            user.setSysUser("http://localhost:8080/upload/" + user.getSysUser()); 
+//	            user.setSysUser("http://localhost:8080/upload/" + user.getSysUser()); 
+	            user.setSysUser(user.getSysUser()); 
 	        }
 	    }
 
 	    return user;
 	}
+
 
 
 	@Override
@@ -328,32 +193,6 @@ public class UsersServiceImpl implements UsersService {
 
 
 
-	// ✅ 프로필 이미지 업로드 및 저장된 파일명 반환
-//	@Override
-//    public String uploadProfileImage(Users user, MultipartFile profileImage) throws IOException {
-//        if (profileImage == null || profileImage.isEmpty()) {
-//            return null;
-//        }
-//
-//        String originalFilename = profileImage.getOriginalFilename();
-//        if (originalFilename == null || !originalFilename.contains(".")) {
-//            throw new IllegalArgumentException("유효하지 않은 파일명입니다.");
-//        }
-//
-//        String extension = originalFilename.substring(originalFilename.lastIndexOf(".")).toLowerCase();
-//        if (!isAllowedExtension(extension)) {
-//            throw new IllegalArgumentException("허용되지 않은 파일 형식입니다.");
-//        }
-//
-//        String uniqueFileName = UUID.randomUUID().toString() + extension;
-//        File file = new File(UPLOAD_DIR + uniqueFileName);
-//        profileImage.transferTo(file);
-//
-//        user.setOriginUser(originalFilename);
-//        user.setSysUser(uniqueFileName);
-//
-//        return uniqueFileName;
-//    }
 
 	@Override
 	public String uploadProfileImage(Users user, MultipartFile profileImage) throws IOException {
@@ -401,17 +240,6 @@ public class UsersServiceImpl implements UsersService {
 		return uniqueFileName; // 저장된 파일명 반환
 	}
 
-//    @Override
-//    public Users getUserInfo(Long userId) {
-//        Users user = usersMapper.readById(userId); // ✅ Get user from DB
-//
-//        if (user != null) {
-//            user.setOriginUser(getProfileImageUrl(user.getSysUser())); // ✅ Set full image URL
-//            log.info("유저정보{}", user);
-//        }
-//
-//        return user;
-//    }
 	@Override
 	public Users getUserInfo(Long userId) {
 		Users user = usersMapper.readById(userId); // ✅ DB에서 유저 정보 가져오기
@@ -424,13 +252,6 @@ public class UsersServiceImpl implements UsersService {
 		return user;
 	}
 
-	// ✅ 프로필 이미지 URL 변환 메서드 추가
-//    public String getProfileImageUrl(String profileImage) {
-//        if (profileImage == null || profileImage.isEmpty()) {
-//            return BASE_IMAGE_URL + "default-image.png"; // 기본 이미지 경로
-//        }
-//        return BASE_IMAGE_URL + profileImage; // 저장된 이미지의 URL
-//    }
 	// ✅ 프로필 이미지 URL 생성 메서드
 	public String getProfileImageUrl(String profileImage) {
 		if (profileImage == null || profileImage.isEmpty()) {
@@ -461,22 +282,6 @@ public class UsersServiceImpl implements UsersService {
 		}
 	}
 
-//	@Override
-//	@Transactional
-//	public void updateUser(Users user) throws Exception {
-//		if (user == null || user.getUserEmail() == null || user.getUserEmail().trim().isEmpty()) {
-//			throw new IllegalArgumentException("Us er 정보가 유효하지 않습니다.");
-//		}
-//		log.info("비밀번호 값 확인2: {}", user.getPassword());
-//
-//		try {
-//			usersMapper.updateUser(user);
-//			log.info("사용자 정보 업데이트 완료: {}", user.getUserEmail());
-//		} catch (Exception e) {
-//			log.error(" 사용자 정보 업데이트 중 오류 발생: {}", e.getMessage());
-//			throw new RuntimeException("사용자 정보 업데이트 중 오류가 발생했습니다.");
-//		}
-//	}
 
 	@Override
 	@Transactional
