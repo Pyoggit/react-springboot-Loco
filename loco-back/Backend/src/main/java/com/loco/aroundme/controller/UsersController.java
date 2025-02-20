@@ -6,6 +6,7 @@ import java.util.Optional;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -18,6 +19,8 @@ import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.loco.aroundme.common.security.jwt.JwtUtil;
 import com.loco.aroundme.domain.Users;
 import com.loco.aroundme.mapper.UsersMapper;
@@ -38,9 +41,8 @@ public class UsersController {
 	private final UsersMapper usersMapper;
 	private final JwtUtil jwtUtil;
 	private final BCryptPasswordEncoder passwordEncoder;
-	private final EmailService emailService; 
-    private final VerificationCodeService verificationCodeService;
-
+	private final EmailService emailService;
+	private final VerificationCodeService verificationCodeService;
 
 	/**
 	 * 회원가입 API (경로: /api/users/signup) JSON 데이터는 Users 객체로, 프로필 사진은 MultipartFile로
@@ -51,6 +53,9 @@ public class UsersController {
 			@RequestPart(value = "profileImage", required = false) MultipartFile profileImage) {
 		try {
 			System.out.println("회원가입 요청 데이터: " + user);
+			if (profileImage != null) {
+				System.out.println("받은 프로필 이미지: " + profileImage.getOriginalFilename());
+			}
 			usersService.registerUser(user, profileImage);
 			return ResponseEntity.ok("회원가입이 완료되었습니다!");
 		} catch (Exception e) {
@@ -164,13 +169,33 @@ public class UsersController {
 //						Map.entry("detailAddress", user.getAddress2() == null ? "" : user.getAddress2()),
 //						Map.entry("profileImage", user.getOriginUser() == null ? "" : user.getOriginUser())));
 //	}
+
+//	@GetMapping("/mypage")
+//	public ResponseEntity<?> getCurrentUser(@RequestHeader("Authorization") String authorizationHeader) {
+//		if (authorizationHeader == null || !authorizationHeader.startsWith("Bearer ")) {
+//			return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(Map.of("error", "토큰이 없습니다."));
+//		}
+//
+//		String token = authorizationHeader.substring(7); // "Bearer " 이후의 토큰 값 추출
+//
+//		if (!jwtUtil.validateToken(token)) {
+//			return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(Map.of("error", "유효하지 않은 토큰"));
+//		}
+//
+//		String userEmail = jwtUtil.getUserEmail(token);
+//		Users user = usersMapper.read(userEmail);
+//
+//		if (user == null) {
+//			return ResponseEntity.status(HttpStatus.NOT_FOUND).body(Map.of("error", "유저 정보를 찾을 수 없습니다."));
+//		}
+
 	@GetMapping("/mypage")
 	public ResponseEntity<?> getCurrentUser(@RequestHeader("Authorization") String authorizationHeader) {
 		if (authorizationHeader == null || !authorizationHeader.startsWith("Bearer ")) {
 			return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(Map.of("error", "토큰이 없습니다."));
 		}
 
-		String token = authorizationHeader.substring(7); // "Bearer " 이후의 토큰 값 추출
+		String token = authorizationHeader.substring(7);
 
 		if (!jwtUtil.validateToken(token)) {
 			return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(Map.of("error", "유효하지 않은 토큰"));
@@ -182,12 +207,23 @@ public class UsersController {
 		if (user == null) {
 			return ResponseEntity.status(HttpStatus.NOT_FOUND).body(Map.of("error", "유저 정보를 찾을 수 없습니다."));
 		}
+		// ✅ 프로필 이미지 URL 처리
+	    String profileImage;
+	    if (user.getSysUser() != null && user.getSysUser().startsWith("http")) {
+	        profileImage = user.getSysUser();  // 카카오 URL 그대로 사용
+	    } else {
+	        profileImage = "http://localhost:8080/upload/" + user.getSysUser(); // 일반 사용자는 /upload/ 추가
+	    }
 
-		 // ✅ 프로필 이미지 URL 설정 (기본값 추가)
-	    String profileImage = (user.getSysUser() != null && !user.getSysUser().isEmpty())
-	        ? "/upload/" + user.getSysUser()  // ✅ 업로드된 이미지 사용
-	        : "/images/default-image.png";  // ✅ 기본 이미지
-	    
+		// ✅ 프로필 이미지 URL 설정 (기본값 추가)
+//	    String profileImage = (user.getSysUser() != null && !user.getSysUser().isEmpty())
+//	        ? "/upload/" + user.getSysUser()  // ✅ 업로드된 이미지 사용
+//	        : "/images/default-image.png";  // ✅ 기본 이미지
+		// ✅ 프로필 이미지 URL 설정 (기본값 추가)
+//		String profileImage = (user.getSysUser() != null && !user.getSysUser().isEmpty())
+//		    ? "/upload/" + user.getSysUser()  // ✅ 업로드된 이미지 사용
+//		    : "/images/default-image.png";  // ✅ 기본 이미지
+
 		return ResponseEntity
 				.ok(Map.ofEntries(Map.entry("userId", user.getUserId()), Map.entry("email", user.getUserEmail()),
 						Map.entry("userName", user.getUserName()), Map.entry("role", user.getRoleId()),
@@ -198,63 +234,77 @@ public class UsersController {
 						Map.entry("phone1", user.getPhone1() == null ? "" : user.getPhone1()),
 						Map.entry("phone2", user.getPhone2() == null ? "" : user.getPhone2()),
 						Map.entry("phone3", user.getPhone3() == null ? "" : user.getPhone3()),
-						Map.entry("birthDate", user.getBirth() == null ? "" : user.getBirth()),
+						Map.entry("birth", user.getBirth() == null ? "" : user.getBirth()),
 						Map.entry("zipcode", user.getZipcode() == null ? "" : user.getZipcode()),
 						Map.entry("address", user.getAddress1() == null ? "" : user.getAddress1()),
 						Map.entry("detailAddress", user.getAddress2() == null ? "" : user.getAddress2()),
-						Map.entry("profileImage", user.getOriginUser() == null ? "" : user.getOriginUser())));
+//						Map.entry("profileImage", user.getOriginUser() == null ? "" : user.getOriginUser())));
+//						Map.entry("profileImage", user.getSysUser() == null ? "/images/default-image.png" : "/upload/" + user.getSysUser())));
+
+//						Map.entry("profileImage", user.getSysUser() == null ? "/images/default-image.png" :  user.getSysUser())));
+//						Map.entry("profileImage",
+//								user.getSysUser() == null ? "http://localhost:8080/images/default-image.png"
+//										: "http://localhost:8080/upload/" + user.getSysUser())));
+						Map.entry("profileImage", profileImage)));
 	}
 
 //	@PutMapping("/update")
 //	public ResponseEntity<?> updateUser(@RequestHeader("Authorization") String authorizationHeader,
-//			@RequestPart("user") Users user,
-//			@RequestPart(value = "profileImage", required = false) MultipartFile profileImage) throws Exception {
+//			@RequestPart("user") Users user, // ✅ JSON 데이터는 @RequestPart로 받아야 함
+//			@RequestPart(value = "profileImage", required = false) MultipartFile profileImage) { // ✅ 파일은 @RequestPart
 //
-//		if (authorizationHeader == null || !authorizationHeader.startsWith("Bearer ")) {
-//			return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(Map.of("error", "토큰이 없습니다."));
+//		try {
+//			if (authorizationHeader == null || !authorizationHeader.startsWith("Bearer ")) {
+//				return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(Map.of("error", "토큰이 없습니다."));
+//			}
+//
+//			String token = authorizationHeader.substring(7);
+//			if (!jwtUtil.validateToken(token)) {
+//				return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(Map.of("error", "유효하지 않은 토큰"));
+//			}
+//
+//			String userEmail = jwtUtil.getUserEmail(token);
+//			Users existingUser = usersMapper.read(userEmail);
+//
+//			if (existingUser == null) {
+//				return ResponseEntity.status(HttpStatus.NOT_FOUND).body(Map.of("error", "유저 정보를 찾을 수 없습니다."));
+//			}
+//
+//			// ✅ 기존 유저 정보 업데이트
+//			existingUser.setUserName(user.getUserName());
+//			existingUser.setGender(user.getGender());
+//			existingUser.setMobile1(user.getMobile1());
+//			existingUser.setMobile2(user.getMobile2());
+//			existingUser.setMobile3(user.getMobile3());
+//			existingUser.setPhone1(user.getPhone1());
+//			existingUser.setPhone2(user.getPhone2());
+//			existingUser.setPhone3(user.getPhone3());
+//			existingUser.setZipcode(user.getZipcode());
+//			existingUser.setAddress1(user.getAddress1());
+//			existingUser.setAddress2(user.getAddress2());
+//
+//			// ✅ 프로필 이미지 처리
+//			if (profileImage != null && !profileImage.isEmpty()) {
+//				usersService.uploadProfileImage(existingUser, profileImage);
+//			}
+//
+//			usersMapper.updateUser(existingUser);
+////	        log.info("✅ 회원 정보 업데이트 완료: {}", existingUser.getUserEmail());
+//			log.info("✅ 회원 정보 업데이트 완료: {}", existingUser);
+//
+//			return ResponseEntity.ok(Map.of("message", "회원정보가 성공적으로 수정되었습니다!"));
+//
+//		} catch (Exception e) {
+//			log.error("❌ 회원 정보 업데이트 중 오류 발생", e);
+//			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+//					.body(Map.of("error", "서버 오류가 발생했습니다.", "details", e.getMessage()));
 //		}
-//
-//		String token = authorizationHeader.substring(7);
-//
-//		if (!jwtUtil.validateToken(token)) {
-//			return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(Map.of("error", "유효하지 않은 토큰"));
-//		}
-//
-//		String userEmail = jwtUtil.getUserEmail(token);
-//		Users existingUser = usersMapper.read(userEmail);
-//
-//		if (existingUser == null) {
-//			return ResponseEntity.status(HttpStatus.NOT_FOUND).body(Map.of("error", "유저 정보를 찾을 수 없습니다."));
-//		}
-//
-//		// 기존 유저 정보 업데이트
-//		existingUser.setUserName(user.getUserName());
-//		existingUser.setGender(user.getGender());
-//		existingUser.setMobile1(user.getMobile1());
-//		existingUser.setMobile2(user.getMobile2());
-//		existingUser.setMobile3(user.getMobile3());
-//		existingUser.setPhone1(user.getPhone1());
-//		existingUser.setPhone2(user.getPhone2());
-//		existingUser.setPhone3(user.getPhone3());
-//		existingUser.setZipcode(user.getZipcode());
-//		existingUser.setAddress1(user.getAddress1());
-//		existingUser.setAddress2(user.getAddress2());
-//
-//		// ✅ 프로필 이미지 업데이트 반영
-//		if (profileImage != null && !profileImage.isEmpty()) {
-//			String newProfileImageUrl = usersService.uploadProfileImage(existingUser, profileImage);
-//			existingUser.setOriginUser(newProfileImageUrl);
-//		}
-//
-//		usersService.updateUser(existingUser);
-//
-//		return ResponseEntity.ok(Map.of("message", "회원정보가 성공적으로 수정되었습니다!"));
 //	}
-
 	@PutMapping("/update")
+	@Transactional
 	public ResponseEntity<?> updateUser(@RequestHeader("Authorization") String authorizationHeader,
-			@RequestPart("user") Users user, // ✅ JSON 데이터는 @RequestPart로 받아야 함
-			@RequestPart(value = "profileImage", required = false) MultipartFile profileImage) { // ✅ 파일은 @RequestPart
+			@RequestPart("user") String userJson, // ✅ JSON을 String으로 받기
+			@RequestPart(value = "profileImage", required = false) MultipartFile profileImage) {
 
 		try {
 			if (authorizationHeader == null || !authorizationHeader.startsWith("Bearer ")) {
@@ -273,8 +323,13 @@ public class UsersController {
 				return ResponseEntity.status(HttpStatus.NOT_FOUND).body(Map.of("error", "유저 정보를 찾을 수 없습니다."));
 			}
 
+			// ✅ JSON 문자열을 Users 객체로 변환
+			ObjectMapper objectMapper = new ObjectMapper();
+			Users user = objectMapper.readValue(userJson, Users.class);
+
 			// ✅ 기존 유저 정보 업데이트
 			existingUser.setUserName(user.getUserName());
+			existingUser.setBirth(user.getBirth());
 			existingUser.setGender(user.getGender());
 			existingUser.setMobile1(user.getMobile1());
 			existingUser.setMobile2(user.getMobile2());
@@ -286,17 +341,23 @@ public class UsersController {
 			existingUser.setAddress1(user.getAddress1());
 			existingUser.setAddress2(user.getAddress2());
 
-			// ✅ 프로필 이미지 처리
+			// ✅ 기존 파일 삭제 후 새 파일 저장
 			if (profileImage != null && !profileImage.isEmpty()) {
-				usersService.uploadProfileImage(existingUser, profileImage);
+				String newSysFileName = usersService.updateProfileImage(existingUser, profileImage);
+				existingUser.setSysUser(newSysFileName); // ✅ 새로운 파일명을 DB에 저장
+				log.info("✅ 새로운 프로필 이미지 저장됨: {}", newSysFileName);
 			}
 
 			usersMapper.updateUser(existingUser);
-//	        log.info("✅ 회원 정보 업데이트 완료: {}", existingUser.getUserEmail());
 			log.info("✅ 회원 정보 업데이트 완료: {}", existingUser);
 
-			return ResponseEntity.ok(Map.of("message", "회원정보가 성공적으로 수정되었습니다!"));
+			return ResponseEntity.ok(Map.of("message", "회원정보가 성공적으로 수정되었습니다!", "profileImage",
+					"http://localhost:8080/upload/" + existingUser.getSysUser() // ✅ 클라이언트에 새 URL 반환
+			));
 
+		} catch (JsonProcessingException e) {
+			log.error("❌ JSON 변환 오류:", e);
+			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(Map.of("error", "JSON 변환 오류"));
 		} catch (Exception e) {
 			log.error("❌ 회원 정보 업데이트 중 오류 발생", e);
 			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
@@ -305,33 +366,32 @@ public class UsersController {
 	}
 
 	@DeleteMapping("/delete")
-	public ResponseEntity<?> deleteUser(
-	        @RequestHeader("Authorization") String authorizationHeader,
-	        @RequestBody Map<String, String> requestBody) throws Exception {
+	public ResponseEntity<?> deleteUser(@RequestHeader("Authorization") String authorizationHeader,
+			@RequestBody Map<String, String> requestBody) throws Exception {
 
-	    if (authorizationHeader == null || !authorizationHeader.startsWith("Bearer ")) {
-	        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(Map.of("error", "토큰이 없습니다."));
-	    }
+		if (authorizationHeader == null || !authorizationHeader.startsWith("Bearer ")) {
+			return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(Map.of("error", "토큰이 없습니다."));
+		}
 
-	    String token = authorizationHeader.substring(7);
-	    if (!jwtUtil.validateToken(token)) {
-	        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(Map.of("error", "유효하지 않은 토큰"));
-	    }
+		String token = authorizationHeader.substring(7);
+		if (!jwtUtil.validateToken(token)) {
+			return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(Map.of("error", "유효하지 않은 토큰"));
+		}
 
-	    String userEmail = jwtUtil.getUserEmail(token);
-	    Users existingUser = usersMapper.read(userEmail);
+		String userEmail = jwtUtil.getUserEmail(token);
+		Users existingUser = usersMapper.read(userEmail);
 
-	    if (existingUser == null) {
-	        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(Map.of("error", "유저 정보를 찾을 수 없습니다."));
-	    }
+		if (existingUser == null) {
+			return ResponseEntity.status(HttpStatus.NOT_FOUND).body(Map.of("error", "유저 정보를 찾을 수 없습니다."));
+		}
 
-	    String inputPassword = requestBody.get("password");
-	    if (inputPassword == null || !passwordEncoder.matches(inputPassword, existingUser.getPassword())) {
-	        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(Map.of("error", "비밀번호가 올바르지 않습니다."));
-	    }
+		String inputPassword = requestBody.get("password");
+		if (inputPassword == null || !passwordEncoder.matches(inputPassword, existingUser.getPassword())) {
+			return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(Map.of("error", "비밀번호가 올바르지 않습니다."));
+		}
 
-	    usersService.deleteUser(userEmail);
-	    return ResponseEntity.ok(Map.of("message", "회원 탈퇴가 완료되었습니다."));
+		usersService.deleteUser(userEmail);
+		return ResponseEntity.ok(Map.of("message", "회원 탈퇴가 완료되었습니다."));
 	}
 
 	@PostMapping("/auth/token/refresh")
@@ -362,113 +422,112 @@ public class UsersController {
 		return ResponseEntity.ok().header("Authorization", "Bearer " + newAccessToken) // ✅ 새 Access Token을 헤더로 반환
 				.body(Map.of("accessToken", newAccessToken));
 	}
-	
-	
+
 	/**
-     * ✅ 이메일 찾기 
-     */
+	 * ✅ 이메일 찾기
+	 */
 	@PostMapping("/find-email")
 	public ResponseEntity<?> findEmail(@RequestBody Map<String, String> request) {
-	    String name = request.get("name");
-	    String mobile = request.get("mobile");
+		String name = request.get("name");
+		String mobile = request.get("mobile");
 
-	    if (name == null || name.trim().isEmpty() || mobile == null || mobile.trim().isEmpty()) {
-	        return ResponseEntity.badRequest().body(Map.of("error", "이름과 휴대폰 번호는 필수 입력 사항입니다."));
-	    }
+		if (name == null || name.trim().isEmpty() || mobile == null || mobile.trim().isEmpty()) {
+			return ResponseEntity.badRequest().body(Map.of("error", "이름과 휴대폰 번호는 필수 입력 사항입니다."));
+		}
 
-	    Optional<String> foundEmail = usersService.findEmailByNameAndMobile(name, mobile);
+		Optional<String> foundEmail = usersService.findEmailByNameAndMobile(name, mobile);
 
-	    if (foundEmail.isPresent()) {
-	        // ✅ 이메일의 일부만 보여주기 (보안 강화)
-	        String email = foundEmail.get();
-	        String maskedEmail = maskEmail(email);
+		if (foundEmail.isPresent()) {
+			// ✅ 이메일의 일부만 보여주기 (보안 강화)
+			String email = foundEmail.get();
+			String maskedEmail = maskEmail(email);
 
-	        return ResponseEntity.ok(Map.of("email", maskedEmail));
-	    } else {
-	        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(Map.of("error", "일치하는 계정을 찾을 수 없습니다."));
-	    }
+			return ResponseEntity.ok(Map.of("email", maskedEmail));
+		} else {
+			return ResponseEntity.status(HttpStatus.NOT_FOUND).body(Map.of("error", "일치하는 계정을 찾을 수 없습니다."));
+		}
 	}
-	
+
 	/**
-     * ✅ 이메일 찾기 - 일부만 노출
-     */
+	 * ✅ 이메일 찾기 - 일부만 노출
+	 */
 	private String maskEmail(String email) {
-	    int atIndex = email.indexOf("@");
-	    if (atIndex <= 1) return "****" + email.substring(atIndex); // "a@email.com" -> "****@email.com"
+		int atIndex = email.indexOf("@");
+		if (atIndex <= 1)
+			return "****" + email.substring(atIndex); // "a@email.com" -> "****@email.com"
 
-	    String firstPart = email.substring(0, 2);  // 앞 두 글자 유지
-	    return firstPart + "****" + email.substring(atIndex);
+		String firstPart = email.substring(0, 2); // 앞 두 글자 유지
+		return firstPart + "****" + email.substring(atIndex);
 	}
 
-	
 	/**
-     * ✅ 비밀번호 찾기 - 인증번호 요청 API
-     */
+	 * ✅ 비밀번호 찾기 - 인증번호 요청 API
+	 */
 	@PostMapping("/request-verification")
 	public ResponseEntity<?> requestVerification(@RequestBody Map<String, String> request) {
-	    String name = request.get("name");
-	    String email = request.get("email");
+		String name = request.get("name");
+		String email = request.get("email");
 
-	    if (name == null || email == null || name.trim().isEmpty() || email.trim().isEmpty()) {
-	        return ResponseEntity.badRequest().body(Map.of("error", "이름과 이메일을 입력하세요."));
-	    }
+		if (name == null || email == null || name.trim().isEmpty() || email.trim().isEmpty()) {
+			return ResponseEntity.badRequest().body(Map.of("error", "이름과 이메일을 입력하세요."));
+		}
 
-	    boolean exists = usersService.existsByNameAndEmail(name, email);
-	    if (!exists) {
-	        return ResponseEntity.status(HttpStatus.NOT_FOUND)
-	                .body(Map.of("error", "회원 정보가 존재하지 않습니다.")); // ✅ 오류 메시지 추가
-	    }
+		boolean exists = usersService.existsByNameAndEmail(name, email);
+		if (!exists) {
+			return ResponseEntity.status(HttpStatus.NOT_FOUND).body(Map.of("error", "회원 정보가 존재하지 않습니다.")); // ✅ 오류 메시지
+																											// 추가
+		}
 
-	    // ✅ 인증번호 생성 및 저장
-	    String verificationCode = verificationCodeService.generateCode(email);
-	    emailService.sendVerificationCode(email, verificationCode);
+		// ✅ 인증번호 생성 및 저장
+		String verificationCode = verificationCodeService.generateCode(email);
+		emailService.sendVerificationCode(email, verificationCode);
 
-	    return ResponseEntity.ok(Map.of("message", "인증번호가 이메일로 전송되었습니다."));
+		return ResponseEntity.ok(Map.of("message", "인증번호가 이메일로 전송되었습니다."));
 	}
 
-    /**
-     * ✅ 비밀번호 찾기 - 인증번호 검증 API
-     */
-    @PostMapping("/verify-code")
-    public ResponseEntity<?> verifyCode(@RequestBody Map<String, String> request) {
-        String email = request.get("email");
-        String code = request.get("code");
+	/**
+	 * ✅ 비밀번호 찾기 - 인증번호 검증 API
+	 */
+	@PostMapping("/verify-code")
+	public ResponseEntity<?> verifyCode(@RequestBody Map<String, String> request) {
+		String email = request.get("email");
+		String code = request.get("code");
 
-        if (email == null || code == null || email.trim().isEmpty() || code.trim().isEmpty()) {
-            return ResponseEntity.badRequest().body(Map.of("error", "이메일과 인증번호를 입력하세요."));
-        }
+		if (email == null || code == null || email.trim().isEmpty() || code.trim().isEmpty()) {
+			return ResponseEntity.badRequest().body(Map.of("error", "이메일과 인증번호를 입력하세요."));
+		}
 
-        boolean isValid = verificationCodeService.isValidCode(email, code);
-        if (!isValid) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(Map.of("error", "인증번호가 올바르지 않습니다."));
-        }
+		boolean isValid = verificationCodeService.isValidCode(email, code);
+		if (!isValid) {
+			return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(Map.of("error", "인증번호가 올바르지 않습니다."));
+		}
 
-        verificationCodeService.removeCode(email); // 인증번호 사용 후 삭제
+		verificationCodeService.removeCode(email); // 인증번호 사용 후 삭제
 
-        return ResponseEntity.ok(Map.of("message", "인증이 완료되었습니다."));
-    }
+		return ResponseEntity.ok(Map.of("message", "인증이 완료되었습니다."));
+	}
 
-    /**
-     * ✅ 비밀번호 찾기 - 임시 비밀번호 발급 API
-     */
-    @PostMapping("/reset-password")
-    public ResponseEntity<?> resetPassword(@RequestBody Map<String, String> request) {
-        String email = request.get("email");
+	/**
+	 * ✅ 비밀번호 찾기 - 임시 비밀번호 발급 API
+	 */
+	@PostMapping("/reset-password")
+	public ResponseEntity<?> resetPassword(@RequestBody Map<String, String> request) {
+		String email = request.get("email");
 
-        if (email == null || email.trim().isEmpty()) {
-            return ResponseEntity.badRequest().body(Map.of("error", "이메일을 입력하세요."));
-        }
+		if (email == null || email.trim().isEmpty()) {
+			return ResponseEntity.badRequest().body(Map.of("error", "이메일을 입력하세요."));
+		}
 
-        boolean exists = usersService.existsByEmail(email);
-        if (!exists) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(Map.of("error", "일치하는 계정을 찾을 수 없습니다."));
-        }
+		boolean exists = usersService.existsByEmail(email);
+		if (!exists) {
+			return ResponseEntity.status(HttpStatus.NOT_FOUND).body(Map.of("error", "일치하는 계정을 찾을 수 없습니다."));
+		}
 
-        // ✅ 임시 비밀번호 생성 및 저장
-        String tempPassword = usersService.generateTemporaryPassword(email);
-        emailService.sendTemporaryPassword(email, tempPassword);
+		// ✅ 임시 비밀번호 생성 및 저장
+		String tempPassword = usersService.generateTemporaryPassword(email);
+		emailService.sendTemporaryPassword(email, tempPassword);
 
-        return ResponseEntity.ok(Map.of("message", "임시 비밀번호가 이메일로 전송되었습니다."));
-    }
+		return ResponseEntity.ok(Map.of("message", "임시 비밀번호가 이메일로 전송되었습니다."));
+	}
 
 }

@@ -57,7 +57,9 @@
 }
 
 
-
+.bottom-sec {
+  justify-content: space-around;
+}
 .find-email-pw {
   display: flex;
   justify-content: space-evenly;
@@ -108,7 +110,7 @@
 
 /* 회원가입 버튼 스타일 */
 .signup-link {
-  margin-top: 20px;
+  margin-top: 10px;
   font-size: 16px;
   font-weight: bold;
   color: #666;
@@ -136,3 +138,30 @@
 .social-login-btn button {
   margin-bottom: 10px;
 } */
+.bottom-sec {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 20px; /* 버튼 간 간격 */
+  margin-top: 20px;
+}
+
+.find-email-pw {
+  display: flex;
+  gap: 20px; /* 버튼 간 간격 */
+}
+
+.find-email,
+.find-pw,
+.signup-link {
+  cursor: pointer;
+  font-weight: bold;
+  color: #555;
+  transition: color 0.3s ease-in-out;
+}
+
+.find-email:hover,
+.find-pw:hover,
+.signup-link:hover {
+  color: #000;
+}

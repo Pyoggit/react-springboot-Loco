@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.loco.aroundme.domain.Users;
 
@@ -20,6 +21,8 @@ public interface UsersMapper {
 
     // ✅ 카카오 사용자 회원가입 (카카오 ID 기반)
     void resignKakaoUser(Users user);
+    
+    Users readById(Long userId);
 
     // ✅ 모든 사용자 조회
     List<Users> findAllUsers();
@@ -35,4 +38,6 @@ public interface UsersMapper {
     // ✅ 임시비밀번호로 업데이트
     void updatePassword(@Param("email") String email, @Param("password") String password);
 
+
+	String updateProfileImage(Users user, MultipartFile profileImage) throws Exception;
 }

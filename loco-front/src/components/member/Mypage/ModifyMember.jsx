@@ -1,14 +1,14 @@
-import { useState, useEffect } from "react";
+import { useRef, useState, useEffect } from "react";
 import DaumPostcode from "react-daum-postcode";
 import axios from "@/utils/AxiosConfig";
 import "@/css/member/mypage/ModifyMember.css";
 
 const ModifyMember = () => {
   const [formData, setFormData] = useState({
-    email: "",
+    email: "", // ✅ userEmail -> email
     password: "",
     confirmPassword: "",
-    name: "",
+    userName: "",
     gender: "",
     mobile1: "",
     mobile2: "",
@@ -16,44 +16,75 @@ const ModifyMember = () => {
     phone1: "",
     phone2: "",
     phone3: "",
-    birthDate: "",
+    birth: "",
     zipcode: "",
-    address: "",
-    detailAddress: "",
-    profileImage: null, // ✅ 파일 데이터 저장 (기본값 null)
+    address: "", // ✅ address1 -> address
+    detailAddress: "", // ✅ address2 -> detailAddress
+    profileImage: null,
   });
 
   const [isOpen, setIsOpen] = useState(false);
 
+  // ✅ 카카오 / 일반 로그인 토큰 가져오기
+  const getAuthToken = () => {
+    return (
+      localStorage.getItem("normal_accessToken") ||
+      localStorage.getItem("kakao_accessToken")
+    );
+  };
+
+  // ✅ 주소 검색 완료 핸들러
+  const handleComplete = (data) => {
+    let fullAddress = data.address;
+    let extraAddress = "";
+
+    if (data.addressType === "R") {
+      if (data.bname !== "") {
+        extraAddress += data.bname;
+      }
+      if (data.buildingName !== "") {
+        extraAddress +=
+          extraAddress !== "" ? `, ${data.buildingName}` : data.buildingName;
+      }
+    }
+
+    const completeAddress = `${fullAddress} ${extraAddress}`;
+
+    setFormData((prev) => ({
+      ...prev,
+      zipcode: data.zonecode,
+      address: completeAddress, // ✅ address -> address1으로 변경
+    }));
+
+    setIsOpen(false);
+  };
+
   useEffect(() => {
     const fetchUserInfo = async () => {
       try {
-        const normalAccessToken = localStorage.getItem("normal_accessToken");
-        const kakaoAccessToken = localStorage.getItem("kakao_accessToken");
-
-        if (!normalAccessToken && !kakaoAccessToken) {
+        const token = getAuthToken();
+        if (!token) {
           console.warn("🚨 로그인 토큰 없음 → API 요청 안 보냄");
           return;
         }
 
-        const headers = {
-          Authorization: `Bearer ${normalAccessToken || kakaoAccessToken}`,
-        };
+        const headers = { Authorization: `Bearer ${token}` };
         const response = await axios.get("/api/users/mypage", { headers });
 
         console.log("📌 받은 유저 정보:", response.data);
         const user = response.data;
 
+        // ✅ userEmail이 아니라 email로 변경!
         if (!user || !user.email) {
           console.error("❌ 유저 정보가 올바르게 오지 않음:", user);
           return;
         }
 
         setFormData({
-          email: user.email || "",
+          email: user.email || "", // ✅ userEmail -> email
           password: "",
           confirmPassword: "",
-          name: user.userName || "",
+          userName: user.userName || "",
           gender: user.gender || "",
           mobile1: user.mobile1 || "",
           mobile2: user.mobile2 || "",
@@ -61,11 +92,11 @@ const ModifyMember = () => {
           phone1: user.phone1 || "",
           phone2: user.phone2 || "",
           phone3: user.phone3 || "",
-          birthDate: user.birthDate ? user.birthDate.substring(0, 10) : "",
+          birth: user.birth ? user.birth.substring(0, 10) : "",
           zipcode: user.zipcode || "",
-          address: user.address || "",
-          detailAddress: user.detailAddress || "",
-          profileImage: null, // ✅ 기존 이미지 URL이 아니라 null로 설정
+          address: user.address || "", // ✅ address1 -> address
+          detailAddress: user.detailAddress || "", // ✅ address2 -> detailAddress
+          profileImage: null,
         });
       } catch (error) {
         console.error("❌ 유저 정보 가져오기 실패:", error);
@@ -78,6 +109,7 @@ const ModifyMember = () => {
   // ✅ 입력값 변경 처리
   const handleChange = (e) => {
     const { name, value } = e.target;
+    console.log(`🔄 변경된 값 → ${name}:`, value);
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
@@ -87,7 +119,7 @@ const ModifyMember = () => {
     setFormData((prev) => ({ ...prev, profileImage: file }));
   };
 
-  // ✅ 폼 제출 처리
+  // ✅ 회원정보 수정 요청
   const handleSubmit = async (e) => {
     e.preventDefault();
 
@@ -97,18 +129,20 @@ const ModifyMember = () => {
     }
 
     try {
-      const normalAccessToken = localStorage.getItem("normal_accessToken");
-      const kakaoAccessToken = localStorage.getItem("kakao_accessToken");
-
-      if (!normalAccessToken && !kakaoAccessToken) {
+      const token = getAuthToken();
+      if (!token) {
         alert("로그인 정보가 없습니다. 다시 로그인해주세요.");
         return;
       }
 
+      // ✅ FormData 생성
+      const userData = new FormData();
+
+      // ✅ JSON 데이터 변환 후 Blob으로 추가
       const userJson = JSON.stringify({
-        email: formData.email || "",
-        password: formData.password || "",
-        userName: formData.name,
+        userEmail: formData.email, // ✅ userEmail -> email
+        password: formData.password,
+        userName: formData.userName,
         gender: formData.gender,
         mobile1: formData.mobile1,
         mobile2: formData.mobile2,
@@ -116,29 +150,31 @@ const ModifyMember = () => {
         phone1: formData.phone1,
         phone2: formData.phone2,
         phone3: formData.phone3,
-        birth: formData.birthDate,
+        birth: formData.birth,
         zipcode: formData.zipcode,
-        address1: formData.address,
-        address2: formData.detailAddress,
+        address1: formData.address, // ✅ address1 -> address
+        address2: formData.detailAddress, // ✅ address2 -> detailAddress
       });
 
-      const userData = new FormData();
       userData.append(
         "user",
         new Blob([userJson], { type: "application/json" })
       );
 
+      // ✅ 프로필 이미지가 있을 경우 추가
       if (formData.profileImage instanceof File) {
         userData.append("profileImage", formData.profileImage);
       }
 
       console.log("📌 보낼 데이터:", userData);
+      console.log("📌 포함된 birth 값:", formData.birth);
 
       const headers = {
-        Authorization: `Bearer ${normalAccessToken || kakaoAccessToken}`,
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "multipart/form-data",
       };
 
-      // ❌ Content-Type을 직접 설정하지 않음! (axios가 자동 설정)
+      // ✅ PUT 요청 보내기
       const response = await axios.put("/api/users/update", userData, {
         headers,
       });
@@ -200,8 +236,8 @@ const ModifyMember = () => {
           <input
             className="modify-input"
             type="text"
-            name="name"
-            value={formData.name}
+            name="userName"
+            value={formData.userName}
             onChange={handleChange}
             required
           />
@@ -282,8 +318,8 @@ const ModifyMember = () => {
           <input
             className="modify-input"
             type="date"
-            name="birthDate"
-            value={formData.birthDate}
+            name="birth"
+            value={formData.birth}
             onChange={handleChange}
             required
           />
@@ -291,13 +327,20 @@ const ModifyMember = () => {
         <div className="modify-group">
           <label className="modify-title">우편번호</label>
           <div className="input-zipcode">
+            {/* <input
+              className="input-zipcodeMain"
+              type="text"
+              ref={zipcode}
+              name="zipcode"
+              value={formData.zipcode}
+              onChange={handleChange}
+            /> */}
             <input
               className="input-zipcodeMain"
               type="text"
               name="zipcode"
               value={formData.zipcode}
-              onChange={handleChange}
-              required
+              readOnly
             />
             <button
               className="btn-zipcode"
@@ -310,13 +353,19 @@ const ModifyMember = () => {
         </div>
         <div className="modify-group">
           <label className="modify-title">기본주소</label>
-          <input
+          {/* <input
             className="modify-input"
             type="text"
             name="address"
             value={formData.address}
             onChange={handleChange}
-            required
+          /> */}
+          <input
+            className="modify-input"
+            type="text"
+            name="address"
+            value={formData.address}
+            readOnly
           />
         </div>
         <div className="modify-group">
