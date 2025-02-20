@@ -215,6 +215,16 @@ export default function Header() {
 
   console.log("📌 로그인한 유저 데이터:", loginUser);
 
+  const profileUrl =
+    localStorage.getItem("kakao_accessToken") && loginUser?.profileImage
+      ? loginUser.profileImage // ✅ 카카오 유저는 URL 그대로 사용
+      : loginUser?.profileImage
+      ? `http://localhost:8080/upload/${loginUser.profileImage}` // ✅ 일반 로그인 유저는 /upload/ 추가
+      : "http://localhost:8080/images/default-image.png"; // ✅ 기본 이미지
+
+  console.log("📌 유저 프로필 profileImage(sysFile):", loginUser?.profileImage);
+  console.log("📌 유저 프로필 url:", profileUrl);
+
   const MyPageButton = () => {
     const [isDropdownOpen, setDropdownOpen] = useState(false);
 
@@ -232,13 +242,7 @@ export default function Header() {
           <div className="user-profile">
             <div
               className="profile-pic"
-              style={{
-                backgroundImage: `url(${
-                  loginUser?.profileImage?.startsWith("http")
-                    ? loginUser?.profileImage
-                    : `http://localhost:8080${loginUser?.profileImage}` // ✅ 여기서 서버 이미지 URL 설정됨
-                })`,
-              }}
+              style={{ backgroundImage: `url(${profileUrl})` }}
             ></div>
 
             <div className="user-details">
