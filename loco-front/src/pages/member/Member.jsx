@@ -7,17 +7,18 @@ import BoardPage from "./BoardPage";
 import MypageMain from "../../components/member/Mypage/MypageMain";
 import SerchPage from "../../components/member/Common/SerchPage";
 import MarketPage from "./MarketPage";
-import ChatRoom from "../../components/member/Common/ChatRoom";
+import ChatRoomPopup from "../../components/member/Common/ChatRoomPopup";
+import { ChatProvider } from "@/utils/ChatContext";
 
 //일반사용자 화면
 const Member = () => {
   return (
-    <>
+    <ChatProvider>
       <Routes>
         <Route element={<Container />}>
           <Route path="/" element={<Home />} />
-          <Route path="/chat" element={<ChatRoom />} />
-          <Route path="/chat/:roomId" element={<ChatRoom />} />
+          <Route path="/chat" element={<ChatRoomPopup />} />
+          <Route path="/chat/:roomId" element={<ChatRoomPopup />} />
           <Route path="/search" element={<SerchPage />} />
           <Route path="/circle" element={<CirclePage />} />
           <Route path="/board/*" element={<BoardPage />} />
@@ -27,7 +28,7 @@ const Member = () => {
           <Route path="/circle/*" element={<CirclePage />} />
         </Route>
       </Routes>
-    </>
+    </ChatProvider>
   );
 };
 

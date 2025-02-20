@@ -5,13 +5,19 @@ import com.loco.aroundme.domain.ChatRoom;
 import java.util.List;
 
 public interface ChatService {
-	void createChatRoom(String roomName, int createdBy); // 채팅방 생성
+    
+    // ✅ 판매자-구매자-상품별 채팅방 생성 (중복방 확인 후 기존 방 반환)
+    ChatRoom createOrGetChatRoom(Long sellerId, Long buyerId, Long productId);
 
-	ChatRoom findRoomById(int roomId); // 특정 채팅방 조회
+    // ✅ 특정 채팅방 정보 조회
+    ChatRoom findRoomById(Long roomId);
 
-	List<ChatRoom> findAllRooms(); // 모든 채팅방 조회
+    // ✅ 특정 유저의 모든 채팅방 조회
+    List<ChatRoom> findChatRoomsByUserId(Long userId);
 
-	void saveMessage(int roomId, int senderId, String messageContent, String messageType); // 메시지 저장
+    // ✅ 특정 채팅방의 메시지 목록 조회
+    List<ChatMessage> findMessagesByRoomId(Long roomId);
 
-	List<ChatMessage> findMessagesByRoomId(int roomId); // 특정 채팅방의 모든 메시지 조회
+    // ✅ 채팅 메시지 저장
+    void saveMessage(Long roomId, Long senderId, String senderName, String messageContent, String messageType);
 }

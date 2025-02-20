@@ -81,22 +81,26 @@
 
 
 	<!-- 회원 정보 업데이트 (프로필 이미지 포함) -->
-	<update id="updateUser"
-		parameterType="com.loco.aroundme.domain.Users">
-		UPDATE USERS SET
-		<!-- PASSWORD = #{password, jdbcType=VARCHAR}, -->
-		USER_NAME = #{userName, jdbcType=VARCHAR}, GENDER = #{gender,
-		jdbcType=VARCHAR}, MOBILE1 = #{mobile1, jdbcType=VARCHAR}, MOBILE2 =
-		#{mobile2, jdbcType=VARCHAR}, MOBILE3 = #{mobile3, jdbcType=VARCHAR},
-		PHONE1 = #{phone1, jdbcType=VARCHAR}, PHONE2 = #{phone2,
-		jdbcType=VARCHAR}, PHONE3 = #{phone3, jdbcType=VARCHAR}, BIRTH =
-		#{birth, jdbcType=VARCHAR}, ZIPCODE = #{zipcode, jdbcType=VARCHAR},
-		ADDRESS1 = #{address1, jdbcType=VARCHAR}, ADDRESS2 = #{address2,
-		jdbcType=VARCHAR}, ORIGIN_USER = #{originUser, jdbcType=VARCHAR}
-		<!-- ✅ 프로필 이미지 추가 -->
-		WHERE USER_EMAIL = #{userEmail}
-	</update>
-
+	<update id="updateUser" parameterType="com.loco.aroundme.domain.Users">
+    UPDATE USERS 
+    <set>
+        <if test="userName != null"> USER_NAME = #{userName}, </if>
+        <if test="gender != null"> GENDER = #{gender}, </if>
+        <if test="birth != null"> BIRTH = #{birth}, </if>
+        <if test="mobile1 != null"> MOBILE1 = #{mobile1}, </if>
+        <if test="mobile2 != null"> MOBILE2 = #{mobile2}, </if>
+        <if test="mobile3 != null"> MOBILE3 = #{mobile3}, </if>
+        <if test="phone1 != null"> PHONE1 = #{phone1}, </if>
+        <if test="phone2 != null"> PHONE2 = #{phone2}, </if>
+        <if test="phone3 != null"> PHONE3 = #{phone3}, </if>
+        <if test="zipcode != null"> ZIPCODE = #{zipcode}, </if>
+        <if test="address1 != null"> ADDRESS1 = #{address1}, </if>
+        <if test="address2 != null"> ADDRESS2 = #{address2}, </if>
+        <if test="originUser != null"> ORIGIN_USER = #{originUser}, </if>
+        <if test="sysUser != null"> SYS_USER = #{sysUser}, </if>
+    </set>
+    WHERE USER_EMAIL = #{userEmail}
+</update>
 
 	<!-- ✅ 회원 탈퇴 (이메일 기반) -->
 	<delete id="deleteUser" parameterType="String"> DELETE FROM USERS WHERE

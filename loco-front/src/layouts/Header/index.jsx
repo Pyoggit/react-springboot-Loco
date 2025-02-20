@@ -1,11 +1,12 @@
 import { Link, useNavigate, useParams, useLocation } from "react-router-dom";
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, useContext } from "react";
 import { useCookies } from "react-cookie";
 import axios from "@/utils/AxiosConfig";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faComments } from "@fortawesome/free-solid-svg-icons";
 import { faSquareCaretDown } from "@fortawesome/free-regular-svg-icons";
-import ChatRoom from "@/components/member/Common/ChatRoom";
+import { ChatContext } from "@/utils/ChatContext";
+import ChatRoomPopup from "../../components/member/Common/ChatRoomPopup";
 import "./style.css";
 
 export default function Header() {
@@ -20,6 +21,10 @@ export default function Header() {
   const [isSearchPage, setSearchPage] = useState(false);
   const [loginUser, setLoginUser] = useState(null);
   const [showChat, setShowChat] = useState(false);
+  const [chatRooms, setChatRooms] = useState([]);
+
+  const { unreadCount, activeRoomId, setActiveRoomId } =
+    useContext(ChatContext);
 
   const MAIN_PATH = () => "/";
   const LOGIN_PATH = () => "/login";
@@ -99,10 +104,37 @@ export default function Header() {
     }
   };
 
+  const fetchChatRooms = async (userId) => {
+    try {
+      const response = await axios.get(`/api/chat/rooms/${userId}`);
+      console.log("✅ 채팅방 목록:", response.data);
+      setChatRooms(response.data);
+    } catch (error) {
+      console.error("❌ 채팅방 목록 불러오기 실패:", error);
+    }
+  };
+
   // ✅ useEffect에서 `fetchUserInfo` 호출 (로그인 상태 체크)
   useEffect(() => {
-    fetchUserInfo();
+    (async () => {
+      await fetchUserInfo();
+    })();
   }, []);
+
+  useEffect(() => {
+    if (loginUser?.userId) {
+      fetchChatRooms(loginUser.userId);
+    }
+  }, [loginUser]);
+
+  const toggleChatPopup = () => {
+    setShowChat((prev) => !prev);
+  };
+
+  const handleSelectRoom = (roomId) => {
+    setActiveRoomId(roomId);
+    setShowChat(true); // 팝업 열기
+  };
 
   // const handleLogout = async () => {
   //   try {
@@ -371,19 +403,52 @@ export default function Header() {
       </div>
       {/* 로그인한 경우에만 헤더에 채팅 아이콘 표시 */}
       {isLogin && (
-        <div className="chat-icon" onClick={() => setShowChat(!showChat)}>
+        <div className="chat-icon" onClick={toggleChatPopup}>
           <FontAwesomeIcon icon={faComments} size="2x" />
+          {unreadCount > 0 && <span className="chat-badge">{unreadCount}</span>}
         </div>
       )}
       {/* 채팅 팝업창: showChat이 true일 때 작게 띄움 */}
       {isLogin && showChat && (
         <div className="chat-popup">
           <div className="chat-popup-header">
-            <span>채팅</span>
-            <button onClick={() => setShowChat(false)}>X</button>
+            <span>채팅방 목록</span>
+            <button onClick={toggleChatPopup}>X</button>
           </div>
           <div className="chat-popup-body">
-            <ChatRoom />
+            {/* 채팅방 리스트 */}
+            {chatRooms.length === 0 ? (
+              <p>참여중인 채팅방이 없습니다.</p>
+            ) : (
+              <ul>
+                {chatRooms.map((room) => (
+                  <li
+                    key={room.roomId}
+                    onClick={() => handleSelectRoom(room.roomId)}
+                    style={{
+                      cursor: "pointer",
+                      padding: "8px",
+                      borderBottom: "1px solid #ccc",
+                      backgroundColor:
+                        room.roomId === activeRoomId ? "#eee" : "transparent",
+                    }}
+                  >
+                    <strong>판매자:</strong> {room.sellerName} /{" "}
+                    <strong>구매자:</strong> {room.buyerName}
+                  </li>
+                ))}
+              </ul>
+            )}
+            {/* 선택된 채팅방이 있다면 채팅룸 표시 */}
+            {activeRoomId && (
+              <div style={{ marginTop: "10px" }}>
+                <ChatRoomPopup
+                  roomId={activeRoomId}
+                  currentUserId={loginUser?.userId}
+                  currentUserName={loginUser?.userName}
+                />
+              </div>
+            )}
           </div>
         </div>
       )}
