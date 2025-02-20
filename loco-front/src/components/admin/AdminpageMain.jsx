@@ -22,7 +22,7 @@ const AdminpageMain = () => {
 
     if (!accessToken) {
       alert("❌ 관리자 로그인이 필요합니다.");
-      navigate("/admin/login"); // ✅ 관리자 로그인 페이지로 이동
+      navigate("/adminpage/login"); // ✅ 관리자 로그인 페이지로 이동
       return;
     }
 
@@ -39,7 +39,7 @@ const AdminpageMain = () => {
       console.error("🚨 JWT 파싱 오류:", error);
       alert("❌ 잘못된 토큰입니다. 다시 로그인하세요.");
       localStorage.removeItem("admin_token"); // ✅ 잘못된 토큰 삭제
-      navigate("/admin/login"); // ✅ 로그인 페이지로 이동
+      navigate("/adminpage/login"); // ✅ 로그인 페이지로 이동
     }
   }, [navigate]);
 
