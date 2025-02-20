@@ -18,7 +18,7 @@ const Qna = () => {
   const fetchPosts = async () => {
     try {
       const response = await axios.get(
-        `${import.meta.env.VITE_API_URL}/api/board/report`
+        `${import.meta.env.VITE_API_URL}/api/board/qna`
       );
       setPosts(response.data);
     } catch (error) {

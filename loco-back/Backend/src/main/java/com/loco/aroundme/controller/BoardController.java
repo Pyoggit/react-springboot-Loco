@@ -53,7 +53,7 @@ public class BoardController {
 	/** ✅ 게시글 수정 */
 	@PutMapping("/{type}/{id}")
 	public ResponseEntity<String> updateBoard(@PathVariable String type, @PathVariable Long id,
-	        @RequestBody String postJson) {
+			@RequestBody String postJson) {
 		try {
 			log.info("📌 게시글 수정 요청: {}", postJson);
 			// 파일 업로드 기능 제거: convertJsonToBoard는 이제 postJson만 받음
@@ -141,10 +141,10 @@ public class BoardController {
 		} catch (Exception e) {
 			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("게시글 삭제 실패: " + e.getMessage());
 		}
+
 	}
+
 }
-
-
 
 //package com.loco.aroundme.controller;
 //
