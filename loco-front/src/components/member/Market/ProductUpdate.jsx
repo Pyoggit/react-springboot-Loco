@@ -84,11 +84,21 @@ const ProductUpdate = () => {
     fetchProduct();
   }, [id, navigate]);
 
+  useEffect(() => {
+    // ✅ localStorage에서 userId를 올바르게 가져오는지 확인
+    const storedUserId = localStorage.getItem('userId');
+    console.log('🔍 localStorage 저장된 userId:', storedUserId);
+
+    if (storedUserId) {
+      setUserId(Number(storedUserId)); // ✅ 반드시 숫자로 변환
+    }
+  }, []);
+
   /** ✅ 본인만 수정 가능하도록 체크 */
   useEffect(() => {
     if (product && userId) {
-      console.log('🟢 로그인한 유저 ID:', userId);
-      console.log('🟢 상품 등록자 ID:', product.userId);
+      console.log('🟢 로그인한 유저 ID:', Number(userId));
+      console.log('🟢 상품 등록자 ID:', Number(product.userId));
 
       if (Number(product?.userId) !== Number(userId)) {
         alert('본인이 등록한 상품만 수정할 수 있습니다.');

@@ -8,26 +8,13 @@ export function PaymentSuccess() {
   const navigate = useNavigate();
   const [isLoading, setIsLoading] = useState(true);
   const [productName, setProductName] = useState('상품 정보 없음'); // ✅ 상품명 추가
+  const [userId, setUserId] = useState(null);
+  const [customerName, setCustomerName] = useState('고객');
 
   const orderId = searchParams.get('orderId');
   const amount = parseInt(searchParams.get('amount'), 10);
   const paymentKey = searchParams.get('paymentKey');
   const productId = searchParams.get('productId');
-
-  // ✅ 로그인한 사용자 정보 가져오기
-  const loginUser = localStorage.getItem('loginUser');
-  let userId = null;
-  let customerName = '테스트 사용자'; // 기본값 설정
-
-  if (loginUser) {
-    try {
-      const parsedUser = JSON.parse(loginUser);
-      userId = parsedUser.userId;
-      customerName = parsedUser.userName;
-    } catch (error) {
-      console.error('❌ 로그인 사용자 정보 파싱 오류:', error);
-    }
-  }
 
   useEffect(() => {
     console.log('✅ Payment Success Page Loaded');
@@ -35,9 +22,8 @@ export function PaymentSuccess() {
     console.log('✅ Received amount:', amount);
     console.log('✅ Received paymentKey:', paymentKey);
     console.log('✅ Received productId:', productId);
-    console.log('✅ Received customerName:', customerName);
 
-    if (!orderId || !amount || !paymentKey || !productId || !userId) {
+    if (!orderId || !amount || !paymentKey || !productId) {
       alert('결제 정보가 올바르지 않습니다.');
       navigate('/market');
       return;
@@ -49,6 +35,28 @@ export function PaymentSuccess() {
       navigate('/login');
       return;
     }
+
+    /** ✅ 로그인한 사용자 정보 API에서 가져오기 */
+    const fetchUserInfo = async () => {
+      try {
+        const response = await axios.get(
+          `${import.meta.env.VITE_API_URL}/api/users/mypage`,
+          {
+            headers: { Authorization: `Bearer ${token}` },
+          }
+        );
+
+        if (response.data.userId) {
+          setUserId(response.data.userId);
+          setCustomerName(response.data.userName);
+          console.log('✅ 로그인한 사용자 정보:', response.data);
+        } else {
+          console.error('❌ 사용자 정보를 가져오지 못함:', response.data);
+        }
+      } catch (error) {
+        console.error('❌ 로그인 사용자 정보 가져오기 실패:', error);
+      }
+    };
 
     /** ✅ 결제 승인 후 주문 상태 업데이트 */
     const sendPaymentData = async () => {
@@ -99,15 +107,16 @@ export function PaymentSuccess() {
       }
     };
 
-    /** ✅ 순서: 결제 승인 후 상품명 조회 */
+    /** ✅ 순서: 사용자 정보 가져오기 → 결제 승인 → 상품명 조회 */
     const processPaymentSuccess = async () => {
-      await sendPaymentData(); // 🛑 먼저 결제 정보 저장 완료!
+      await fetchUserInfo(); // ✅ 로그인한 사용자 정보 가져오기
+      await sendPaymentData(); // ✅ 결제 정보 저장 완료!
       await fetchProductName(); // ✅ 결제 정보 저장 후 상품명 조회
       setIsLoading(false);
     };
 
     processPaymentSuccess();
-  }, [orderId, amount, paymentKey, productId, customerName, navigate]);
+  }, [orderId, amount, paymentKey, productId, navigate]);
 
   return (
     <div className="success-container">

@@ -1,4 +1,4 @@
-.mypage-order-container {
+.mypage-product-container {
   width: 100%;
   background: white;
   border-radius: 10px;
@@ -6,13 +6,14 @@
   box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
 }
 
-.mypage-order-header {
+.mypage-product-header {
   display: flex;
   justify-content: space-between;
   margin-bottom: 15px;
 }
 
-.mypage-order-header input[type='text'] {
+/* ✅ 검색 입력창 스타일 (PayManager.css 기반) */
+.mypage-product-header input[type='text'] {
   padding: 8px;
   border-radius: 5px;
   border: 1px solid #ccc;
@@ -21,36 +22,67 @@
   transition: all 0.2s ease-in-out;
 }
 
-.mypage-order-header input[type='text']:focus {
+.mypage-product-header input[type='text']:focus {
   border-color: rgba(177, 121, 241, 0.8);
   box-shadow: 0 0 5px rgba(177, 121, 241, 0.5);
   outline: none;
 }
 
-.mypage-order-table {
+.mypage-product-table {
   width: 100%;
   border-collapse: collapse;
 }
 
-.mypage-order-table th,
-.mypage-order-table td {
+.mypage-product-table th,
+.mypage-product-table td {
   padding: 12px;
   border: 1px solid #ddd;
   text-align: center;
 }
 
-.mypage-order-table th {
+.mypage-product-table th {
   background: rgba(177, 121, 241, 0.6);
   color: white;
   cursor: pointer;
 }
 
-.mypage-order-table th:hover {
+.mypage-product-table th:hover {
   background: rgba(177, 121, 241, 0.8);
 }
 
+/* ✅ 수정 & 삭제 버튼 스타일 */
+.mypage-edit-btn,
+.mypage-delete-btn {
+  padding: 8px 12px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: bold;
+  transition: background-color 0.2s ease-in-out;
+}
+
+.mypage-edit-btn {
+  background-color: rgba(52, 152, 219, 0.9); /* 파란색 */
+  color: white;
+}
+
+.mypage-edit-btn:hover {
+  background-color: rgba(41, 128, 185, 1);
+}
+
+.mypage-delete-btn {
+  background-color: rgba(230, 74, 74, 0.9); /* 빨간색 */
+  color: white;
+  margin-left: 5px;
+}
+
+.mypage-delete-btn:hover {
+  background-color: rgba(200, 50, 50, 1);
+}
+
 /* ✅ 페이지네이션 스타일 (PayManager.css 스타일 반영) */
-.mypage-order-pagination {
+.mypage-product-pagination {
   display: flex;
   justify-content: center;
   align-items: center;
@@ -58,7 +90,7 @@
   gap: 8px; /* 버튼 간격 */
 }
 
-.mypage-order-pagination button {
+.mypage-product-pagination button {
   padding: 8px 12px;
   border: none;
   border-radius: 6px;
@@ -70,17 +102,17 @@
   color: white;
 }
 
-.mypage-order-pagination button:hover {
+.mypage-product-pagination button:hover {
   background-color: #9655d7; /* 호버 시 더 진한 보라색 */
 }
 
-.mypage-order-pagination button:disabled {
+.mypage-product-pagination button:disabled {
   background-color: #ccc;
   cursor: not-allowed;
   opacity: 0.6;
 }
 
-.mypage-order-pagination .page-number {
+.mypage-product-pagination .page-number {
   font-size: 14px;
   font-weight: bold;
   color: #333;
@@ -89,7 +121,7 @@
   background: rgba(177, 121, 241, 0.2);
 }
 
-.mypage-order-pagination .current-page {
+.mypage-product-pagination .current-page {
   background: rgba(177, 121, 241, 0.8);
   color: white;
 }

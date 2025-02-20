@@ -145,14 +145,14 @@ const MypageOrder = () => {
       </table>
 
       {/* 페이지네이션 */}
-      <div className="pagination">
+      <div className="mypage-order-pagination">
         <button
           onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
           disabled={currentPage === 1}
         >
           이전
         </button>
-        <span>
+        <span className="page-number">
           {currentPage} / {Math.ceil(filteredOrders.length / itemsPerPage)}
         </span>
         <button
