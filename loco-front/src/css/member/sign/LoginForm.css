@@ -13,6 +13,33 @@
   background-repeat: no-repeat;
   background-size: cover;
 }
+.logo-main-icon-loginForm {
+  position: absolute;
+  top: 20px; /* 🔼 위쪽 여백 */
+  left: 50px; /* ◀ 왼쪽 여백 */
+  
+  width: 50px;
+  height: 50px;
+  /* border: 1px solid black; */
+
+  background-image: url("@/assets/images/main-logo.png");
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
+}
+.header-logo-loginForm {
+  
+  position: absolute;
+  top: 25px; /* 🔼 위쪽 여백 */
+  left: 110px; /* ◀ 왼쪽 여백 */
+  font-family: "Caveat", cursive;
+  font-size: 32px;
+  font-weight: 700;
+  line-height: 140%;
+  letter-spacing: -0.4px;
+  color: rgb(175, 209, 208);
+}
+
 
 .auth-container {
   width: 400px;
@@ -96,7 +123,8 @@
   padding: 12px;
   border: none;
   border-radius: 5px;
-  background-color: #3b82f6;
+  /* background-color: #3b82f6; */
+  background-color: rgba(177, 121, 241, 0.6);
   color: white;
   font-size: 18px;
   font-weight: bold;
@@ -105,7 +133,9 @@
 }
 
 .login-btn:hover {
-  background-color: #2563eb;
+  /* background-color: #2563eb; */
+
+  background-color: rgba(148, 109, 192, 0.6);
 }
 
 /* 회원가입 버튼 스타일 */
