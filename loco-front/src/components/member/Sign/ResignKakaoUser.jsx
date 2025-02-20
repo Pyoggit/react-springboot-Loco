@@ -76,22 +76,57 @@ const ResignKakaoUser = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
+    const passwordValue = password.current.value;
+    const nameValue = name.current.value;
+    const mobile2Value = mobile2.current.value;
+    const mobile3Value = mobile3.current.value;
+    const phone2Value = phone2.current?.value || "";
+    const phone3Value = phone3.current?.value || "";
+
+    // ✅ 비밀번호 검증 (영어, 숫자, 특수문자 중 2가지 이상 포함 + 7~20자리)
+    const passwordRegex =
+      /^(?=.*[A-Za-z])(?=.*\d)|(?=.*[A-Za-z])(?=.*[\W_])|(?=.*\d)(?=.*[\W_])[A-Za-z\d\W_]{7,20}$/;
+    if (!passwordRegex.test(passwordValue)) {
+      alert(
+        "비밀번호는 영어, 숫자, 특수문자 중 2가지 이상 포함한 7~20자리여야 합니다."
+      );
+      return;
+    }
+
+    // ✅ 이름 검증 (2자 이상 8자 이하)
+    if (nameValue.length < 2 || nameValue.length > 8) {
+      alert("이름은 2자 이상 8자 이하로 입력해야 합니다.");
+      return;
+    }
+
+    // ✅ 전화번호 검증 (각 칸은 4자 이상 입력 불가능)
+    if (mobile2Value.length > 4 || mobile3Value.length > 4) {
+      alert("휴대폰 번호는 각 칸마다 최대 4자리까지만 입력 가능합니다.");
+      return;
+    }
+    if (phone2Value.length > 4 || phone3Value.length > 4) {
+      alert("전화번호는 각 칸마다 최대 4자리까지만 입력 가능합니다.");
+      return;
+    }
+
+    // ✅ 비밀번호 확인
     if (password.current.value !== confirmPassword.current.value) {
       alert("비밀번호가 일치하지 않습니다.");
       return;
     }
 
+    // ✅ 회원가입 요청 데이터 구성
     const user = {
       userEmail: email.current.value,
-      password: password.current.value,
-      userName: name.current.value,
+      password: passwordValue,
+      userName: nameValue,
       gender: gender.current.value || null,
       mobile1: mobile1.current.value,
-      mobile2: mobile2.current.value,
-      mobile3: mobile3.current.value,
-      phone1: phone1.current.value || null,
-      phone2: phone2.current.value || null,
-      phone3: phone3.current.value || null,
+      mobile2: mobile2Value,
+      mobile3: mobile3Value,
+      phone1: phone1.current?.value || null,
+      phone2: phone2Value || null,
+      phone3: phone3Value || null,
       birth: birthDate.current.value || null,
       zipcode: zipcode.current.value,
       address1: address1.current.value,
@@ -166,18 +201,21 @@ const ResignKakaoUser = () => {
                 ref={mobile1}
                 defaultValue="010"
                 required
+                maxLength={3}
               />
               <input
                 className="input-phone2"
                 type="text"
                 ref={mobile2}
                 required
+                maxLength={4}
               />
               <input
                 className="input-phone3"
                 type="text"
                 ref={mobile3}
                 required
+                maxLength={4}
               />
             </div>
           </div>
@@ -185,9 +223,24 @@ const ResignKakaoUser = () => {
           <div className="signup-group">
             <label className="signup-title">전화번호</label>
             <div className="input-phone">
-              <input className="input-phone1" type="text" ref={phone1} />
-              <input className="input-phone2" type="text" ref={phone2} />
-              <input className="input-phone3" type="text" ref={phone3} />
+              <input
+                className="input-phone1"
+                type="text"
+                ref={phone1}
+                maxLength={3}
+              />
+              <input
+                className="input-phone2"
+                type="text"
+                ref={phone2}
+                maxLength={4}
+              />
+              <input
+                className="input-phone3"
+                type="text"
+                ref={phone3}
+                maxLength={4}
+              />
             </div>
           </div>
 
@@ -246,7 +299,7 @@ const ResignKakaoUser = () => {
             )}
           </div> */}
 
-          <button type="submit" className="signup-btn">
+          <button type="submit" className="signup-btn2">
             가입 완료
           </button>
         </form>

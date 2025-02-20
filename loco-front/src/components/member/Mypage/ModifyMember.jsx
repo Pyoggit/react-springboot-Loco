@@ -123,7 +123,44 @@ const ModifyMember = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    if (formData.password !== formData.confirmPassword) {
+    const {
+      password,
+      confirmPassword,
+      userName,
+      mobile2,
+      mobile3,
+      phone2,
+      phone3,
+    } = formData;
+
+    // ✅ 비밀번호 검증 (영어, 숫자, 특수문자 중 2가지 이상 포함 + 7~20자리)
+    const passwordRegex =
+      /^(?=.*[A-Za-z])(?=.*\d)|(?=.*[A-Za-z])(?=.*[\W_])|(?=.*\d)(?=.*[\W_])[A-Za-z\d\W_]{7,20}$/;
+    if (!passwordRegex.test(password)) {
+      alert(
+        "비밀번호는 영어, 숫자, 특수문자 중 2가지 이상 포함한 7~20자리여야 합니다."
+      );
+      return;
+    }
+
+    // ✅ 이름 검증 (2자 이상 8자 이하)
+    if (userName.length < 2 || userName.length > 8) {
+      alert("이름은 2자 이상 8자 이하로 입력해야 합니다.");
+      return;
+    }
+
+    // ✅ 전화번호 검증 (각 칸은 4자 이상 입력 불가능)
+    if (mobile2.length > 4 || mobile3.length > 4) {
+      alert("휴대폰 번호는 각 칸마다 최대 4자리까지만 입력 가능합니다.");
+      return;
+    }
+    if (phone2.length > 4 || phone3.length > 4) {
+      alert("전화번호는 각 칸마다 최대 4자리까지만 입력 가능합니다.");
+      return;
+    }
+
+    // ✅ 비밀번호 확인
+    if (password !== confirmPassword) {
       alert("비밀번호가 일치하지 않습니다.");
       return;
     }
@@ -135,12 +172,10 @@ const ModifyMember = () => {
         return;
       }
 
-      // ✅ FormData 생성
       const userData = new FormData();
 
-      // ✅ JSON 데이터 변환 후 Blob으로 추가
       const userJson = JSON.stringify({
-        userEmail: formData.email, // ✅ userEmail -> email
+        userEmail: formData.email,
         password: formData.password,
         userName: formData.userName,
         gender: formData.gender,
@@ -152,8 +187,8 @@ const ModifyMember = () => {
         phone3: formData.phone3,
         birth: formData.birth,
         zipcode: formData.zipcode,
-        address1: formData.address, // ✅ address1 -> address
-        address2: formData.detailAddress, // ✅ address2 -> detailAddress
+        address1: formData.address,
+        address2: formData.detailAddress,
       });
 
       userData.append(
@@ -161,20 +196,15 @@ const ModifyMember = () => {
         new Blob([userJson], { type: "application/json" })
       );
 
-      // ✅ 프로필 이미지가 있을 경우 추가
       if (formData.profileImage instanceof File) {
         userData.append("profileImage", formData.profileImage);
       }
-
-      console.log("📌 보낼 데이터:", userData);
-      console.log("📌 포함된 birth 값:", formData.birth);
 
       const headers = {
         Authorization: `Bearer ${token}`,
         "Content-Type": "multipart/form-data",
       };
 
-      // ✅ PUT 요청 보내기
       const response = await axios.put("/api/users/update", userData, {
         headers,
       });
@@ -265,6 +295,7 @@ const ModifyMember = () => {
               value={formData.mobile1}
               onChange={handleChange}
               required
+              maxLength={3}
             />
             <input
               className="input-phone2"
@@ -273,6 +304,7 @@ const ModifyMember = () => {
               value={formData.mobile2}
               onChange={handleChange}
               required
+              maxLength={4}
             />
             <input
               className="input-phone3"
@@ -281,6 +313,7 @@ const ModifyMember = () => {
               value={formData.mobile3}
               onChange={handleChange}
               required
+              maxLength={4}
             />
           </div>
         </div>
@@ -294,6 +327,7 @@ const ModifyMember = () => {
               value={formData.phone1}
               onChange={handleChange}
               // required
+              maxLength={3}
             />
             <input
               className="input-phone2"
@@ -302,6 +336,7 @@ const ModifyMember = () => {
               value={formData.phone2}
               onChange={handleChange}
               // required
+              maxLength={4}
             />
             <input
               className="input-phone3"
@@ -310,6 +345,7 @@ const ModifyMember = () => {
               value={formData.phone3}
               onChange={handleChange}
               // required
+              maxLength={4}
             />
           </div>
         </div>
