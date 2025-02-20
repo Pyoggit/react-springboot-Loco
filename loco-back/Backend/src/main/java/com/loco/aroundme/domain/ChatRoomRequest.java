@@ -5,12 +5,8 @@ import lombok.Setter;
 
 @Getter
 @Setter
-public class ChatRoom {
-    private Long roomId;
+public class ChatRoomRequest {
     private Long sellerId;
     private Long buyerId;
     private Long productId;
-    private String sellerName;
-    private String buyerName;
-    private String createdAt;
 }

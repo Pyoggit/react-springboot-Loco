@@ -16,17 +16,19 @@ public class ChatMessageController {
 
     private final ChatService chatService;
 
-    // 특정 채팅방의 모든 메시지 조회
     @GetMapping("/room/{roomId}/messages")
-    public List<ChatMessage> getMessagesByRoom(@PathVariable int roomId) {
+    public List<ChatMessage> getMessagesByRoom(@PathVariable Long roomId) {
         return chatService.findMessagesByRoomId(roomId);
     }
 
-    // 메시지 저장
     @PostMapping("/room/{roomId}/message")
-    public void saveMessage(@PathVariable int roomId, @RequestParam int senderId, 
-                            @RequestParam String messageContent, @RequestParam String messageType) {
-        log.info("📩 메시지 저장 요청: roomId={}, senderId={}, content={}", roomId, senderId, messageContent);
-        chatService.saveMessage(roomId, senderId, messageContent, messageType);
+    public void saveMessage(@PathVariable Long roomId, 
+                            @RequestParam Long senderId, 
+                            @RequestParam String senderName,
+                            @RequestParam String messageContent, 
+                            @RequestParam String messageType) {
+        log.info("📩 메시지 저장 요청: roomId={}, senderId={}, senderName={}, content={}", 
+                 roomId, senderId, senderName, messageContent);
+        chatService.saveMessage(roomId, senderId, senderName, messageContent, messageType);
     }
 }
