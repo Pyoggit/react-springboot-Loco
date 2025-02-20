@@ -1,47 +1,118 @@
-import React, { useState } from "react";
-import "@/css/admin/PayManager.css";
+import React, { useState, useEffect } from 'react';
+import axios from 'axios';
+import '@/css/admin/PayManager.css';
 
 const PayManager = () => {
-  const [payments, setPayments] = useState([
-    {
-      code: 701,
-      seller: "seller01",
-      buyer: "buyer01",
-      product: "스마트폰",
-      price: 900000,
-      date: "2025-02-10",
-    },
-    {
-      code: 702,
-      seller: "seller02",
-      buyer: "buyer02",
-      product: "노트북",
-      price: 1500000,
-      date: "2025-02-09",
-    },
-    {
-      code: 703,
-      seller: "seller03",
-      buyer: "buyer03",
-      product: "태블릿",
-      price: 600000,
-      date: "2025-02-08",
-    },
-  ]);
-
-  const [searchTerm, setSearchTerm] = useState("");
+  const [payments, setPayments] = useState([]);
+  const [searchTerm, setSearchTerm] = useState('');
+  const [selectedPayments, setSelectedPayments] = useState(new Set());
+  const [selectAll, setSelectAll] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 10;
-  const totalPages = Math.ceil(payments.length / itemsPerPage);
 
-  const indexOfLastItem = currentPage * itemsPerPage;
-  const indexOfFirstItem = indexOfLastItem - itemsPerPage;
+  // ✅ 주문 목록 불러오기 (DB에서 가져오기)
+  useEffect(() => {
+    const fetchPayments = async () => {
+      try {
+        const response = await axios.get(
+          `${import.meta.env.VITE_API_URL}/api/payment/all-orders`
+        );
 
-  const filteredPayments = payments
-    .filter((pay) =>
-      pay.product.toLowerCase().includes(searchTerm.toLowerCase())
-    )
-    .slice(indexOfFirstItem, indexOfLastItem);
+        // ✅ 대문자 키 → 소문자 변환
+        const mappedPayments = response.data.map((pay) => ({
+          orderId: pay.ORDER_ID,
+          price: pay.PRICE,
+          orderDate: pay.ORDER_DATE,
+          customerName: pay.CUSTOMER_NAME,
+          productName: pay.PRODUCT_NAME,
+          sellerName: pay.SELLER_NAME,
+        }));
+
+        setPayments(mappedPayments);
+      } catch (error) {
+        console.error('❌ 주문 목록 불러오기 실패:', error);
+      }
+    };
+
+    fetchPayments();
+  }, []);
+
+  // ✅ 검색 필터링
+  const filteredPayments = payments.filter((pay) =>
+    (pay.productName || '').toLowerCase().includes(searchTerm.toLowerCase())
+  );
+
+  // ✅ 페이지네이션 계산
+  const totalPages = Math.max(
+    1,
+    Math.ceil(filteredPayments.length / itemsPerPage)
+  );
+  const displayedPayments = filteredPayments.slice(
+    (currentPage - 1) * itemsPerPage,
+    currentPage * itemsPerPage
+  );
+
+  // ✅ 개별 체크박스 클릭
+  const handleCheckboxChange = (orderId) => {
+    setSelectedPayments((prevSelected) => {
+      const updatedSelected = new Set(prevSelected);
+      if (updatedSelected.has(orderId)) {
+        updatedSelected.delete(orderId);
+      } else {
+        updatedSelected.add(orderId);
+      }
+      setSelectAll(updatedSelected.size === displayedPayments.length);
+      return updatedSelected;
+    });
+  };
+
+  // ✅ 전체 선택/해제
+  const handleSelectAll = () => {
+    if (selectAll) {
+      setSelectedPayments(new Set());
+    } else {
+      setSelectedPayments(new Set(displayedPayments.map((pay) => pay.orderId)));
+    }
+    setSelectAll(!selectAll);
+  };
+
+  // ✅ 선택한 주문 삭제 (API 호출)
+  const handleDeleteSelected = async () => {
+    if (selectedPayments.size === 0) {
+      alert('삭제할 주문을 선택하세요.');
+      return;
+    }
+
+    if (window.confirm('선택한 주문을 삭제하시겠습니까?')) {
+      try {
+        const token = localStorage.getItem('normal_accessToken');
+        if (!token) {
+          alert('로그인이 필요합니다.');
+          return;
+        }
+
+        await axios.delete(
+          `${import.meta.env.VITE_API_URL}/api/payment/remove-orders`,
+          {
+            headers: { Authorization: `Bearer ${token}` },
+            data: { orderIds: Array.from(selectedPayments) },
+          }
+        );
+
+        alert('선택한 주문이 삭제되었습니다.');
+
+        // ✅ 삭제된 주문 제외하고 목록 갱신
+        setPayments((prevPayments) =>
+          prevPayments.filter((pay) => !selectedPayments.has(pay.orderId))
+        );
+        setSelectedPayments(new Set());
+        setSelectAll(false);
+      } catch (error) {
+        console.error('❌ 주문 삭제 실패:', error);
+        alert('주문 삭제에 실패했습니다.');
+      }
+    }
+  };
 
   return (
     <div className="admin-pay-container">
@@ -53,28 +124,49 @@ const PayManager = () => {
           onChange={(e) => setSearchTerm(e.target.value)}
           className="admin-pay-search-input"
         />
+        <button className="admin-pay-delete-btn" onClick={handleDeleteSelected}>
+          삭제
+        </button>
       </div>
 
       <table className="admin-pay-table">
         <thead>
           <tr>
-            <th>결제 코드</th>
-            <th>판매자 아이디</th>
-            <th>구매자 아이디</th>
+            <th>
+              <input
+                type="checkbox"
+                checked={selectAll}
+                onChange={handleSelectAll}
+              />
+            </th>
+            <th>주문 코드</th>
+            <th>판매자</th>
+            <th>구매자</th>
             <th>상품명</th>
             <th>상품가격</th>
-            <th>결제일자</th>
+            <th>주문 날짜</th>
           </tr>
         </thead>
         <tbody>
-          {filteredPayments.map((pay) => (
-            <tr key={pay.code}>
-              <td>{pay.code}</td>
-              <td>{pay.seller}</td>
-              <td>{pay.buyer}</td>
-              <td>{pay.product}</td>
-              <td>{pay.price.toLocaleString()}원</td>
-              <td>{pay.date}</td>
+          {displayedPayments.map((pay, index) => (
+            <tr key={pay.orderId || `order-${index}`}>
+              <td>
+                <input
+                  type="checkbox"
+                  checked={selectedPayments.has(pay.orderId)}
+                  onChange={() => handleCheckboxChange(pay.orderId)}
+                />
+              </td>
+              <td>{pay.orderId}</td>
+              <td>{pay.sellerName || '판매자 없음'}</td>
+              <td>{pay.customerName || '구매자 없음'}</td>
+              <td>{pay.productName || '상품명 없음'}</td>
+              <td>{pay.price?.toLocaleString() || '가격 정보 없음'} 원</td>
+              <td>
+                {pay.orderDate
+                  ? new Date(pay.orderDate).toLocaleDateString()
+                  : '날짜 없음'}
+              </td>
             </tr>
           ))}
         </tbody>
@@ -87,7 +179,7 @@ const PayManager = () => {
         >
           이전
         </button>
-        <span>
+        <span className="page-number">
           {currentPage} / {totalPages}
         </span>
         <button
