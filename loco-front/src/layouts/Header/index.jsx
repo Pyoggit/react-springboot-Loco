@@ -136,46 +136,6 @@ export default function Header() {
     setShowChat(true); // 팝업 열기
   };
 
-  // const handleLogout = async () => {
-  //   try {
-  //     console.log("🚀 로그아웃 요청을 보냄!");
-
-  //     // ✅ normal & kakao accessToken 가져오기
-  //     const normalToken = localStorage.getItem("normal_accessToken");
-  //     const kakaoToken = localStorage.getItem("kakao_accessToken");
-
-  //     // ✅ 보낼 Authorization 헤더 결정
-  //     let headers = {};
-  //     if (normalToken) {
-  //       headers.Authorization = `Bearer ${normalToken}`;
-  //     } else if (kakaoToken) {
-  //       headers.Authorization = `Bearer ${kakaoToken}`;
-  //     }
-
-  //     // ✅ 백엔드로 로그아웃 요청
-  //     const response = await axios.post("/api/users/logout", {}, { headers });
-
-  //     console.log("✅ 로그아웃 API 응답:", response);
-
-  //     if (response.status === 200) {
-  //       // ✅ localStorage에서 모든 토큰 삭제
-  //       localStorage.removeItem("normal_accessToken");
-  //       localStorage.removeItem("normal_refreshToken");
-  //       localStorage.removeItem("kakao_accessToken");
-  //       localStorage.removeItem("kakao_refreshToken");
-
-  //       setLoginUser(null);
-  //       setLogin(false);
-
-  //       alert("로그아웃 성공!");
-  //       navigate("/");
-  //     } else {
-  //       console.error("❌ 로그아웃 실패: 응답 상태", response.status);
-  //     }
-  //   } catch (error) {
-  //     console.error("❌ 로그아웃 API 요청 실패:", error);
-  //   }
-  // };
   const handleLogout = async () => {
     try {
       console.log("🚀 로그아웃 요청을 보냄!");
@@ -219,7 +179,8 @@ export default function Header() {
     localStorage.getItem("kakao_accessToken") && loginUser?.profileImage
       ? loginUser.profileImage // ✅ 카카오 유저는 URL 그대로 사용
       : loginUser?.profileImage
-      ? `http://localhost:8080/upload/${loginUser.profileImage}` // ✅ 일반 로그인 유저는 /upload/ 추가
+      ? // ? `http://localhost:8080/upload/${loginUser.profileImage}` // ✅ 일반 로그인 유저는 /upload/ 추가
+        `${loginUser.profileImage}` // ✅ 일반 로그인 유저는 /upload/ 추가
       : "http://localhost:8080/images/default-image.png"; // ✅ 기본 이미지
 
   console.log("📌 유저 프로필 profileImage(sysFile):", loginUser?.profileImage);
