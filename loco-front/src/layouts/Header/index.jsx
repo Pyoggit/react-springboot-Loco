@@ -114,6 +114,26 @@ export default function Header() {
     }
   }, [newMessageAlert, setNewMessageAlert]);
 
+  const handleDeleteChat = (roomId) => {
+    if (!window.confirm("정말로 이 채팅방을 삭제하시겠습니까?")) return;
+
+    axios
+      .delete(`/api/chat/room/${roomId}`)
+      .then(() => {
+        alert("채팅방이 삭제되었습니다.");
+        setChatRooms((prevRooms) =>
+          prevRooms.filter((room) => room.roomId !== roomId)
+        );
+        if (activeRoomId === roomId) {
+          setActiveRoomId(null); // 삭제된 채팅방이 현재 활성화된 경우 닫기
+        }
+      })
+      .catch((err) => {
+        console.error("❌ 채팅방 삭제 실패:", err);
+        alert("채팅방 삭제에 실패했습니다.");
+      });
+  };
+
   const handleLogout = async () => {
     try {
       console.log("🚀 로그아웃 요청을 보냄!");
@@ -359,27 +379,50 @@ export default function Header() {
             <button onClick={toggleChatPopup}>X</button>
           </div>
           <div className="chat-popup-body">
-            {/* 채팅방 리스트 */}
             {chatRooms.length === 0 ? (
-              <p>참여중인 채팅방이 없습니다.</p>
+              <p>참여 중인 채팅방이 없습니다.</p>
             ) : (
               <ul>
-                {chatRooms.map((room) => (
-                  <li
-                    key={room.roomId}
-                    onClick={() => handleSelectRoom(room.roomId)}
-                    style={{
-                      cursor: "pointer",
-                      padding: "8px",
-                      borderBottom: "1px solid #ccc",
-                      backgroundColor:
-                        room.roomId === activeRoomId ? "#eee" : "transparent",
-                    }}
-                  >
-                    <strong>판매자:</strong> {room.sellerName} /{" "}
-                    <strong>구매자:</strong> {room.buyerName}
-                  </li>
-                ))}
+                {chatRooms.map((room) => {
+                  const isSeller = room.sellerId === loginUser?.userId;
+                  const displayName = isSeller
+                    ? `구매자: ${room.buyerName}`
+                    : `판매자: ${room.sellerName}`;
+
+                  return (
+                    <li
+                      key={room.roomId}
+                      style={{
+                        cursor: "pointer",
+                        padding: "8px",
+                        borderBottom: "1px solid #ccc",
+                        backgroundColor:
+                          room.roomId === activeRoomId ? "#eee" : "transparent",
+                        display: "flex",
+                        justifyContent: "space-between",
+                        alignItems: "center",
+                      }}
+                    >
+                      <span onClick={() => handleSelectRoom(room.roomId)}>
+                        {displayName}
+                      </span>
+                      <button
+                        className="chat-delete-button"
+                        onClick={() => handleDeleteChat(room.roomId)}
+                        style={{
+                          marginLeft: "10px",
+                          backgroundColor: "red",
+                          color: "white",
+                          border: "none",
+                          padding: "5px",
+                          cursor: "pointer",
+                        }}
+                      >
+                        삭제
+                      </button>
+                    </li>
+                  );
+                })}
               </ul>
             )}
             {/* 선택된 채팅방이 있다면 채팅룸 표시 */}

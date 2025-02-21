@@ -306,7 +306,7 @@
   position: fixed;
   bottom: 90px;
   right: 20px;
-  width: 320px;
+  width: 350px; /* 가로 크기 조정 */
   height: 500px;
   background-color: white;
   border: 1px solid #ddd;
@@ -336,22 +336,39 @@
   cursor: pointer;
 }
 
-.chat-popup-body {
-  flex: 1;
-  overflow-y: auto;
-  padding: 10px;
-  background-color: #f9f9f9;
+.chat-popup-body ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
 }
 
-.chat-badge {
-  background: red;
+.chat-popup-body li {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px;
+  border-bottom: 1px solid #ddd;
+  background-color: white;
+  transition: background 0.3s;
+}
+
+.chat-popup-body li:hover {
+  background-color: #f3f3f3;
+}
+
+.chat-delete-button {
+  background-color: #ff4d4d;
   color: white;
-  border-radius: 50%;
-  padding: 5px 10px;
-  font-size: 12px;
-  position: absolute;
-  top: 10px;
-  right: 10px;
+  border: none;
+  border-radius: 20px; /* 둥글게 */
+  padding: 5px 12px;
+  font-size: 14px; /* 글자 크기 줄이기 */
+  cursor: pointer;
+  transition: background 0.3s ease-in-out;
+}
+
+.chat-delete-button:hover {
+  background-color: #cc0000;
 }
 
 .chat-notification {
