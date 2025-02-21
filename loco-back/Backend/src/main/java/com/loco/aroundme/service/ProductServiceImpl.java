@@ -98,30 +98,37 @@ public class ProductServiceImpl implements ProductService {
 
 	@Override
 	public List<Map<String, Object>> getProducts() {
-		log.info("🔹 전체 상품 목록 조회 요청");
+	    log.info("🔹 전체 상품 목록 조회 요청");
 
-		List<Product> products = productMapper.selectProducts();
-		List<Map<String, Object>> productListWithDetails = new ArrayList<>();
+	    List<Product> products = productMapper.selectProducts();
+	    List<Map<String, Object>> productListWithDetails = new ArrayList<>();
 
-		for (Product product : products) {
-			Map<String, Object> productData = new HashMap<>();
-			productData.put("productId", product.getProductId());
-			productData.put("productName", product.getProductName());
-			productData.put("productCategory", product.getProductCategory());
-			productData.put("price", product.getPrice());
-			productData.put("userName", product.getUserName()); // ✅ 판매자 이름
-			productData.put("userEmail", product.getUserEmail()); // ✅ 판매자 이메일 추가
-			productData.put("productRegdate", product.getProductRegdate()); // ✅ 등록일 추가
+	    for (Product product : products) {
+	        Map<String, Object> productData = new HashMap<>();
+	        productData.put("productId", product.getProductId());
+	        productData.put("productName", product.getProductName());
+	        productData.put("productCategory", product.getProductCategory());
+	        productData.put("price", product.getPrice());
+	        productData.put("userName", product.getUserName());
+	        productData.put("userEmail", product.getUserEmail());
+	        productData.put("productRegdate", product.getProductRegdate());
 
-			// ✅ 이미지 정보 가져오기
-			List<ProductPic> productPics = productMapper.getProductPics(product.getProductId());
-			productData.put("images", productPics);
+	        // ✅ 거래장소 추가
+	        productData.put("productAddress", product.getProductAddress());
+	        productData.put("productLat", product.getProductLat());
+	        productData.put("productLng", product.getProductLng());
+	        productData.put("productPlaceId", product.getProductPlaceId());
 
-			productListWithDetails.add(productData);
-		}
+	        // ✅ 이미지 정보 가져오기
+	        List<ProductPic> productPics = productMapper.getProductPics(product.getProductId());
+	        productData.put("images", productPics);
 
-		return productListWithDetails;
+	        productListWithDetails.add(productData);
+	    }
+
+	    return productListWithDetails;
 	}
+
 
 	@Override
 	public List<Product> getProductsByUserId(Long userId) {

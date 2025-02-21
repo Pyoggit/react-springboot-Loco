@@ -69,12 +69,11 @@ const ProductInsert = () => {
   /** Google Places API 자동완성 설정 */
   useEffect(() => {
     if (!window.google) return;
-
-    autoCompleteRef.current = new window.google.maps.places.Autocomplete(
+    const autoComplete = new window.google.maps.places.Autocomplete(
       inputRef.current
     );
-    autoCompleteRef.current.addListener('place_changed', () => {
-      const place = autoCompleteRef.current.getPlace();
+    autoComplete.addListener('place_changed', () => {
+      const place = autoComplete.getPlace();
       if (place.geometry) {
         setFormData((prev) => ({
           ...prev,
@@ -131,7 +130,7 @@ const ProductInsert = () => {
       !formData.name ||
       !formData.content ||
       !formData.category ||
-      !priceValue ||
+      isNaN(priceValue) ||
       !formData.address
     ) {
       alert('모든 항목을 입력해주세요.');
@@ -243,11 +242,13 @@ const ProductInsert = () => {
         />
         <input
           type="text"
+          name="address"
           ref={inputRef}
           placeholder="거래 장소를 검색하세요"
+          value={formData.address}
+          onChange={handleChange}
           required
         />
-        <GoogleMap />
         <div className="product-insert-button">
           <button className="team-button" onClick={() => navigate(-1)}>
             취소하기

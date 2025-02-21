@@ -1,8 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import '@/css/admin/ProductManager.css';
+import { useNavigate } from 'react-router';
 
 const ProductManager = () => {
+  const navigate = useNavigate();
   const [products, setProducts] = useState([]);
   const [searchTerm, setSearchTerm] = useState('');
   const [currentPage, setCurrentPage] = useState(1);
@@ -17,6 +19,7 @@ const ProductManager = () => {
         const response = await axios.get(
           `${import.meta.env.VITE_API_URL}/api/market/products`
         );
+        console.log('✅ 상품 목록 응답:', response.data);
         setProducts(response.data);
       } catch (error) {
         console.error('❌ 상품 목록 불러오기 실패:', error);
@@ -134,6 +137,7 @@ const ProductManager = () => {
             <th>상품가격</th>
             <th>지역</th>
             <th>등록일자</th>
+            <th>관리</th>
           </tr>
         </thead>
         <tbody>
@@ -153,6 +157,14 @@ const ProductManager = () => {
               <td>{product.price.toLocaleString()}원</td>
               <td>{product.productAddress || '지역 정보 없음'}</td>
               <td>{new Date(product.productRegdate).toLocaleDateString()}</td>
+              <td>
+                <button
+                  className="admin-product-info-btn"
+                  onClick={() => navigate(`/market/info/${product.productId}`)}
+                >
+                  보기
+                </button>
+              </td>
             </tr>
           ))}
         </tbody>

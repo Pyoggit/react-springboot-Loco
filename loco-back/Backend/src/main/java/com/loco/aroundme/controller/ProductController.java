@@ -105,12 +105,12 @@ public class ProductController {
 	@GetMapping("/products")
 	public ResponseEntity<List<Map<String, Object>>> getProducts() {
 		try {
-			log.info("🔹 상품 목록 조회 요청 (판매자 정보 포함)");
-
+			log.info("🔹 상품 목록 조회 요청 (판매자 정보 및 거래장소 포함)");
 			List<Map<String, Object>> products = productService.getProducts();
 
-			// 🚨 응답 데이터 확인 (userName이 있는지 확인)
-			log.info("🔹 조회된 상품 목록: {}", products);
+			for (Map<String, Object> product : products) {
+				log.info("🔹 상품 ID: {}, 거래장소: {}", product.get("productId"), product.get("productAddress"));
+			}
 
 			return ResponseEntity.ok(products);
 		} catch (Exception e) {

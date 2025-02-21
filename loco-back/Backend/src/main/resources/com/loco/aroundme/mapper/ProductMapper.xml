@@ -73,16 +73,25 @@
 	<!-- ✅ 전체 상품 조회 -->
 	<select id="selectProducts" resultMap="productResultMap">
 		SELECT
-		p.*,
+		p.PRODUCT_ID,
+		p.USER_ID,
+		p.PRODUCT_NAME,
+		p.PRICE,
+		p.PRODUCT_CATEGORY,
+		p.DESCRIPTION,
+		p.PRODUCT_ADDRESS,  <!-- ✅ 거래장소 추가 -->
+		p.PRODUCT_LAT,      <!-- ✅ 위도 추가 -->
+		p.PRODUCT_LNG,      <!-- ✅ 경도 추가 -->
+		p.PRODUCT_PLACE_ID, <!-- ✅ 장소 ID 추가 -->
+		p.PRODUCT_REGDATE,
 		u.USER_NAME AS USER_NAME,
-		u.USER_EMAIL AS USER_EMAIL,  <!-- ✅ 판매자 
-			이메일 추가 -->
-		TO_CHAR(p.PRODUCT_REGDATE, 'YYYY-MM-DD') AS PRODUCT_REGDATE  <!-- ✅ 등록일 추가 -->
+		u.USER_EMAIL AS USER_EMAIL,
+		TO_CHAR(p.PRODUCT_REGDATE, 'YYYY-MM-DD') AS PRODUCT_REGDATE
 		FROM PRODUCT p
 		LEFT JOIN USERS u ON p.USER_ID = u.USER_ID
-		ORDER BY
-		p.PRODUCT_REGDATE DESC
+		ORDER BY p.PRODUCT_REGDATE DESC
 	</select>
+
 
 	<!-- ✅ 특정 유저가 등록한 상품 조회 -->
 	<select id="findProductsByUserId" parameterType="long"
@@ -174,10 +183,12 @@
 
 	<!-- ✅ 상품 ID로 판매자 이름 조회 -->
 	<select id="getSellerNameByProductId" resultType="string">
-		SELECT u.USER_NAME
+		SELECT
+		u.USER_NAME
 		FROM PRODUCT p
 		JOIN USERS u ON p.USER_ID = u.USER_ID
-		WHERE p.PRODUCT_ID = #{productId}
+		WHERE
+		p.PRODUCT_ID = #{productId}
 	</select>
 
 </mapper>
