@@ -144,6 +144,71 @@ public class BoardController {
 
 	}
 
+	/**
+	 * 전체 게시글 조회
+	 */
+	@GetMapping("/all")
+	public ResponseEntity<?> getAllBoards() {
+		try {
+			List<Board> boards = boardService.getAllBoards();
+			return ResponseEntity.ok(boards);
+		} catch (Exception e) {
+			log.error("전체 게시글 조회 실패: {}", e.getMessage(), e);
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("전체 게시글 조회 실패");
+		}
+	}
+
+	/**
+	 * 선택한 게시글 삭제 프론트에서는 axios.delete 로 boardIds 를 JSON 바디에 담아 전송
+	 */
+	@DeleteMapping("/remove")
+	public ResponseEntity<?> deleteBoards(@RequestBody Map<String, List<Long>> request) {
+		try {
+			List<Long> boardIds = request.get("boardIds");
+			if (boardIds == null || boardIds.isEmpty()) {
+				return ResponseEntity.badRequest().body("삭제할 게시글이 선택되지 않았습니다.");
+			}
+			boardService.deleteBoards(boardIds);
+			return ResponseEntity.ok("선택한 게시글 삭제 성공");
+		} catch (Exception e) {
+			log.error("선택한 게시글 삭제 실패: {}", e.getMessage(), e);
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("게시글 삭제 실패: " + e.getMessage());
+		}
+	}
+	/**
+	 * 전체 댓글 조회 (userEmail 포함)
+	 */
+	@GetMapping("/comments/all")
+	public ResponseEntity<?> getAllComments() {
+	    try {
+	        List<BoardComment> comments = boardService.getAllComments();
+	        return ResponseEntity.ok(comments);
+	    } catch (Exception e) {
+	        log.error("전체 댓글 조회 실패: {}", e.getMessage(), e);
+	        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("전체 댓글 조회 실패");
+	    }
+	}
+
+	/**
+	 * 선택한 댓글 삭제
+	 * 프론트에서는 axios.delete 로 commentIds 를 JSON 바디에 담아 전송
+	 */
+	@DeleteMapping("/comments/remove")
+	public ResponseEntity<?> deleteComments(@RequestBody Map<String, List<Long>> request) {
+	    try {
+	        List<Long> commentIds = request.get("commentIds");
+	        if (commentIds == null || commentIds.isEmpty()) {
+	            return ResponseEntity.badRequest().body("삭제할 댓글이 선택되지 않았습니다.");
+	        }
+	        boardService.deleteComments(commentIds);
+	        return ResponseEntity.ok("선택한 댓글 삭제 성공");
+	    } catch (Exception e) {
+	        log.error("선택한 댓글 삭제 실패: {}", e.getMessage(), e);
+	        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("댓글 삭제 실패: " + e.getMessage());
+	    }
+	}
+
+
 }
 
 //package com.loco.aroundme.controller;

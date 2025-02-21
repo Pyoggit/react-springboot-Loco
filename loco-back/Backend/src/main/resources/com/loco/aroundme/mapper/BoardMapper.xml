@@ -11,16 +11,18 @@
 		CONTENT, VIEWS,
 		BOARD_REGDATE)
 		VALUES (Board_SEQ.NEXTVAL,
-		#{type}, #{title}, #{userId}, #{content},
+		#{type},
+		#{title}, #{userId}, #{content},
 		#{views}, SYSDATE)
 	</insert>
-	
+
 	<!-- ✅ 게시글 수정 -->
-    <update id="updateBoard">
-        UPDATE BOARD
-        SET TITLE = #{title}, CONTENT = #{content}
-        WHERE BOARD_ID = #{boardId}
-    </update>
+	<update id="updateBoard">
+		UPDATE BOARD
+		SET TITLE = #{title}, CONTENT =
+		#{content}
+		WHERE BOARD_ID = #{boardId}
+	</update>
 
 	<!-- ✅ 게시판 타입별 게시글 조회 -->
 	<select id="selectBoardsByType" parameterType="String"
@@ -57,8 +59,10 @@
 	<!-- 댓글 등록 (이미지 없이) -->
 	<insert id="insertComment"
 		parameterType="com.loco.aroundme.domain.BoardComment">
-		INSERT INTO BOARD_COMMENT (COMMENT_ID, BOARD_ID, USER_ID, CONTENT, REGDATE)
-		VALUES (BOARD_COMMENT_SEQ.NEXTVAL, #{boardId}, #{userId}, #{content},
+		INSERT INTO BOARD_COMMENT (COMMENT_ID, BOARD_ID,
+		USER_ID, CONTENT, REGDATE)
+		VALUES (BOARD_COMMENT_SEQ.NEXTVAL,
+		#{boardId}, #{userId}, #{content},
 		SYSDATE)
 	</insert>
 
@@ -66,7 +70,8 @@
 	<select id="selectCommentsByBoardId" parameterType="long"
 		resultMap="boardCommentResultMap">
 		SELECT COMMENT_ID, BOARD_ID, USER_ID, CONTENT, REGDATE
-		FROM BOARD_COMMENT
+		FROM
+		BOARD_COMMENT
 		WHERE BOARD_ID = #{boardId}
 		ORDER BY REGDATE ASC
 	</select>
@@ -76,20 +81,23 @@
 		parameterType="com.loco.aroundme.domain.BoardComment">
 		UPDATE BOARD_COMMENT
 		SET CONTENT = #{content}
-		WHERE COMMENT_ID = #{commentId}
+		WHERE
+		COMMENT_ID = #{commentId}
 	</update>
 
 	<!-- 단건 댓글 조회 -->
 	<select id="selectCommentById" parameterType="long"
 		resultMap="boardCommentResultMap">
 		SELECT COMMENT_ID, BOARD_ID, USER_ID, CONTENT, REGDATE
-		FROM BOARD_COMMENT
+		FROM
+		BOARD_COMMENT
 		WHERE COMMENT_ID = #{commentId}
 	</select>
 
 	<!-- 댓글 삭제 -->
 	<delete id="deleteComment" parameterType="long">
-		DELETE FROM BOARD_COMMENT WHERE COMMENT_ID = #{commentId}
+		DELETE FROM
+		BOARD_COMMENT WHERE COMMENT_ID = #{commentId}
 	</delete>
 
 	<!-- Result Map for Board -->
@@ -116,132 +124,104 @@
 			javaType="java.util.Date" jdbcType="TIMESTAMP" />
 	</resultMap>
 
+	<!-- 전체 게시글 조회 -->
+	<select id="selectAllBoards"
+		resultType="com.loco.aroundme.domain.Board">
+		SELECT
+		b.BOARD_ID as boardId,
+		b.TYPE as type,
+		b.TITLE as
+		title,
+		b.USER_ID as userId,
+		b.CONTENT as content,
+		b.VIEWS as views,
+		b.BOARD_REGDATE as boardRegdate,
+		u.USER_EMAIL as userEmail
+		FROM BOARD b
+		LEFT JOIN USERS u ON b.USER_ID = u.USER_ID
+		ORDER BY b.BOARD_REGDATE
+		DESC
+	</select>
+
+	<!-- 다중 게시글 삭제 -->
+	<delete id="deleteBoards" parameterType="java.util.List">
+		DELETE FROM BOARD
+		WHERE BOARD_ID IN
+		<foreach item="id" collection="list" open="(" separator=","
+			close=")">
+			#{id}
+		</foreach>
+	</delete>
+
+	<!-- 전체 댓글 조회: BOARD_COMMENT와 USERS 테이블 조인 -->
+	<select id="selectAllComments"
+		resultType="com.loco.aroundme.domain.BoardComment">
+		SELECT
+		bc.COMMENT_ID as commentId,
+		bc.BOARD_ID as boardId,
+		bc.USER_ID as userId,
+		bc.CONTENT as content,
+		bc.REGDATE as regdate,
+		u.USER_EMAIL as userEmail
+		FROM BOARD_COMMENT bc
+		LEFT JOIN USERS u ON bc.USER_ID = u.USER_ID
+		ORDER BY bc.REGDATE DESC
+	</select>
+
+	<!-- 선택한 댓글 다중 삭제 -->
+	<delete id="deleteComments" parameterType="java.util.List">
+		DELETE FROM BOARD_COMMENT
+		WHERE COMMENT_ID IN
+		<foreach item="id" collection="list" open="(" separator=","
+			close=")">
+			#{id}
+		</foreach>
+	</delete>
+
+
+
 </mapper>
 
 
 
-<!-- <?xml version="1.0" encoding="UTF-8"?>
-<!DOCTYPE mapper
-  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
-  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.loco.aroundme.mapper.BoardMapper">
-
-	✅ 게시글 등록 (BOARD_REGDATE에 SYSDATE 적용)
-	<insert id="insertBoard"
-		parameterType="com.loco.aroundme.domain.Board">
-		INSERT INTO BOARD (BOARD_ID, TYPE, TITLE, USER_ID,
-		CONTENT, VIEWS,
-		BOARD_REGDATE, PICTURE_URL)
-		VALUES (Board_SEQ.NEXTVAL,
-		#{type}, #{title}, #{userId}, #{content},
-		#{views}, SYSDATE,
-		#{pictureUrl})
-	</insert>
-	
-	✅ 게시글 수정
-    <update id="updateBoard">
-        UPDATE BOARD
-        SET TITLE = #{title}, CONTENT = #{content}, PICTURE_URL = #{pictureUrl}
-        WHERE BOARD_ID = #{boardId}
-    </update>
-
-	✅ 게시판 타입별 게시글 조회
-	<select id="selectBoardsByType" parameterType="String"
-		resultMap="boardResultMap">
-		SELECT BOARD_ID, TYPE, TITLE, USER_ID, CONTENT, VIEWS,
-		BOARD_REGDATE,
-		PICTURE_URL
-		FROM BOARD
-		WHERE TYPE = #{type}
-		ORDER BY
-		BOARD_REGDATE DESC
-	</select>
-
-	특정 게시글 조회
-	<select id="selectBoardById" parameterType="long"
-		resultMap="boardResultMap">
-		SELECT BOARD_ID, TYPE, TITLE, USER_ID, CONTENT, VIEWS,
-		BOARD_REGDATE,
-		PICTURE_URL
-		FROM BOARD
-		WHERE BOARD_ID = #{id}
-	</select>
-
-	조회수 증가
-	<update id="updateViews" parameterType="long">
-		UPDATE BOARD SET VIEWS =
-		VIEWS + 1 WHERE BOARD_ID = #{id}
-	</update>
-
-	게시글 삭제
-	<delete id="deleteBoard" parameterType="long">
-		DELETE FROM BOARD WHERE
-		BOARD_ID = #{id}
-	</delete>
-
-	댓글 등록 (이미지 없이)
-	<insert id="insertComment"
-		parameterType="com.loco.aroundme.domain.BoardComment">
-		INSERT INTO BOARD_COMMENT (COMMENT_ID, BOARD_ID, USER_ID, CONTENT, REGDATE)
-		VALUES (BOARD_COMMENT_SEQ.NEXTVAL, #{boardId}, #{userId}, #{content},
-		SYSDATE)
-	</insert>
-
-	특정 게시글의 댓글 조회
-	<select id="selectCommentsByBoardId" parameterType="long"
-		resultMap="boardCommentResultMap">
-		SELECT COMMENT_ID, BOARD_ID, USER_ID, CONTENT, REGDATE
-		FROM BOARD_COMMENT
-		WHERE BOARD_ID = #{boardId}
-		ORDER BY REGDATE ASC
-	</select>
-
-	댓글 수정
-	<update id="updateComment"
-		parameterType="com.loco.aroundme.domain.BoardComment">
-		UPDATE BOARD_COMMENT
-		SET CONTENT = #{content}
-		WHERE COMMENT_ID = #{commentId}
-	</update>
-
-	단건 댓글 조회
-	<select id="selectCommentById" parameterType="long"
-		resultMap="boardCommentResultMap">
-		SELECT COMMENT_ID, BOARD_ID, USER_ID, CONTENT, REGDATE
-		FROM BOARD_COMMENT
-		WHERE COMMENT_ID = #{commentId}
-	</select>
-
-	댓글 삭제
-	<delete id="deleteComment" parameterType="long">
-		DELETE FROM BOARD_COMMENT WHERE COMMENT_ID = #{commentId}
-	</delete>
-
-
-	Result Map for Board
-	<resultMap id="boardResultMap"
-		type="com.loco.aroundme.domain.Board">
-		<id property="boardId" column="BOARD_ID" />
-		<result property="type" column="TYPE" />
-		<result property="title" column="TITLE" />
-		<result property="userId" column="USER_ID" />
-		<result property="content" column="CONTENT" />
-		<result property="views" column="VIEWS" />
-		<result property="boardRegdate" column="BOARD_REGDATE"
-			javaType="java.util.Date" jdbcType="TIMESTAMP" />
-		<result property="pictureUrl" column="PICTURE_URL" />
-	</resultMap>
-
-	Result Map for BoardComment
-	<resultMap id="boardCommentResultMap"
-		type="com.loco.aroundme.domain.BoardComment">
-		<id property="commentId" column="COMMENT_ID" />
-		<result property="boardId" column="BOARD_ID" />
-		<result property="userId" column="USER_ID" />
-		<result property="content" column="CONTENT" />
-		<result property="regdate" column="REGDATE"
-			javaType="java.util.Date" jdbcType="TIMESTAMP" />
-	</resultMap>
-
-</mapper> -->
+<!-- <?xml version="1.0" encoding="UTF-8"?> <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD 
+	Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd"> <mapper namespace="com.loco.aroundme.mapper.BoardMapper"> 
+	✅ 게시글 등록 (BOARD_REGDATE에 SYSDATE 적용) <insert id="insertBoard" parameterType="com.loco.aroundme.domain.Board"> 
+	INSERT INTO BOARD (BOARD_ID, TYPE, TITLE, USER_ID, CONTENT, VIEWS, BOARD_REGDATE, 
+	PICTURE_URL) VALUES (Board_SEQ.NEXTVAL, #{type}, #{title}, #{userId}, #{content}, 
+	#{views}, SYSDATE, #{pictureUrl}) </insert> ✅ 게시글 수정 <update id="updateBoard"> 
+	UPDATE BOARD SET TITLE = #{title}, CONTENT = #{content}, PICTURE_URL = #{pictureUrl} 
+	WHERE BOARD_ID = #{boardId} </update> ✅ 게시판 타입별 게시글 조회 <select id="selectBoardsByType" 
+	parameterType="String" resultMap="boardResultMap"> SELECT BOARD_ID, TYPE, 
+	TITLE, USER_ID, CONTENT, VIEWS, BOARD_REGDATE, PICTURE_URL FROM BOARD WHERE 
+	TYPE = #{type} ORDER BY BOARD_REGDATE DESC </select> 특정 게시글 조회 <select id="selectBoardById" 
+	parameterType="long" resultMap="boardResultMap"> SELECT BOARD_ID, TYPE, TITLE, 
+	USER_ID, CONTENT, VIEWS, BOARD_REGDATE, PICTURE_URL FROM BOARD WHERE BOARD_ID 
+	= #{id} </select> 조회수 증가 <update id="updateViews" parameterType="long"> UPDATE 
+	BOARD SET VIEWS = VIEWS + 1 WHERE BOARD_ID = #{id} </update> 게시글 삭제 <delete 
+	id="deleteBoard" parameterType="long"> DELETE FROM BOARD WHERE BOARD_ID = 
+	#{id} </delete> 댓글 등록 (이미지 없이) <insert id="insertComment" parameterType="com.loco.aroundme.domain.BoardComment"> 
+	INSERT INTO BOARD_COMMENT (COMMENT_ID, BOARD_ID, USER_ID, CONTENT, REGDATE) 
+	VALUES (BOARD_COMMENT_SEQ.NEXTVAL, #{boardId}, #{userId}, #{content}, SYSDATE) 
+	</insert> 특정 게시글의 댓글 조회 <select id="selectCommentsByBoardId" parameterType="long" 
+	resultMap="boardCommentResultMap"> SELECT COMMENT_ID, BOARD_ID, USER_ID, 
+	CONTENT, REGDATE FROM BOARD_COMMENT WHERE BOARD_ID = #{boardId} ORDER BY 
+	REGDATE ASC </select> 댓글 수정 <update id="updateComment" parameterType="com.loco.aroundme.domain.BoardComment"> 
+	UPDATE BOARD_COMMENT SET CONTENT = #{content} WHERE COMMENT_ID = #{commentId} 
+	</update> 단건 댓글 조회 <select id="selectCommentById" parameterType="long" resultMap="boardCommentResultMap"> 
+	SELECT COMMENT_ID, BOARD_ID, USER_ID, CONTENT, REGDATE FROM BOARD_COMMENT 
+	WHERE COMMENT_ID = #{commentId} </select> 댓글 삭제 <delete id="deleteComment" 
+	parameterType="long"> DELETE FROM BOARD_COMMENT WHERE COMMENT_ID = #{commentId} 
+	</delete> Result Map for Board <resultMap id="boardResultMap" type="com.loco.aroundme.domain.Board"> 
+	<id property="boardId" column="BOARD_ID" /> <result property="type" column="TYPE" 
+	/> <result property="title" column="TITLE" /> <result property="userId" column="USER_ID" 
+	/> <result property="content" column="CONTENT" /> <result property="views" 
+	column="VIEWS" /> <result property="boardRegdate" column="BOARD_REGDATE" 
+	javaType="java.util.Date" jdbcType="TIMESTAMP" /> <result property="pictureUrl" 
+	column="PICTURE_URL" /> </resultMap> Result Map for BoardComment <resultMap 
+	id="boardCommentResultMap" type="com.loco.aroundme.domain.BoardComment"> 
+	<id property="commentId" column="COMMENT_ID" /> <result property="boardId" 
+	column="BOARD_ID" /> <result property="userId" column="USER_ID" /> <result 
+	property="content" column="CONTENT" /> <result property="regdate" column="REGDATE" 
+	javaType="java.util.Date" jdbcType="TIMESTAMP" /> </resultMap> </mapper> -->
 

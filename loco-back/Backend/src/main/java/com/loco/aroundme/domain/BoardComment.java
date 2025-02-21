@@ -16,6 +16,7 @@ public class BoardComment {
     private Long userId;     // 댓글 작성자의 ID
     private String content;  // 댓글 내용
     private Date regdate;    // 댓글 작성일
+    private String userEmail;
 }
 //package com.loco.aroundme.domain;
 //
