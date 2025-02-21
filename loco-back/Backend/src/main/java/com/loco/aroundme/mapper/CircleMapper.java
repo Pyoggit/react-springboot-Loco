@@ -93,4 +93,7 @@ public interface CircleMapper {
 
 	@Select("SELECT C.* FROM CIRCLE C JOIN ENJOY E ON C.CIRCLE_ID = E.CIRCLE_ID WHERE E.USER_ID = #{userId}")
 	List<Circle> findAttendingCirclesByUserId(@Param("userId") Long userId);
+
+	@Select("SELECT * FROM CIRCLE WHERE TO_CHAR(CIRCLE_DATE, 'YYYY-MM-DD') = #{date} AND CIRCLE_CATEGORY = #{category} ORDER BY CIRCLE_DATE DESC")
+	List<Circle> findCirclesByDateAndCategory(@Param("date") String date, @Param("category") String category);
 }

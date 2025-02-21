@@ -45,5 +45,5 @@ public interface CircleService {
 	
 	List<Circle> getAttendingCircles(Long userId);//마이페이지
 	
-	
+	List<Circle> getCirclesByDateAndCategory(String date, String category);
 }

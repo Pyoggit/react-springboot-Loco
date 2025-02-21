@@ -548,5 +548,16 @@ public class UsersController {
 			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(Collections.emptyList());
 		}
 	}
+	
+	@GetMapping("/{userId}")
+	public ResponseEntity<Users> getUserById(@PathVariable Long userId, 
+	                                         @RequestHeader("Authorization") String token) {
+	    Users user = usersService.getUserById(userId);
+	    if (user != null) {
+	        return ResponseEntity.ok(user);
+	    } else {
+	        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+	    }
+	}
 
 }

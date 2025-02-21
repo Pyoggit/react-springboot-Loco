@@ -47,6 +47,11 @@ const CircleDetail = () => {
         `${import.meta.env.VITE_API_URL}/api/circles/${circleId}/creator-email`
       );
       console.log('✅ 모임 생성자 데이터 응답:', response.data);
+
+      if (!response.data || response.data.trim() === '') {
+        console.warn('⚠️ 서버에서 받은 creatorEmail이 비어 있음!');
+      }
+
       setCreatorEmail(response.data);
     } catch (error) {
       console.error('❌ 모임 생성자 이메일 가져오기 실패:', error);
@@ -55,6 +60,8 @@ const CircleDetail = () => {
 
   const fetchUserEmail = async (userId, token) => {
     try {
+      console.log('📌 fetchUserEmail 실행됨! userId:', userId, 'token:', token);
+
       const response = await axios.get(
         `${import.meta.env.VITE_API_URL}/api/users/${userId}`,
         {
@@ -64,8 +71,10 @@ const CircleDetail = () => {
         }
       );
 
-      if (response.data.email) {
-        localStorage.setItem('userEmail', response.data.email);
+      console.log('✅ 서버에서 받은 사용자 정보:', response.data);
+
+      if (response.data.userEmail) {
+        localStorage.setItem('userEmail', response.data.userEmail);
         console.log('✅ 저장된 이메일:', localStorage.getItem('userEmail'));
       } else {
         console.error('❌ 이메일을 가져오지 못함:', response.data);
@@ -74,6 +83,23 @@ const CircleDetail = () => {
       console.error('❌ 이메일 가져오기 실패:', error);
     }
   };
+
+  useEffect(() => {
+    console.log('📌 useEffect 실행됨! storedEmail:', storedEmail);
+
+    if (!storedEmail) {
+      console.log('📌 storedEmail이 없으므로 사용자 이메일을 가져옵니다.');
+      const userId = localStorage.getItem('userId');
+      const token = localStorage.getItem('normal_accessToken');
+
+      if (userId && token) {
+        fetchUserEmail(userId, token);
+      } else {
+        console.warn('⚠️ userId 또는 token이 없어서 fetchUserEmail 실행 불가.');
+      }
+    }
+  }, [storedEmail]);
+
   useEffect(() => {
     console.log('🔥 isAttending 상태 업데이트됨:', isAttending);
   }, [isAttending]);
@@ -252,8 +278,13 @@ const CircleDetail = () => {
   }, [post, userId]);
 
   useEffect(() => {
-    console.log('📌 로그인한 유저 이메일:', storedEmail);
-    console.log('📌 모임 생성자 이메일:', creatorEmail);
+    console.log('📌 로그인한 유저 이메일 (storedEmail):', storedEmail);
+    console.log('📌 모임 생성자 이메일 (creatorEmail):', creatorEmail);
+
+    if (!storedEmail)
+      console.warn('⚠️ storedEmail이 null 또는 undefined 입니다!');
+    if (!creatorEmail)
+      console.warn('⚠️ creatorEmail이 null 또는 undefined 입니다!');
 
     if (storedEmail && creatorEmail) {
       const isCreatorMatch =
@@ -265,21 +296,38 @@ const CircleDetail = () => {
       setIsCreator(false);
     }
   }, [storedEmail, creatorEmail]);
-
   useEffect(() => {
-    console.log('🛠 `isAttending` 변경 후 상태 확인:', isAttending);
-  }, [isAttending]); // ✅ isAttending이 변경될 때 실행
+    if (!storedEmail) {
+      console.log('📌 storedEmail이 없으므로 사용자 이메일을 가져옵니다.');
+      const userId = localStorage.getItem('userId');
+      const token = localStorage.getItem('normal_accessToken');
 
+      if (userId && token) {
+        fetchUserEmail(userId, token);
+      } else {
+        console.warn('⚠️ userId 또는 token이 없어서 fetchUserEmail 실행 불가.');
+      }
+    }
+  }, [storedEmail]);
   useEffect(() => {
-    const storedUserId = localStorage.getItem('userId');
+    const email = localStorage.getItem('userEmail');
+    console.log('📌 localStorage에서 가져온 userEmail:', email);
 
-    console.log('📌 로컬스토리지에서 불러온 userId:', storedUserId);
-
-    if (storedUserId) {
-      setUserId(storedUserId);
-      fetchAttendees(); // ✅ userId가 설정된 직후 `fetchAttendees()` 실행
+    if (!email) {
+      console.warn('⚠️ localStorage에 userEmail이 저장되지 않았음!');
     }
   }, []);
+
+  useEffect(() => {
+    if (!storedEmail) {
+      console.log('📌 storedEmail이 없으므로 사용자 이메일을 가져옵니다.');
+      const userId = localStorage.getItem('userId');
+      const token = localStorage.getItem('normal_accessToken');
+      if (userId && token) {
+        fetchUserEmail(userId, token);
+      }
+    }
+  }, [storedEmail]);
   return (
     <div className="circle-detail-page">
       <div className="image-banner">

@@ -120,7 +120,7 @@ public class CircleServiceImpl implements CircleService {
 
 	@Override
 	public Circle findCircleById(int circleId) {
-		
+
 		return circleMapper.findCircleById(circleId);
 	}
 
@@ -131,6 +131,11 @@ public class CircleServiceImpl implements CircleService {
 
 	@Override
 	public List<Circle> getAttendingCircles(Long userId) {
-		 return circleMapper.findAttendingCirclesByUserId(userId);
+		return circleMapper.findAttendingCirclesByUserId(userId);
+	}
+
+	@Override
+	public List<Circle> getCirclesByDateAndCategory(String date, String category) {
+		return circleMapper.findCirclesByDateAndCategory(date, category);
 	}
 }
