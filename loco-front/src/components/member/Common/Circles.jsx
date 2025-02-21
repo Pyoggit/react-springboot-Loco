@@ -33,6 +33,11 @@ const Circles = ({ selectedCategory }) => {
     setVisibleCircles((prev) => prev + 6);
   };
 
+  const handleCircleClick = (circle) => {
+    localStorage.setItem("selectedPost", JSON.stringify(circle)); // ✅ 선택한 모임 저장
+    navigate(`/circle/detail/${circle.circleId}`);
+  };
+
   return (
     <section className="circles-layout">
       <div className="circles-container">
@@ -46,7 +51,7 @@ const Circles = ({ selectedCategory }) => {
             <div
               key={circle.circleId}
               className="circle-card"
-              onClick={() => navigate(`/circle/detail/${circle.circleId}`)}
+              onClick={() => handleCircleClick(circle)} // ✅ 수정된 클릭 이벤트
             >
               <img
                 src={
