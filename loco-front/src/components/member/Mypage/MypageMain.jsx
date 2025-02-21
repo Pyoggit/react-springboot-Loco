@@ -6,6 +6,7 @@ import MypageOrder from './MypageOrder';
 import ModifyMember from './ModifyMember';
 import DeleteMember from './DeleteMember';
 import MypageProduct from './MypageProduct';
+import MypageLikeCircle from './MypageLikeCircle';
 import '@/css/member/mypage/MypageMain.css';
 
 const MypageMain = () => {
@@ -16,6 +17,9 @@ const MypageMain = () => {
         <ul>
           <li>
             <Link to="/mypage/circle">참여한 모임</Link>
+          </li>
+          <li>
+            <Link to="/mypage/like_circle">관심 모임</Link>
           </li>
           <li>
             <Link to="/mypage/board">내가 쓴 글</Link>
@@ -41,6 +45,7 @@ const MypageMain = () => {
       <article className="mypage-content">
         <Routes>
           <Route path="/circle" element={<MypageCircle />} />
+          <Route path="/like_circle" element={<MypageLikeCircle />} />
           <Route path="/board" element={<MypageBoard />} />
           <Route path="/comment" element={<MypageComment />} />
           <Route path="/order" element={<MypageOrder />} />

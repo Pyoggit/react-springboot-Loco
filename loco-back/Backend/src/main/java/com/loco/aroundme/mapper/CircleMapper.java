@@ -96,4 +96,32 @@ public interface CircleMapper {
 
 	@Select("SELECT * FROM CIRCLE WHERE TO_CHAR(CIRCLE_DATE, 'YYYY-MM-DD') = #{date} AND CIRCLE_CATEGORY = #{category} ORDER BY CIRCLE_DATE DESC")
 	List<Circle> findCirclesByDateAndCategory(@Param("date") String date, @Param("category") String category);
+
+	 // ✅ 1. 좋아요 추가
+    @Insert("INSERT INTO CIRCLE_LIKES (USER_ID, CIRCLE_ID) VALUES (#{userId}, #{circleId})")
+    void addLike(@Param("userId") int userId, @Param("circleId") int circleId);
+
+    // ✅ 2. 좋아요 삭제
+    @Delete("DELETE FROM CIRCLE_LIKES WHERE USER_ID = #{userId} AND CIRCLE_ID = #{circleId}")
+    void removeLike(@Param("userId") int userId, @Param("circleId") int circleId);
+
+    // ✅ 3. 특정 모임의 좋아요 개수 가져오기
+    @Select("SELECT COUNT(*) FROM CIRCLE_LIKES WHERE CIRCLE_ID = #{circleId}")
+    int getLikeCount(@Param("circleId") int circleId);
+
+    // ✅ 4. 사용자가 특정 모임을 좋아요 눌렀는지 확인
+    @Select("SELECT COUNT(*) FROM CIRCLE_LIKES WHERE USER_ID = #{userId} AND CIRCLE_ID = #{circleId}")
+    int isUserLiked(@Param("userId") int userId, @Param("circleId") int circleId);
+
+    // ✅ 5. 사용자가 좋아요한 모든 모임 조회
+    @Select("SELECT C.* FROM CIRCLE_LIKES CL JOIN CIRCLE C ON CL.CIRCLE_ID = C.CIRCLE_ID WHERE CL.USER_ID = #{userId}")
+    List<Circle> getLikedCirclesByUser(@Param("userId") int userId);
+
+	void increaseLikeCount(int circleId);
+
+	void decreaseLikeCount(int circleId);
+	
+	/** ✅ 사용자가 좋아요한 모임 목록 조회 */
+    @Select("SELECT C.* FROM CIRCLE C JOIN CIRCLE_LIKES CL ON C.CIRCLE_ID = CL.CIRCLE_ID WHERE CL.USER_ID = #{userId}")
+    List<Circle> getLikedCirclesByUserId(@Param("userId") Long userId);
 }

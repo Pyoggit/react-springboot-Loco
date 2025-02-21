@@ -1,4 +1,4 @@
-.button-detail {
+.button-circle-detail {
   background-color: #b999ffc1;
   color: white;
   padding: 10px 15px;
@@ -58,11 +58,11 @@
   justify-content: space-between;
   margin-top: 15px;
 }
-.no-posts {
+.circle-no-posts {
+  color: #8b8a8a;
   padding: 0 30px;
   display: flex;
   justify-content: center;
-  font-size: xx-large;
 }
 .post-button {
   display: flex;
