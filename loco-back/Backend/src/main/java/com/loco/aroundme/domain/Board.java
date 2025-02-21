@@ -14,6 +14,7 @@ public class Board {
     private String content;
     private Long views;
     private Date boardRegdate; // ✅ String → Date 타입으로 변경
+    private String userEmail;
 }
 
 

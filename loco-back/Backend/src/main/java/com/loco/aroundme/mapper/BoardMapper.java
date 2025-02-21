@@ -42,6 +42,13 @@ public interface BoardMapper {
 
     // 댓글 삭제
     void deleteComment(@Param("commentId") Long commentId);
+
+    List<Board> selectAllBoards();
+    int deleteBoards(List<Long> boardIds);
+
+    List<BoardComment> selectAllComments();
+    int deleteComments(List<Long> commentIds);
+
 }
 
 //package com.loco.aroundme.mapper;

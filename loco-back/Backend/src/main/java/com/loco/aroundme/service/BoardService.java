@@ -37,6 +37,13 @@ public interface BoardService {
 
 	/** 게시글 삭제 */
 	void deleteBoard(String type, Long id);
+
+	List<Board> getAllBoards();
+	void deleteBoards(List<Long> boardIds);
+
+	List<BoardComment> getAllComments();
+	void deleteComments(List<Long> commentIds);
+
 }
 
 //package com.loco.aroundme.service;
