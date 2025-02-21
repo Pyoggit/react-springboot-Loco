@@ -27,6 +27,9 @@ public interface ChatMapper {
 
     // ✅ 특정 채팅방의 모든 메시지 조회
     List<ChatMessage> findMessagesByRoomId(@Param("roomId") Long roomId);
+    
+    // ✅ 채팅방 삭제
+    void deleteChatRoom(@Param("roomId") Long roomId);
 
     // ✅ 메시지 저장 (보낸 사람 ID + 보낸 사람 이름 함께 저장)
     void saveMessage(@Param("roomId") Long roomId, 

@@ -17,6 +17,9 @@ public interface ChatService {
 
     // ✅ 특정 채팅방의 메시지 목록 조회
     List<ChatMessage> findMessagesByRoomId(Long roomId);
+    
+    // ✅ 채팅방 삭제
+    void deleteChatRoom(Long roomId);
 
     // ✅ 채팅 메시지 저장
     void saveMessage(Long roomId, Long senderId, String senderName, String messageContent, String messageType);

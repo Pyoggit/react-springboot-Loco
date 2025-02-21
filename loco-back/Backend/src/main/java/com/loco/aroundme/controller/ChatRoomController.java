@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -44,5 +45,13 @@ public class ChatRoomController {
 		List<ChatRoom> rooms = chatService.findChatRoomsByUserId(userId);
 		return ResponseEntity.ok(rooms);
 	}
+	
+	/** ✅ 채팅방 삭제 */
+    @DeleteMapping("/room/{roomId}")
+    public ResponseEntity<Void> deleteChatRoom(@PathVariable Long roomId) {
+        log.info("🗑️ 채팅방 삭제 요청: roomId={}", roomId);
+        chatService.deleteChatRoom(roomId);
+        return ResponseEntity.ok().build();
+    }
 
 }
