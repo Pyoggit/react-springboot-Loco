@@ -1,15 +1,15 @@
-import React, { useState } from "react";
-import Carousel from "@/components/member/Common/Carousel";
-import Category from "@/components/member/Common/Category";
-import Circles from "@/components/member/Common/Circles";
-import One from "/src/assets/images/slide-1.jpg";
-import Two from "/src/assets/images/slide-2.jpg";
-import Three from "/src/assets/images/slide-3.jpg";
-import Four from "/src/assets/images/slide-4.jpg";
-import Five from "/src/assets/images/slide-5.jpg";
+import React, { useState } from 'react';
+import Carousel from '@/components/member/Common/Carousel';
+import Category from '@/components/member/Common/Category';
+import Circles from '@/components/member/Common/Circles';
+import One from '/src/assets/images/slide-1.png';
+import Two from '/src/assets/images/slide-2.png';
+import Three from '/src/assets/images/slide-3.png';
+import Four from '/src/assets/images/slide-4.jpg';
+import Five from '/src/assets/images/slide-5.jpg';
 
 export default function Home() {
-  const [selectedCategory, setSelectedCategory] = useState("전체");
+  const [selectedCategory, setSelectedCategory] = useState('전체');
 
   return (
     <>
