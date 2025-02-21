@@ -10,8 +10,6 @@ const FreeboardManager = () => {
   const [selectedBoards, setSelectedBoards] = useState(new Set());
   const [selectAll, setSelectAll] = useState(false);
 
-  const userName = localStorage.getItem("userName");
-
   // 선택한 타입에 따라 게시글 목록 불러오기
   // selectedType이 빈 값이면 전체 조회 (/api/board/all), 아니면 해당 타입 조회 (/api/board/{type})
   useEffect(() => {
@@ -132,7 +130,7 @@ const FreeboardManager = () => {
             <th>게시글코드</th>
             <th>타입</th>
             <th>제목</th>
-            <th>작성자</th>
+            {/* 작성자 칼럼 제거 */}
             <th>작성자 이메일</th>
             <th>내용</th>
             <th>조회수</th>
@@ -153,7 +151,7 @@ const FreeboardManager = () => {
                 <td>{board.boardId}</td>
                 <td>{board.type}</td>
                 <td>{board.title}</td>
-                <td>{userName}</td>
+                {/* 작성자 칼럼 제거 */}
                 <td>{board.userEmail}</td>
                 <td>{board.content}</td>
                 <td>{board.views}</td>
@@ -162,7 +160,7 @@ const FreeboardManager = () => {
             ))
           ) : (
             <tr>
-              <td colSpan="9" className="no-posts">
+              <td colSpan="8" className="no-posts">
                 등록된 게시글이 없습니다.
               </td>
             </tr>

@@ -28,7 +28,8 @@ const NoticeManager = () => {
         const response = await axios.get(url);
         setBoards(response.data);
         setCurrentPage(1);
-        setBoardComments({}); // 댓글 데이터 초기화
+        // 댓글 데이터 초기화
+        setBoardComments({});
         setSelectedComments(new Set());
         setSelectAllComments(false);
       } catch (error) {
@@ -41,6 +42,7 @@ const NoticeManager = () => {
   }, [selectedType]);
 
   // 게시글 목록이 바뀌면 각 게시글의 댓글 불러오기 (상세 조회 API를 통해 댓글 목록 포함)
+  // 그리고 댓글이 없는 게시글은 boards 목록에서 제거합니다.
   useEffect(() => {
     const fetchCommentsForBoards = async () => {
       const newMapping = {};
@@ -48,9 +50,7 @@ const NoticeManager = () => {
         boards.map(async (board) => {
           try {
             const response = await axios.get(
-              `${import.meta.env.VITE_API_URL}/api/board/${board.type}/${
-                board.boardId
-              }`
+              `${import.meta.env.VITE_API_URL}/api/board/${board.type}/${board.boardId}`
             );
             // 응답 구조: { board: { ... }, comments: [ ... ] }
             newMapping[board.boardId] = response.data.comments || [];
@@ -61,6 +61,13 @@ const NoticeManager = () => {
         })
       );
       setBoardComments(newMapping);
+      // 댓글이 하나도 없는 게시글은 화면 목록에서 제거 (DB에서는 삭제되지 않음)
+      setBoards((prevBoards) =>
+        prevBoards.filter(
+          (board) =>
+            newMapping[board.boardId] && newMapping[board.boardId].length > 0
+        )
+      );
     };
 
     if (boards.length > 0) {
@@ -123,12 +130,9 @@ const NoticeManager = () => {
     }
     if (!window.confirm("선택한 댓글을 삭제하시겠습니까?")) return;
     try {
-      // 백엔드의 deleteComments 매퍼를 사용하는 엔드포인트
       await axios.delete(
         `${import.meta.env.VITE_API_URL}/api/board/comments/remove`,
-        {
-          data: { commentIds: Array.from(selectedComments) },
-        }
+        { data: { commentIds: Array.from(selectedComments) } }
       );
       alert("선택한 댓글이 삭제되었습니다.");
       // 삭제 후, boardComments 상태 업데이트: 각 게시글의 댓글 목록에서 삭제된 댓글 제거
@@ -141,6 +145,14 @@ const NoticeManager = () => {
       setBoardComments(updatedMapping);
       setSelectedComments(new Set());
       setSelectAllComments(false);
+      // 댓글이 하나도 없는 게시글은 boards 목록에서 제거 (게시글 자체는 DB에서 삭제되지 않음)
+      setBoards((prevBoards) =>
+        prevBoards.filter(
+          (board) =>
+            updatedMapping[board.boardId] &&
+            updatedMapping[board.boardId].length > 0
+        )
+      );
     } catch (error) {
       console.error("댓글 삭제 실패:", error);
       alert("댓글 삭제에 실패했습니다.");
@@ -184,7 +196,7 @@ const NoticeManager = () => {
             <th>게시글코드</th>
             <th>타입</th>
             <th>제목</th>
-            <th>작성자</th>
+            {/* 작성자 칼럼 제거 */}
             <th>작성자 이메일</th>
             <th>내용</th>
             <th>조회수</th>
@@ -199,7 +211,7 @@ const NoticeManager = () => {
                   <td>{board.boardId}</td>
                   <td>{board.type}</td>
                   <td>{board.title}</td>
-                  <td>{userName}</td>
+                  {/* 작성자 칼럼 제거 */}
                   <td>{board.userEmail}</td>
                   <td>{board.content}</td>
                   <td>{board.views}</td>
@@ -209,7 +221,7 @@ const NoticeManager = () => {
                   boardComments[board.boardId].length > 0 && (
                     <tr>
                       <td
-                        colSpan="8"
+                        colSpan="7"
                         style={{
                           backgroundColor: "#f9f9f9",
                           paddingLeft: "20px",
@@ -253,7 +265,7 @@ const NoticeManager = () => {
             ))
           ) : (
             <tr>
-              <td colSpan="8" className="no-posts">
+              <td colSpan="7" className="no-posts">
                 등록된 게시글이 없습니다.
               </td>
             </tr>

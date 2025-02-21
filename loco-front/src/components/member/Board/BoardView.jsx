@@ -179,7 +179,7 @@ const BoardView = () => {
               </tr>
               {/* 이미지 관련 코드 제거됨 */}
               <tr height="80px">
-                <td>작성자 : {myuserName}</td>
+                <td>작성자 : {boardItem.userEmail}</td>
                 <td>작성일 : {getStringedDate(boardItem.boardRegdate)}</td>
               </tr>
               <tr>
@@ -220,7 +220,7 @@ const BoardView = () => {
                 </div>
               ) : (
                 <div>
-                  <strong>{myuserName}:</strong> {comment.content}
+                  <strong>{boardItem.userEmail}:</strong> {comment.content}
                   <button
                     onClick={() => {
                       setEditingCommentId(comment.commentId);
