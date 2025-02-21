@@ -18,7 +18,7 @@ const Improvement = () => {
   const fetchPosts = async () => {
     try {
       const response = await axios.get(
-        `${import.meta.env.VITE_API_URL}/api/board/improvement`
+        `${import.meta.env.VITE_API_URL}/api/board/freeboard`
       );
       setPosts(response.data);
     } catch (error) {
@@ -121,7 +121,7 @@ const Improvement = () => {
               onClick={() => nav(`/board/${item.type}/${item.boardId}`)}
             >
               <span className="notice-board-title">{item.title}</span>
-              <span className="notice-board-writer">{userName}</span>
+              <span className="notice-board-writer">{item.userEmail}</span>
               <span className="notice-board-date">
                 {new Date(item.boardRegdate).toLocaleDateString()}
               </span>
