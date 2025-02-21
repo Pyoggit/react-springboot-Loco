@@ -72,7 +72,7 @@ const Freeboard = () => {
         <div className="notice-title">자유 게시판</div>
         <button
           className="notice-write-button"
-          onClick={() => nav("/board/new")}
+          onClick={() => nav("/board/freeboard/new")}
         >
           글쓰기
         </button>

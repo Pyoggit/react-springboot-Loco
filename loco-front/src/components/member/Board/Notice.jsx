@@ -72,7 +72,7 @@ const Notice = () => {
         <div className="notice-title">공지사항</div>
         <button
           className="notice-write-button"
-          onClick={() => nav("/board/new")}
+          onClick={() => nav("/board/notice/new")}
         >
           글쓰기
         </button>

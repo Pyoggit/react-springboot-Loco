@@ -72,7 +72,7 @@ const Faq = () => {
         <div className="notice-title">FAQ(자주 묻는 질문)</div>
         <button
           className="notice-write-button"
-          onClick={() => nav("/board/new")}
+          onClick={() => nav("/board/faq/new")}
         >
           글쓰기
         </button>

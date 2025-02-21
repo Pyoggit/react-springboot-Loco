@@ -72,7 +72,7 @@ const Qna = () => {
         <div className="notice-title">Q&A</div>
         <button
           className="notice-write-button"
-          onClick={() => nav("/board/new")}
+          onClick={() => nav("/board/qna/new")}
         >
           글쓰기
         </button>
