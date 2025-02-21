@@ -20,7 +20,7 @@ const CircleMain = () => {
   const fetchCircles = async () => {
     try {
       const token = localStorage.getItem('token');
-      const formattedDate = selectedDate.toISOString().split('T')[0];
+      const formattedDate = selectedDate.toISOString().split('T')[0]; // 날짜 포맷팅
       const categoryQuery =
         selectedCategory === '전체' ? '' : `&category=${selectedCategory}`;
 
@@ -37,13 +37,22 @@ const CircleMain = () => {
       );
 
       console.log('📥 서버에서 받은 데이터:', response.data);
-      setCircles(response.data);
+
+      // ✅ 서버에서 받은 데이터 중 선택한 날짜와 카테고리가 모두 일치하는 항목 필터링
+      const filteredCircles = response.data.filter((circle) => {
+        const circleDate = new Date(circle.circleDate)
+          .toISOString()
+          .split('T')[0]; // 데이터 날짜 변환
+        return circleDate === formattedDate;
+      });
+
+      setCircles(filteredCircles);
     } catch (error) {
       console.error('❌ 모임 데이터를 불러오는 중 오류 발생:', error);
     }
   };
 
-  // ✅ 선택한 날짜와 카테고리가 변경되면 모임 데이터를 불러옴
+  // ✅ 선택한 날짜와 카테고리가 변경될 때마다 모임 데이터를 불러옴
   useEffect(() => {
     fetchCircles();
   }, [selectedDate, selectedCategory]);

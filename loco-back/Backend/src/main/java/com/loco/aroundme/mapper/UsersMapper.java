@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
+import org.apache.ibatis.annotations.Select;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.loco.aroundme.domain.Users;
@@ -40,4 +41,8 @@ public interface UsersMapper {
 
 
 	String updateProfileImage(Users user, MultipartFile profileImage) throws Exception;
+	
+	 /* ✅ 사용자 ID로 사용자 정보 조회 */
+    @Select("SELECT * FROM USERS WHERE USER_ID = #{userId}")
+    Users findUserById(@Param("userId") Long userId);
 }

@@ -411,4 +411,10 @@ public class UsersServiceImpl implements UsersService {
 
 	}
 
+
+	@Override
+	public Users getUserById(Long userId) {
+		 return usersMapper.findUserById(userId);
+	}
+
 }

@@ -56,4 +56,6 @@ public interface UsersService {
 	String uploadProfileImage(Users user, MultipartFile profileImage) throws Exception;
 
 	String updateProfileImage(Users user, MultipartFile profileImage) throws Exception;
+	
+	Users getUserById(Long userId);
 }
