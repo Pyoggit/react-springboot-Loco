@@ -49,10 +49,9 @@ const AdminpageMain = () => {
       <article className="admin-content">
         {selectedPage === "dashboard" && <StatDashboard />}
         {selectedPage === "members" && <MemberManager />}
-        {selectedPage === "notice" && <NoticeManager />}
         {selectedPage === "freeboard" && <FreeboardManager />}
+        {selectedPage === "notice" && <NoticeManager />}
         {selectedPage === "faq" && <FaqManager />}
-        {selectedPage === "qna" && <QnaManager />}
         {selectedPage === "circles" && <CircleManager />}
         {selectedPage === "market" && <ProductManager />}
         {selectedPage === "pay" && <PayManager />}
