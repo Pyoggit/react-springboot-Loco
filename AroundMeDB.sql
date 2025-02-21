@@ -1,0 +1,229 @@
+/* USER 생성 (관리자 계정으로 실행) */
+--CREATE USER CODESYNC IDENTIFIED BY CODESYNC;
+--GRANT CONNECT, RESOURCE TO CODESYNC;
+
+-- 1 모든 FOREIGN KEY 제약 조건 삭제
+ALTER TABLE USERS DROP CONSTRAINT USERS_ROLE_ID;
+ALTER TABLE PRODUCT DROP CONSTRAINT PRODUCT_USER_ID;
+ALTER TABLE PRODUCT_PIC DROP CONSTRAINT PRODUCT_PIC_PRODUCT_ID;
+ALTER TABLE ORDERS DROP CONSTRAINT ORDERS_USER_ID;
+ALTER TABLE ORDERS DROP CONSTRAINT ORDERS_PRODUCT_ID;
+ALTER TABLE CIRCLE DROP CONSTRAINT FK_CIRCLE_USER;
+ALTER TABLE ENJOY DROP CONSTRAINT FK_ENJOY_CIRCLE;
+ALTER TABLE ENJOY DROP CONSTRAINT FK_ENJOY_USER;
+ALTER TABLE BOARD DROP CONSTRAINT BOARD_USER_ID;
+ALTER TABLE BOARD_COMMENT DROP CONSTRAINT BOARD_COMMENT_BOARD_ID;
+ALTER TABLE BOARD_COMMENT DROP CONSTRAINT BOARD_COMMENT_USER_ID;
+ALTER TABLE CHAT_ROOMS DROP CONSTRAINT FK_CHATROOM_SELLER;
+ALTER TABLE CHAT_ROOMS DROP CONSTRAINT FK_CHATROOM_BUYER;
+ALTER TABLE CHAT_ROOMS DROP CONSTRAINT FK_CHATROOM_PRODUCT;
+ALTER TABLE CHAT_MESSAGES DROP CONSTRAINT FK_CHATMESSAGE_ROOM;
+ALTER TABLE CHAT_MESSAGES DROP CONSTRAINT FK_CHATMESSAGE_SENDER;
+
+-- 2️ 모든 TABLE 삭제
+DROP TABLE CHAT_MESSAGES CASCADE CONSTRAINTS;
+DROP TABLE CHAT_ROOMS CASCADE CONSTRAINTS;
+DROP TABLE BOARD_COMMENT CASCADE CONSTRAINTS;
+DROP TABLE BOARD CASCADE CONSTRAINTS;
+DROP TABLE ENJOY CASCADE CONSTRAINTS;
+DROP TABLE CIRCLE CASCADE CONSTRAINTS;
+DROP TABLE ORDERS CASCADE CONSTRAINTS;
+DROP TABLE PRODUCT_PIC CASCADE CONSTRAINTS;
+DROP TABLE PRODUCT CASCADE CONSTRAINTS;
+DROP TABLE USERS CASCADE CONSTRAINTS;
+DROP TABLE ROLE CASCADE CONSTRAINTS;
+
+-- 3 모든 SEQUENCE 삭제
+DROP SEQUENCE CHAT_MESSAGES_SEQ;
+DROP SEQUENCE CHAT_ROOMS_SEQ;
+DROP SEQUENCE BOARD_COMMENT_SEQ;
+DROP SEQUENCE BOARD_SEQ;
+DROP SEQUENCE ENJOY_SEQ;
+DROP SEQUENCE CIRCLE_SEQ;
+DROP SEQUENCE PRODUCT_PIC_SEQ;
+DROP SEQUENCE PRODUCT_SEQ;
+DROP SEQUENCE USERS_SEQ;
+DROP SEQUENCE ROLE_SEQ;
+
+
+-- 역할 테이블 (ROLE) -------------------------------------------------------------------------------------------------
+CREATE TABLE ROLE (
+    ROLE_ID NUMBER PRIMARY KEY,             -- 사용자 역할 고유키 (PK)
+    ROLE_NAME VARCHAR2(50) UNIQUE NOT NULL  -- 사용자 역할 (유니크 제약조건)
+);
+CREATE SEQUENCE ROLE_SEQ START WITH 1 INCREMENT BY 1;
+
+-- ROLE 데이터
+INSERT INTO ROLE (ROLE_ID, ROLE_NAME) VALUES (1, 'ADMIN');
+INSERT INTO ROLE (ROLE_ID, ROLE_NAME) VALUES (2, 'USER');
+
+
+-- 유저 테이블 (USERS) -------------------------------------------------------------------------------------------------
+CREATE TABLE USERS (
+    USER_ID NUMBER PRIMARY KEY,             -- 사용자 고유키 (PK)
+    PROVIDER VARCHAR2(20),                  --(일반, 카카오, 구글)
+    PROVIDER_ID VARCHAR2(50),               -- 소셜로그인 고유 ID
+    USER_EMAIL VARCHAR2(80) UNIQUE,         -- 사용자 이메일 (로그인 ID, 유니크 제약조건)
+    PASSWORD VARCHAR2(80)DEFAULT NULL,      -- 사용자 비밀번호
+    ROLE_ID NUMBER DEFAULT 2,               -- 사용자 역할 고유키 (FK)
+    USER_NAME VARCHAR2(80) not null,        -- 사용자 이름
+    GENDER VARCHAR2(20),                    -- 성별 
+    MOBILE1 VARCHAR2(5),                    -- 휴대폰 앞자리
+    MOBILE2 VARCHAR2(8),                    -- 휴대폰 중간자리
+    MOBILE3 VARCHAR2(8),                    -- 휴대폰 끝자리
+    PHONE1 VARCHAR2(5),                     -- 전화번호 앞자리 (선택)
+    PHONE2 VARCHAR2(8),                     -- 전화번호 중간자리 (선택)
+    PHONE3 VARCHAR2(8),                     -- 전화번호 끝자리 (선택)
+    BIRTH VARCHAR2(30),                     -- 생년월일 (선택)
+    ZIPCODE VARCHAR2(10) ,                  -- 우편번호
+    ADDRESS1 VARCHAR2(255),                 -- 기본주소
+    ADDRESS2 VARCHAR2(255),                 -- 상세주소 (선택)
+    USER_REGDATE DATE DEFAULT SYSDATE,      -- 가입일자 (기본값: 현재시간)
+    ORIGIN_USER VARCHAR2(500),              -- 프로필 원본 파일명
+    SYS_USER VARCHAR2(500)                  -- 프로필 저장 파일명
+); 
+ALTER TABLE USERS ADD CONSTRAINT USERS_ROLE_ID FOREIGN KEY (ROLE_ID) REFERENCES ROLE(ROLE_ID) ON DELETE CASCADE;
+CREATE SEQUENCE USERS_SEQ START WITH 1 INCREMENT BY 1;
+
+
+-- 상품 테이블 (PRODUCT) ---------------------------------------------------------------------------------------------
+CREATE TABLE PRODUCT (
+    PRODUCT_ID NUMBER PRIMARY KEY,                          -- PK 상품 고유키
+    PRODUCT_NAME VARCHAR2(255) NOT NULL,                    -- 상품명
+    PRICE NUMBER(10, 2) NOT NULL,                           -- 상품 가격
+    PRODUCT_CATEGORY VARCHAR2(100) NOT NULL,                -- 상품 카테고리
+    DESCRIPTION CLOB NOT NULL,                              -- 상품 설명
+    PRODUCT_REGDATE TIMESTAMP DEFAULT CURRENT_TIMESTAMP,    -- 상품 등록일자
+    USER_ID NUMBER NOT NULL,                                -- FK 판매자 유저 식별자
+    PRODUCT_ADDRESS VARCHAR2(255),                          -- 거래 장소 주소
+    PRODUCT_LAT NUMBER(10, 6),                              -- 위도
+    PRODUCT_LNG NUMBER(10, 6),                              -- 경도
+    PRODUCT_PLACE_ID VARCHAR2(100)                          -- Google Places API Place ID-- 모임 상태
+);
+ALTER TABLE PRODUCT ADD CONSTRAINT PRODUCT_USER_ID FOREIGN KEY (USER_ID) REFERENCES USERS(USER_ID) ON DELETE CASCADE;
+CREATE SEQUENCE PRODUCT_SEQ START WITH 1 INCREMENT BY 1;
+
+
+-- 상품 사진 테이블 (PRODUCT_PIC) -------------------------------------------------------------------------------------------------------------
+CREATE TABLE PRODUCT_PIC (
+    PICTURE_ID NUMBER PRIMARY KEY,                         -- 사진 고유 키
+    PRODUCT_ID NUMBER NOT NULL,                            -- 상품 게시판 
+    PICTURE_URL VARCHAR2(255) NOT NULL,                    -- 사진 URL
+    PICTURE_REGDATE TIMESTAMP DEFAULT CURRENT_TIMESTAMP,   -- 사진 등록 일자
+    PICTURE_ORDER NUMBER DEFAULT 1                         -- 이미지 정렬 순서 (썸네일은 1)
+);
+ALTER TABLE PRODUCT_PIC ADD CONSTRAINT PRODUCT_PIC_PRODUCT_ID FOREIGN KEY (PRODUCT_ID) REFERENCES PRODUCT (PRODUCT_ID) ON DELETE CASCADE;
+CREATE SEQUENCE PRODUCT_PIC_SEQ START WITH 1 INCREMENT BY 1;
+
+
+-- 토스페이 결제 테이블 (ORDERS) -----------------------------------------------------------------------------------------------------------------
+CREATE TABLE ORDERS (
+    ORDER_ID VARCHAR2(50) PRIMARY KEY,                      -- 주문번호
+    USER_ID NUMBER NOT NULL,                                -- 주문 유저 식별자
+    PRODUCT_ID NUMBER NOT NULL,                             -- 상품 식별자
+    PRODUCT_NAME VARCHAR2(255) NOT NULL,                    -- 상품명
+    PAYMENT_METHOD VARCHAR2(20) DEFAULT '카드' NOT NULL,    -- 결제수단
+    TOTAL_AMOUNT NUMBER(19,0) NOT NULL,                     -- 결제금액
+    STATUS VARCHAR2(20) DEFAULT 'PENDING' NOT NULL,         -- 결제상태
+    ORDER_DATE TIMESTAMP DEFAULT CURRENT_TIMESTAMP,         -- 결제일자
+    PAYMENT_KEY VARCHAR2(100) UNIQUE,                       -- 토스페이 결제키
+    CUSTOMER_NAME VARCHAR2(50),                             -- 구매자 이름
+    SELLER_NAME VARCHAR2(50)                                -- 판매자 이름
+);
+ALTER TABLE ORDERS ADD CONSTRAINT ORDERS_USER_ID FOREIGN KEY (USER_ID) REFERENCES USERS(USER_ID) ON DELETE CASCADE;
+ALTER TABLE ORDERS ADD CONSTRAINT ORDERS_PRODUCT_ID FOREIGN KEY (PRODUCT_ID) REFERENCES PRODUCT(PRODUCT_ID) ON DELETE CASCADE;
+
+
+-- 모임 테이블 (CIRCLE) ---------------------------------------------------------------------------------------------------------------
+CREATE TABLE CIRCLE (
+    CIRCLE_ID NUMBER ,                       -- 모임 고유 ID (자동 증가)
+    USER_ID NUMBER NOT NULL,                            -- 모임 생성자 (FK)
+    CIRCLE_NAME VARCHAR2(500) NOT NULL,                 -- 모임 이름
+    CIRCLE_CATEGORY VARCHAR2(50) NOT NULL,              -- 모임 카테고리
+    CIRCLE_DATE TIMESTAMP DEFAULT CURRENT_TIMESTAMP,    -- 모일 날짜
+    CIRCLE_MAXMEMBER NUMBER,                            -- 최대 참가 가능 인원
+    CIRCLE_MEMBER NUMBER DEFAULT 0,                     -- 현재 참석 인원
+    CIRCLE_DETAIL VARCHAR2(4000),                       -- 모임 설명
+    CIRCLE_REGDATE TIMESTAMP DEFAULT CURRENT_TIMESTAMP, -- 모임 생성일
+    CIRCLE_STATUS VARCHAR2(20) DEFAULT '참여가능',       -- 모임 상태 (OPEN / CLOSED)
+    CIRCLE_ADDRESS VARCHAR2(255),                       -- 모임 장소 주소
+    CIRCLE_LAT NUMBER(10, 6),                           -- 위도
+    CIRCLE_LNG NUMBER(10, 6),                           -- 경도
+    CIRCLE_PLACE_ID VARCHAR2(100),                      -- Google Places API Place ID
+    PICTURE_ID VARCHAR2(100),                           -- 사진 고유 ID
+    PICTURE_URL CLOB                                    -- 사진 URL
+);
+ALTER TABLE CIRCLE ADD CONSTRAINT PK_CIRCLE PRIMARY KEY (CIRCLE_ID);
+ALTER TABLE CIRCLE ADD CONSTRAINT FK_CIRCLE_USER FOREIGN KEY (USER_ID) REFERENCES USERS(USER_ID) ON DELETE CASCADE;
+create sequence circle_seq START WITH 1 INCREMENT BY 1;
+
+
+-- 모임 참여방 테이블 (ENJOY) --------------------------------------------------------------------------------------------------------------
+CREATE TABLE ENJOY (
+    ENJOY_ID NUMBER,                                -- 참석 ID
+    CIRCLE_ID NUMBER NOT NULL,                      -- 참석한 모임 ID
+    USER_ID NUMBER NOT NULL,                        -- 참석한 유저 ID
+    ENJOY_DATE TIMESTAMP DEFAULT CURRENT_TIMESTAMP  -- 참석 날짜
+);
+ALTER TABLE ENJOY ADD CONSTRAINT PK_ENJOY PRIMARY KEY (ENJOY_ID);
+ALTER TABLE ENJOY ADD CONSTRAINT FK_ENJOY_CIRCLE FOREIGN KEY (CIRCLE_ID) REFERENCES CIRCLE(CIRCLE_ID) ON DELETE CASCADE;
+ALTER TABLE ENJOY ADD CONSTRAINT FK_ENJOY_USER FOREIGN KEY (USER_ID) REFERENCES USERS(USER_ID) ON DELETE CASCADE;
+ALTER TABLE ENJOY ADD CONSTRAINT UQ_ENJOY UNIQUE (CIRCLE_ID, USER_ID);
+CREATE SEQUENCE ENJOY_SEQ START WITH 1 INCREMENT BY 1; 
+
+
+-- 게시판 테이블 (BOARD) -----------------------------------------------------------------------------------------------------------------
+CREATE TABLE BOARD (
+    BOARD_ID NUMBER PRIMARY KEY,                                  -- 게시판 고유 키
+    TYPE VARCHAR2(100),                                           -- 게시판 타입 (공지사항/ 자유/ QNA/ FAQ/ 사이트불편&개선사항/ 신고)
+    TITLE VARCHAR2(100) NOT NULL,                                 -- 게시판 제목
+    USER_ID NUMBER NOT NULL,                                      -- 사용자 고유 키 (User 테이블의 USER_ID FK)
+    CONTENT CLOB,                                                 -- 게시판 내용
+    VIEWS NUMBER DEFAULT 0,                                       -- 조회수
+    BOARD_REGDATE TIMESTAMP DEFAULT CURRENT_TIMESTAMP             -- 게시글 작성일
+);
+ALTER TABLE BOARD ADD CONSTRAINT BOARD_USER_ID FOREIGN KEY (USER_ID) REFERENCES USERS(USER_ID) ON DELETE CASCADE;
+CREATE SEQUENCE BOARD_SEQ START WITH 1 INCREMENT BY 1;
+
+
+-- 게시판 댓글 테이블 (BOARD_COMMENT) ----------------------------------------------------------------------------------------------------------
+CREATE TABLE BOARD_COMMENT (
+    COMMENT_ID NUMBER PRIMARY KEY,                   -- 게시판 댓글 고유 키           
+    BOARD_ID   NUMBER NOT NULL,                      -- 게시판 고유 키 (BOARD 테이블의 BOARD_ID FK)
+    USER_ID    NUMBER NOT NULL,                      -- 사용자 고유 키 (User 테이블의 USER_ID FK)           
+    CONTENT    CLOB NOT NULL,                        -- 댓글 내용 저장
+    REGDATE    TIMESTAMP DEFAULT CURRENT_TIMESTAMP   -- 댓글 등록일
+);
+ALTER TABLE BOARD_COMMENT ADD CONSTRAINT BOARD_COMMENT_BOARD_ID FOREIGN KEY (BOARD_ID) REFERENCES BOARD (BOARD_ID) ON DELETE CASCADE;
+ALTER TABLE BOARD_COMMENT ADD CONSTRAINT BOARD_COMMENT_USER_ID FOREIGN KEY (USER_ID) REFERENCES USERS (USER_ID) ON DELETE CASCADE;
+CREATE SEQUENCE BOARD_COMMENT_SEQ START WITH 1 INCREMENT BY 1;
+
+
+-- 채팅방 테이블 (CHAT_ROOMS) ----------------------------------------------------------------------------------------------------------------
+CREATE TABLE CHAT_ROOMS (
+    ROOM_ID NUMBER PRIMARY KEY,                      -- 채팅방 고유 ID (PK)
+    SELLER_ID NUMBER NOT NULL,                       -- 판매자 ID (FK: USERS.USER_ID)
+    BUYER_ID NUMBER NOT NULL,                        -- 구매자 ID (FK: USERS.USER_ID)
+    PRODUCT_ID NUMBER NOT NULL,                      -- 상품 ID (FK: PRODUCT.PRODUCT_ID)
+    CREATED_AT TIMESTAMP DEFAULT CURRENT_TIMESTAMP   -- 채팅방 생성 시간 (기본값: 현재 시간)
+);
+ALTER TABLE CHAT_ROOMS ADD CONSTRAINT FK_CHATROOM_SELLER FOREIGN KEY (SELLER_ID) REFERENCES USERS(USER_ID) ON DELETE CASCADE;
+ALTER TABLE CHAT_ROOMS ADD CONSTRAINT FK_CHATROOM_BUYER FOREIGN KEY (BUYER_ID) REFERENCES USERS(USER_ID) ON DELETE CASCADE;
+ALTER TABLE CHAT_ROOMS ADD CONSTRAINT FK_CHATROOM_PRODUCT FOREIGN KEY (PRODUCT_ID) REFERENCES PRODUCT(PRODUCT_ID) ON DELETE CASCADE;
+CREATE SEQUENCE CHAT_ROOMS_SEQ START WITH 1 INCREMENT BY 1;
+
+
+-- 채팅 메시지 테이블 (CHAT_MESSAGES) ----------------------------------------------------------------------------------------------------------
+CREATE TABLE CHAT_MESSAGES (
+    MESSAGE_ID NUMBER PRIMARY KEY,                  -- 메시지 고유 ID (PK)
+    ROOM_ID NUMBER NOT NULL,                        -- 채팅방 ID (FK: CHAT_ROOMS.ROOM_ID)
+    SENDER_ID NUMBER NOT NULL,                      -- 보낸 사람 ID (FK: USERS.USER_ID)
+    SENDER_NAME VARCHAR2(100),                      -- 보낸 사람 이름
+    MESSAGE_CONTENT CLOB NOT NULL,                  -- 메시지 내용
+    MESSAGE_TYPE VARCHAR2(20),                      -- 메시지 타입 (예: "TEXT", "IMAGE", "SYSTEM")
+    CREATED_AT TIMESTAMP DEFAULT CURRENT_TIMESTAMP  -- 메시지 생성 시간 (기본값: 현재 시간)
+);
+ALTER TABLE CHAT_MESSAGES ADD CONSTRAINT FK_CHATMESSAGE_ROOM FOREIGN KEY (ROOM_ID) REFERENCES CHAT_ROOMS(ROOM_ID) ON DELETE CASCADE;
+ALTER TABLE CHAT_MESSAGES ADD CONSTRAINT FK_CHATMESSAGE_SENDER FOREIGN KEY (SENDER_ID) REFERENCES USERS(USER_ID) ON DELETE CASCADE;
+CREATE SEQUENCE CHAT_MESSAGES_SEQ START WITH 1 INCREMENT BY 1;
+
