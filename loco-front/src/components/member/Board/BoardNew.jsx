@@ -1,22 +1,111 @@
-import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
+// import React, { useState } from "react";
+// import { useNavigate } from "react-router-dom";
+// import axios from "axios";
+// import "@/css/member/board/BoardNew.css";
+
+// const BoardNew = () => {
+//   const navigate = useNavigate();
+
+//   const [formData, setFormData] = useState({
+//     title: "",
+//     content: "",
+//     writer: "",
+//     type: "", // 기본값을 빈 문자열로 설정
+//     userId: "", // 임시 사용자 ID 추가
+//   });
+
+//   //userId 가져오기
+//   const myuserName = localStorage.getItem("userName");
+//   const myuserId = localStorage.getItem("userId");
+
+//   const handleChange = (e) => {
+//     const { name, value } = e.target;
+//     setFormData((prev) => ({
+//       ...prev,
+//       [name]: value,
+//     }));
+//   };
+
+//   /** ✅ 폼 제출 핸들러 */
+//   const handleSubmit = async (e) => {
+//     e.preventDefault();
+
+//     const { title, content, writer, type, userId } = formData;
+//     if (!title || !content || !type) {
+//       console.log("writer" + writer);
+//       alert("제목, 내용, 작성자, 게시글 유형을 모두 입력해주세요.");
+//       return;
+//     }
+
+//     // ✅ FormData 생성
+//     const formDataToSend = new FormData();
+
+//     // ✅ JSON 데이터를 Blob 형태로 추가
+//     const postData = {
+//       title: title,
+//       content: content,
+//       writer: myuserName,
+//       type: type,
+//       userId: myuserId, // ✅ userId 포함
+//     };
+//     console.log("***************************************");
+//     console.dir(postData);
+//     console.log("***************************************");
+//     formDataToSend.append(
+//       "post",
+//       new Blob([JSON.stringify(postData)], { type: "application/json" })
+//     );
+
+//     try {
+//       const response = await axios.post(
+//         `${import.meta.env.VITE_API_URL}/api/board/new`,
+//         formDataToSend,
+//         {
+//           headers: {
+//             "Content-Type": "multipart/form-data",
+//           },
+//         }
+//       );
+
+//       if (response.status === 200) {
+//         alert("게시글이 성공적으로 등록되었습니다!");
+//         navigate(`/board/${type}`);
+//       }
+//     } catch (error) {
+//       console.error("게시글 등록 실패:", error);
+//       alert(
+//         `게시글 등록에 실패했습니다: ${
+//           error.response?.data?.message || error.message
+//         }`
+//       );
+//     }
+//   };
+import React, { useState, useEffect } from "react";
+import { useNavigate, useParams } from "react-router-dom";
 import axios from "axios";
 import "@/css/member/board/BoardNew.css";
 
 const BoardNew = () => {
   const navigate = useNavigate();
+  const { type } = useParams(); // ✅ URL에서 게시판 타입 가져오기
 
   const [formData, setFormData] = useState({
     title: "",
     content: "",
     writer: "",
-    type: "", // 기본값을 빈 문자열로 설정
-    userId: "", // 임시 사용자 ID 추가
+    type: type || "", // ✅ URL에서 받은 type을 기본값으로 설정
+    userId: "",
   });
 
-  //userId 가져오기
   const myuserName = localStorage.getItem("userName");
   const myuserId = localStorage.getItem("userId");
+
+  useEffect(() => {
+    setFormData((prev) => ({
+      ...prev,
+      type: type || "",
+    }));
+  }, [type]); // ✅ type이 변경될 때 formData 업데이트
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -30,27 +119,22 @@ const BoardNew = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    const { title, content, writer, type, userId } = formData;
+    const { title, content } = formData;
     if (!title || !content || !type) {
-      console.log("writer" + writer);
-      alert("제목, 내용, 작성자, 게시글 유형을 모두 입력해주세요.");
+      alert("제목, 내용, 게시판 유형을 모두 입력해주세요.");
       return;
     }
 
     // ✅ FormData 생성
     const formDataToSend = new FormData();
-
-    // ✅ JSON 데이터를 Blob 형태로 추가
     const postData = {
       title: title,
       content: content,
       writer: myuserName,
       type: type,
-      userId: myuserId, // ✅ userId 포함
+      userId: myuserId,
     };
-    console.log("***************************************");
-    console.dir(postData);
-    console.log("***************************************");
+
     formDataToSend.append(
       "post",
       new Blob([JSON.stringify(postData)], { type: "application/json" })
@@ -91,7 +175,8 @@ const BoardNew = () => {
           <select
             name="type"
             value={formData.type}
-            onChange={handleChange}
+            // onChange={handleChange}
+            disabled
             className="new-select-field"
           >
             <option value="">게시판 선택</option> {/* 기본 선택 옵션 추가 */}

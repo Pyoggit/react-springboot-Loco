@@ -72,7 +72,7 @@ const Report = () => {
         <div className="notice-title">신고 게시판</div>
         <button
           className="notice-write-button"
-          onClick={() => nav("/board/new")}
+          onClick={() => nav("/board/report/new")}
         >
           글쓰기
         </button>
