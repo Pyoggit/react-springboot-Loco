@@ -46,4 +46,17 @@ public interface CircleService {
 	List<Circle> getAttendingCircles(Long userId);//마이페이지
 	
 	List<Circle> getCirclesByDateAndCategory(String date, String category);
+
+	void removeLike(int userId, int circleId);
+
+	void addLike(int userId, int circleId);
+
+	int getLikeCount(int circleId);
+
+	boolean isUserLiked(int userId, int circleId);
+
+	/** ✅ 사용자가 좋아요한 모임 목록 가져오기 */
+	List<Circle> getLikedCirclesByUser(int userId);
+	
+	List<Circle> getLikedCircles(Long userId);
 }
