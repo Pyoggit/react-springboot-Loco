@@ -72,7 +72,8 @@ function SearchPage() {
       <div className="search-result-filter-section">
         <h3 className="search-result-filter-title">상세 조회</h3>
         <div className="search-result-filter-body">
-          <div className="search-result-filter-row">
+          {/* ✅ 검색어 입력란을 상단 단독 블록으로 배치 */}
+          <div className="search-result-filter-row search-bar">
             <input
               type="text"
               className="search-result-page-input"
@@ -82,6 +83,7 @@ function SearchPage() {
             />
           </div>
 
+          {/* ✅ 나머지 필터들은 한 줄로 정리 */}
           <div className="search-result-row">
             <div className="search-result-filter-row">
               <label>지역 (시/도):</label>
@@ -113,32 +115,34 @@ function SearchPage() {
                     ))}
               </select>
             </div>
-          </div>
 
-          <div className="search-result-filter-row">
-            <label>모임 시작 날짜:</label>
-            <input
-              type="date"
-              value={filters.startDate}
-              onChange={(e) => handleFilterChange("startDate", e.target.value)}
-            />
-          </div>
+            <div className="search-result-filter-row">
+              <label>모임 시작 날짜:</label>
+              <input
+                type="date"
+                value={filters.startDate}
+                onChange={(e) =>
+                  handleFilterChange("startDate", e.target.value)
+                }
+              />
+            </div>
 
-          <div className="search-result-filter-row">
-            <label>카테고리:</label>
-            <select
-              value={filters.category}
-              onChange={(e) => handleFilterChange("category", e.target.value)}
-            >
-              <option value="">전체</option>
-              <option value="친목">친목</option>
-              <option value="독서">독서</option>
-              <option value="전시">전시</option>
-              <option value="스포츠">스포츠</option>
-              <option value="스터디">스터디</option>
-              <option value="맛집탐방">맛집탐방</option>
-              <option value="취미활동">취미활동</option>
-            </select>
+            <div className="search-result-filter-row">
+              <label>카테고리:</label>
+              <select
+                value={filters.category}
+                onChange={(e) => handleFilterChange("category", e.target.value)}
+              >
+                <option value="">전체</option>
+                <option value="친목">친목</option>
+                <option value="독서">독서</option>
+                <option value="전시">전시</option>
+                <option value="스포츠">스포츠</option>
+                <option value="스터디">스터디</option>
+                <option value="맛집탐방">맛집탐방</option>
+                <option value="취미활동">취미활동</option>
+              </select>
+            </div>
           </div>
 
           <div className="search-result-filter-apply-buttons">

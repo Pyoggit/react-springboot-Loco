@@ -1,5 +1,5 @@
 .search-result-page-container {
-  max-width: 1000px;
+  max-width: 900px;
   margin: 0 auto;
   padding: 20px;
   background: white;
@@ -11,6 +11,9 @@
   padding: 20px;
   background: #f9f9f9;
   border-radius: 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
 }
 
 .search-result-filter-title {
@@ -20,9 +23,9 @@
 }
 
 .search-result-filter-body {
-  display: grid;
-  grid-template-columns: 1fr;
-  gap: 15px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
 }
 
 .search-result-page-input {
@@ -34,15 +37,16 @@
 }
 
 .search-result-row {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 15px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
 }
 
 .search-result-filter-row {
   display: flex;
   flex-direction: column;
-  gap: 5px;
+  flex: 1;
+  min-width: 200px;
 }
 
 .search-result-filter-row label {
@@ -56,16 +60,34 @@
   border: 1px solid #ccc;
   border-radius: 5px;
   font-size: 14px;
+  box-sizing: border-box;
 }
 
 .search-result-filter-apply-buttons {
   display: flex;
-  justify-content: flex-start;
+  justify-content: center;
+  width: 100%;
   margin-top: 15px;
 }
 
-.search-result-apply-button,
-.search-result-reset-button {
+.search-result-filter-row select,
+.search-result-filter-row input {
+  padding: 10px;
+  width: 100%;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  font-size: 14px;
+  box-sizing: border-box;
+}
+
+.search-result-filter-apply-buttons {
+  display: flex;
+  justify-content: center;
+  width: 100%;
+  margin-top: 15px;
+}
+
+.search-result-apply-button {
   padding: 12px;
   font-size: 16px;
   font-weight: bold;
@@ -73,24 +95,16 @@
   border-radius: 5px;
   cursor: pointer;
   transition: all 0.3s ease-in-out;
-  flex: 1;
-}
-
-.search-result-apply-button {
-  background-color: #28a745;
+  background-color: rgba(0, 0, 0, 1);
   color: white;
-  margin-right: 10px;
+  width: 100%;
+  max-width: 400px;
 }
 
 .search-result-apply-button:hover {
-  background-color: #218838;
+  background-color: rgba(177, 121, 241, 0.6);
 }
 
-.search-result-reset-button {
-  background-color: #6c757d;
-  color: white;
-}
-
-.search-result-reset-button:hover {
-  background-color: #5a6268;
+.search-result-club-results {
+  margin-top: 20px;
 }
