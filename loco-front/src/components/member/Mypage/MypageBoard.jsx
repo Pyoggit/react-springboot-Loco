@@ -10,7 +10,8 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
-import "@/css/member/board/Notice.css";
+import "@/css/member/myPage/MypageBoard.css";
+// import "@/css/member/board/Notice.css";
 
 const MypageBoard = () => {
   const [posts, setPosts] = useState([]);
@@ -78,7 +79,7 @@ const MypageBoard = () => {
       </header>
 
       <table className="admin-freeboard-table">
-        <thead>
+        <thead className="admin-freeboard-table-thead">
           <tr>
             <th>제목</th>
             <th>작성자</th>
@@ -86,7 +87,7 @@ const MypageBoard = () => {
             <th>조회수</th>
           </tr>
         </thead>
-        <tbody>
+        {/* <tbody>
           {currentPosts.length > 0 ? (
             currentPosts.map((post) => (
               <tr
@@ -108,10 +109,34 @@ const MypageBoard = () => {
               </td>
             </tr>
           )}
+        </tbody> */}
+        <tbody>
+          {currentPosts.length > 0 ? (
+            currentPosts.map((post) => (
+              <tr
+                key={post.boardId}
+                onClick={() =>
+                  navigate(`/board/${selectedType}/view/${post.boardId}`)
+                }
+              >
+                <td>{post.title}</td>
+                <td>{userName}</td>
+                <td>{new Date(post.boardRegdate).toLocaleDateString()}</td>
+                <td>{post.views}</td>
+              </tr>
+            ))
+          ) : (
+            <tr>
+              {/* ✅ 테이블 헤더 개수에 맞게 colspan 설정 → 레이아웃 유지됨 */}
+              <td colSpan="4" className="no-posts">
+                게시글이 없습니다.
+              </td>
+            </tr>
+          )}
         </tbody>
       </table>
 
-      <div className="mypage-board-pagination">
+      {/* <div className="mypage-board-pagination">
         <button onClick={goToPrevPage} disabled={currentPage === 1}>
           이전
         </button>
@@ -125,6 +150,25 @@ const MypageBoard = () => {
           </button>
         ))}
         <button onClick={goToNextPage} disabled={currentPage === totalPages}>
+          다음
+        </button>
+      </div> */}
+      <div className="mypage-board-pagination">
+        <button
+          onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
+          disabled={currentPage === 1}
+        >
+          이전
+        </button>
+        <span className="page-number">
+          {currentPage} / {totalPages || 1}
+        </span>
+        <button
+          onClick={() =>
+            setCurrentPage((prev) => Math.min(prev + 1, totalPages || 1))
+          }
+          disabled={currentPage === totalPages}
+        >
           다음
         </button>
       </div>

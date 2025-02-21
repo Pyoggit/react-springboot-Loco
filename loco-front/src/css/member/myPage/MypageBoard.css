@@ -1,0 +1,316 @@
+/* 기본 리스트 스타일 */
+.notice-list {
+    max-width: 1100px;
+    margin: 0 auto;
+    border: 1px solid black;
+    
+  }
+  
+  /* 헤더 스타일 */
+  .notice-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 35px;
+    font-weight: bold;
+    padding: 30px 10px;
+    padding-top: 90px;
+  }
+  
+  /* 최신순 정렬 및 검색 바 스타일 */
+  .notice-listTopWrapper {
+    display: flex;
+    flex-direction: column;
+    margin-top: 20px;
+  }
+  
+  .notice-listTop {
+    display: flex;
+    justify-content: space-between; /* 두 항목을 같은 줄에 배치 */
+    align-items: center; /* 수직 정렬 */
+    width: 100%;
+    margin-bottom: 15px; /* 리스트 헤더와 구분을 위한 간격 */
+  }
+  
+  .notice-sortSelect {
+    display: flex;
+    justify-content: flex-start; /* 왼쪽 정렬 */
+    width: 30%; /* 최신순을 왼쪽에 두기 위한 넓이 설정 */
+  }
+  
+  .notice-searchBar {
+    display: flex;
+    justify-content: flex-end;
+    width: 65%; /* 검색 및 제목/작성자 순을 오른쪽에 두기 위한 넓이 설정 */
+  }
+  
+  .notice-searchBar input,
+  .notice-searchBar select,
+  .notice-sortSelect select {
+    padding: 10px;
+    border: 1px solid rgb(212, 211, 211);
+    border-radius: 5px; /* 일관된 border-radius 적용 */
+    margin-right: 5px;
+  }
+  
+  /* 글제목, 작성자, 작성일 밑줄 스타일 */
+  .notice-listTop > table {
+    font-size: 22px;
+    font-weight: bold;
+    padding: 15px 10px;
+    display: flex;
+    background-color: transparent;
+    text-align: left;
+  }
+  
+  .notice-list-header {
+    border-bottom: 1px solid rgb(205, 156, 191);
+    padding-bottom: 20px;
+  }
+  
+  .notice-board-title {
+    width: 750px;
+    padding-left: 20px;
+  }
+  
+  .notice-board-writer {
+    width: 200px;
+  }
+  .notice-board-date,
+  .notice-board-views {
+    width: 200px;
+  }
+  .notice-board-views {
+    width: 50px;
+    padding-right: 50px;
+  }
+  
+  /* 페이지네이션 스타일 */
+  .notice-pagination {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-top: 40px;
+    margin-bottom: 40px;
+  }
+  
+  .notice-pagination button {
+    margin: 0 5px;
+    padding: 5px 10px;
+    background-color: white;
+    border: 1px solid #f2e9e9;
+    cursor: pointer;
+  }
+  
+  .notice-pagination button:hover {
+    background-color: #ddd;
+  }
+  
+  .notice-pagination button:disabled {
+    background-color: #fcf5f5;
+    cursor: not-allowed;
+  }
+  
+  .notice-pagination .active {
+    font-weight: bold;
+    background-color: #e7bae7;
+    color: white;
+  }
+  
+  /* 게시글 항목 스타일 */
+  .notice-board-item {
+    display: flex;
+    justify-content: space-between;
+    padding: 15px;
+    border-bottom: 1px solid #ddd;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    border-radius: 5px;
+    margin-top: 8px;
+    margin-bottom: 15px;
+  }
+  
+  .notice-board-item:hover {
+    background-color: #e0e0e0; /* 호버 시 배경색 */
+  }
+  
+  .notice-board-title,
+  .notice-board-writer,
+  .notice-board-date {
+    padding-left: 20px;
+    font-size: 18px;
+  }
+  
+  /* 글쓰기 버튼 스타일 */
+  .notice-write-button {
+    background-color: #ebdae2;
+    color: white;
+    border: none;
+    padding: 10px 15px;
+    font-size: 16px;
+    font-weight: bold;
+    border-radius: 5px;
+    cursor: pointer;
+  }
+  
+  .notice-write-button:hover {
+    background-color: #b9afb4;
+  }
+  
+
+
+  /* ======================================== */
+  
+
+  .mypage-board {
+    width: 100%;
+    background: white;
+    border-radius: 10px;
+    padding: 20px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+  }
+  
+  /* ✅ 헤더 스타일 */
+  .mypage-board-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 15px;
+  }
+  
+  .mypage-board-header h2 {
+    font-size: 20px;
+    font-weight: bold;
+    color: #333;
+  }
+  
+  /* ✅ 게시판 선택 필터 */
+  .mypage-board-filter {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  
+  .mypage-board-filter label {
+    font-size: 14px;
+    font-weight: bold;
+    color: #666;
+  }
+  
+  .mypage-board-filter select {
+    padding: 8px;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+    font-size: 14px;
+    transition: all 0.2s ease-in-out;
+  }
+  
+  .mypage-board-filter select:focus {
+    border-color: rgba(177, 121, 241, 0.8);
+    box-shadow: 0 0 5px rgba(177, 121, 241, 0.5);
+    outline: none;
+  }
+  
+/* ✅ 테이블 스타일 */
+.admin-freeboard-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 15px;
+  }
+  
+  .admin-freeboard-table th,
+  .admin-freeboard-table td {
+    padding: 12px;
+    border: 1px solid #ddd;
+    text-align: center;
+  }
+  
+/* ✅ 테이블 헤더(th) 스타일 */
+.admin-freeboard-table th {
+    background: rgba(177, 121, 241, 0.6);
+    color: white;
+    font-weight: bold;
+    width: 25%; /* ✅ 각 컬럼의 너비를 고정 */
+    text-align: center;
+    padding: 12px;
+  }
+  
+  .admin-freeboard-table th:hover {
+    background: rgba(177, 121, 241, 0.8);
+  }
+  
+  /* ✅ 테이블 행 스타일 */
+ /* ✅ 테이블 행 스타일 */
+.admin-freeboard-table tbody tr {
+    transition: background-color 0.2s ease-in-out;
+    cursor: pointer;
+  }
+  
+  .admin-freeboard-table tbody tr:hover {
+    /* background-color: rgba(177, 121, 241, 0.1); */
+  }
+  
+/* ✅ "게시글이 없습니다" 스타일 */
+.no-posts {
+    text-align: center;
+    font-size: 16px;
+    font-weight: bold;
+    color: #666;
+    padding: 12px;
+    width: 100%; /* ✅ td가 th 너비를 따르도록 설정 */
+    display: table-cell; /* ✅ 테이블 구조를 유지 */
+  }
+  
+  /* ✅ 페이지네이션 스타일 */
+/* ✅ 페이지네이션 스타일 */
+.mypage-board-pagination,
+.mypage-comment-pagination {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-top: 20px;
+  gap: 8px;
+}
+
+.mypage-board-pagination button,
+.mypage-comment-pagination button {
+  padding: 8px 12px;
+  border: none;
+  border-radius: 6px;
+  font-size: 14px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: all 0.2s ease-in-out;
+  background-color: #b179f1;
+  color: white;
+}
+
+.mypage-board-pagination button:hover,
+.mypage-comment-pagination button:hover {
+  background-color: #9655d7;
+}
+
+.mypage-board-pagination button:disabled,
+.mypage-comment-pagination button:disabled {
+  background-color: #ccc;
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+/* ✅ 현재 페이지 스타일 */
+.mypage-board-pagination .page-number,
+.mypage-comment-pagination .page-number {
+  font-size: 14px;
+  font-weight: bold;
+  color: #333;
+  padding: 8px 12px;
+  border-radius: 6px;
+  background: rgba(177, 121, 241, 0.2);
+}
+
+.mypage-board-pagination .active,
+.mypage-comment-pagination .active {
+  background: rgba(177, 121, 241, 0.8);
+  color: white;
+}
+
