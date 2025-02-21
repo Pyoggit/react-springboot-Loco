@@ -138,4 +138,38 @@ public class CircleServiceImpl implements CircleService {
 	public List<Circle> getCirclesByDateAndCategory(String date, String category) {
 		return circleMapper.findCirclesByDateAndCategory(date, category);
 	}
+	
+	/** ✅ 좋아요 추가 */
+    @Override
+    public void addLike(int userId, int circleId) {
+        circleMapper.addLike(userId, circleId);
+    }
+
+    /** ✅ 좋아요 삭제 */
+    @Override
+    public void removeLike(int userId, int circleId) {
+        circleMapper.removeLike(userId, circleId);
+    }
+
+    /** ✅ 특정 모임의 좋아요 개수 가져오기 */
+    @Override
+    public int getLikeCount(int circleId) {
+        return circleMapper.getLikeCount(circleId);
+    }
+
+    /** ✅ 사용자가 특정 모임을 좋아요 눌렀는지 확인 */
+    @Override
+    public boolean isUserLiked(int userId, int circleId) {
+        return circleMapper.isUserLiked(userId, circleId) > 0;
+    }
+
+    /** ✅ 사용자가 좋아요한 모임 목록 가져오기 */
+    @Override
+    public List<Circle> getLikedCirclesByUser(int userId) {
+        return circleMapper.getLikedCirclesByUser(userId);
+    }
+    
+    public List<Circle> getLikedCircles(Long userId) {
+        return circleMapper.getLikedCirclesByUserId(userId);
+    }
 }

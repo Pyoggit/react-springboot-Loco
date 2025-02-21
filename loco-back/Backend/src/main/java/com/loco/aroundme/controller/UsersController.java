@@ -458,15 +458,14 @@ public class UsersController {
 	 * ✅ 이메일 일부 마스킹 (앞 2글자 + 마지막 1글자 유지)
 	 */
 	private String maskEmail(String email) {
-	    int atIndex = email.indexOf("@");
-	    if (atIndex <= 3) 
-	        return "****" + email.substring(atIndex); // 너무 짧은 경우 기본 마스킹 처리
+		int atIndex = email.indexOf("@");
+		if (atIndex <= 3)
+			return "****" + email.substring(atIndex); // 너무 짧은 경우 기본 마스킹 처리
 
-	    String firstTwo = email.substring(0, 2); // 앞 두 글자 유지
-	    String lastChar = email.substring(atIndex - 1, atIndex); // '@' 앞 한 글자 유지
-	    return firstTwo + "***" + lastChar + email.substring(atIndex);
+		String firstTwo = email.substring(0, 2); // 앞 두 글자 유지
+		String lastChar = email.substring(atIndex - 1, atIndex); // '@' 앞 한 글자 유지
+		return firstTwo + "***" + lastChar + email.substring(atIndex);
 	}
-
 
 	/**
 	 * ✅ 비밀번호 찾기 - 인증번호 요청 API
@@ -548,16 +547,22 @@ public class UsersController {
 			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(Collections.emptyList());
 		}
 	}
-	
+
 	@GetMapping("/{userId}")
-	public ResponseEntity<Users> getUserById(@PathVariable Long userId, 
-	                                         @RequestHeader("Authorization") String token) {
-	    Users user = usersService.getUserById(userId);
-	    if (user != null) {
-	        return ResponseEntity.ok(user);
-	    } else {
-	        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
-	    }
+	public ResponseEntity<Users> getUserById(@PathVariable Long userId, @RequestHeader("Authorization") String token) {
+		Users user = usersService.getUserById(userId);
+		if (user != null) {
+			return ResponseEntity.ok(user);
+		} else {
+			return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+		}
+	}
+
+	/** ✅ 사용자가 좋아요한 모임 목록 조회 */
+	@GetMapping("/{userId}/liked-circles")
+	public ResponseEntity<List<Circle>> getLikedCircles(@PathVariable Long userId) {
+		List<Circle> likedCircles = circleService.getLikedCircles(userId);
+		return ResponseEntity.ok(likedCircles);
 	}
 
 }

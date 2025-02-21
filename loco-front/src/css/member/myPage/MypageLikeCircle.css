@@ -1,0 +1,46 @@
+.mypage-like-circle {
+  width: 80%;
+  margin: 20px auto;
+  text-align: center;
+}
+
+h2 {
+  font-size: 24px;
+  margin-bottom: 15px;
+}
+
+.like-circle-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 10px;
+}
+
+.like-circle-table th,
+.like-circle-table td {
+  border: 1px solid #ddd;
+  padding: 10px;
+  text-align: center;
+}
+
+.like-circle-table th {
+  background-color: #f4f4f4;
+}
+
+.button-like-circle-detail {
+  background-color: #ffbdd3;
+  color: white;
+  border: none;
+  padding: 8px 12px;
+  cursor: pointer;
+  border-radius: 5px;
+}
+
+.button-like-circle-detail:hover {
+  background-color: #b25fff;
+}
+
+.no-liked-circles {
+  font-size: 18px;
+  color: #888;
+  margin-top: 20px;
+}

@@ -63,31 +63,30 @@ public class CircleController {
 	/** ✅ 1. 특정 날짜의 모임 리스트 반환 */
 	@GetMapping
 	public ResponseEntity<?> getCirclesByDate(
-		    @RequestParam(required = false) String date,
-		    @RequestParam(required = false) String category  // ✅ 카테고리 추가
-		) {
-		    try {
-		        System.out.println("📌 요청된 날짜: " + date);
-		        System.out.println("📌 요청된 카테고리: " + category);
+	    @RequestParam(required = false) String date,
+	    @RequestParam(required = false) String category  // ✅ 카테고리 추가
+	) {
+	    try {
+	        System.out.println("📌 요청된 날짜: " + date);
+	        System.out.println("📌 요청된 카테고리: " + category);
 
-		        List<Circle> circles;
-		        if (date != null && !date.isEmpty()) {
-		            if (category != null && !category.isEmpty()) {
-		                circles = circleService.getCirclesByCategory(category);
-		            } else {
-		                circles = circleService.getCirclesByDate(date);
-		            }
-		        } else {
-		            circles = circleService.getAllCircles();
-		        }
+	        List<Circle> circles;
+	        if (date != null && !date.isEmpty()) {
+	            if (category != null && !category.isEmpty()) {
+	                circles = circleService.getCirclesByDateAndCategory(date, category);
+	            } else {
+	                circles = circleService.getCirclesByDate(date);
+	            }
+	        } else {
+	            circles = circleService.getAllCircles();
+	        }
 
-		        return ResponseEntity.ok(circles);
-		    } catch (Exception e) {
-		        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-		            .body("{\"message\": \"모임 데이터를 불러오는 중 오류 발생: " + e.getMessage() + "\"}");
-		    }
-		}
-
+	        return ResponseEntity.ok(circles);
+	    } catch (Exception e) {
+	        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+	            .body("{\"message\": \"모임 데이터를 불러오는 중 오류 발생: " + e.getMessage() + "\"}");
+	    }
+	}
 	/** ✅ 1. 모임 생성 & 파일 업로드 */
 	@PostMapping(consumes = { MediaType.MULTIPART_FORM_DATA_VALUE })
 	public ResponseEntity<?> createCircle(
@@ -385,7 +384,41 @@ public class CircleController {
         return ResponseEntity.ok(circles);
     }
 
-   
+
+    /** ✅ 좋아요 추가 */
+    @PostMapping("/{circleId}/like")
+    public ResponseEntity<?> addLike(@PathVariable int circleId, @RequestBody Map<String, Integer> requestData) {
+        int userId = requestData.get("userId");
+        circleService.addLike(userId, circleId);
+        return ResponseEntity.ok("{\"message\": \"좋아요 추가 완료\"}");
+    }
+
+    /** ✅ 좋아요 삭제 */
+    @DeleteMapping("/{circleId}/like")
+    public ResponseEntity<?> removeLike(@PathVariable int circleId, @RequestBody Map<String, Integer> requestData) {
+        int userId = requestData.get("userId");
+        circleService.removeLike(userId, circleId);
+        return ResponseEntity.ok("{\"message\": \"좋아요 취소 완료\"}");
+    }
+
+    /** ✅ 특정 모임의 좋아요 개수 조회 */
+    @GetMapping("/{circleId}/likes")
+    public ResponseEntity<Integer> getLikeCount(@PathVariable int circleId) {
+        return ResponseEntity.ok(circleService.getLikeCount(circleId));
+    }
+
+    /** ✅ 사용자가 특정 모임을 좋아요 했는지 확인 */
+    @GetMapping("/{circleId}/isLiked")
+    public ResponseEntity<Boolean> isUserLiked(@PathVariable int circleId, @RequestParam int userId) {
+        return ResponseEntity.ok(circleService.isUserLiked(userId, circleId));
+    }
+
+    /** ✅ 사용자가 좋아요한 모임 목록 가져오기 */
+    @GetMapping("/user/{userId}/liked")
+    public ResponseEntity<List<Circle>> getLikedCirclesByUser(@PathVariable int userId) {
+        return ResponseEntity.ok(circleService.getLikedCirclesByUser(userId));
+    }
     
+
     
 }
