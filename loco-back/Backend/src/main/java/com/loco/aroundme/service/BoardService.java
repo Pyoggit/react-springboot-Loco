@@ -44,6 +44,12 @@ public interface BoardService {
 	List<BoardComment> getAllComments();
 	void deleteComments(List<Long> commentIds);
 
+	/** ✅ 특정 게시판에서 특정 유저의 댓글 조회 */
+	List<BoardComment> getUserCommentsByType(String type, Long userId);
+
+	/** ✅ 특정 유저의 모든 댓글 조회 */
+	List<BoardComment> getAllUserComments(Long userId);
+
 }
 
 //package com.loco.aroundme.service;

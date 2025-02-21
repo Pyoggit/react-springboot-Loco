@@ -47,7 +47,8 @@ public class SecurityConfig {
 						.requestMatchers("/api/users/mypage/**", "/api/users/update").hasAuthority("ROLE_USER") // ✅
 																												// USER
 																												// 권한 필요
-						.requestMatchers("/api/adminpage/**", "/api/admin/**").hasAuthority("ROLE_ADMIN") // ✅ ADMIN 권한
+						.requestMatchers("/api/adminpage/**", "/api/admin/**",
+								"/api/users/mypage/**").hasAuthority("ROLE_ADMIN") // ✅ ADMIN 권한
 																											// 필요
 						.anyRequest().authenticated() // ✅ 그 외 요청은 로그인 필요
 				).exceptionHandling(ex -> ex.accessDeniedPage("/error/403")).logout(logout -> logout
@@ -101,7 +102,7 @@ public class SecurityConfig {
 			public void addCorsMappings(CorsRegistry registry) {
 				registry.addMapping("/**").allowedOriginPatterns("http://localhost:5173")
 						.allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS").allowedHeaders("*")
-						.exposedHeaders("Authorization", "Set-Cookie") // ✅ JWT & 쿠키 헤더 노출
+						.exposedHeaders("Authorization", "Set-Cookie", "*") // ✅ JWT & 쿠키 헤더 노출
 						.allowCredentials(true); // ✅ 쿠키 허용
 
 			}

@@ -122,6 +122,17 @@ public class BoardServiceImpl implements BoardService {
 	    boardMapper.deleteComments(commentIds);
 	}
 
+	@Override
+	public List<BoardComment> getUserCommentsByType(String type, Long userId) {
+	    return boardMapper.selectUserCommentsByType(type, userId);
+	}
+
+	@Override
+	public List<BoardComment> getAllUserComments(Long userId) {
+	    return boardMapper.selectAllUserComments(userId);
+	}
+
+
 
 }
 
