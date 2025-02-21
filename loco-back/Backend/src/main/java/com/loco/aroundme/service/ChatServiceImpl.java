@@ -42,6 +42,13 @@ public class ChatServiceImpl implements ChatService {
     public List<ChatMessage> findMessagesByRoomId(Long roomId) {
         return chatMapper.findMessagesByRoomId(roomId);
     }
+    
+    @Override
+    @Transactional
+    public void deleteChatRoom(Long roomId) {
+        log.info("🗑️ 채팅방 삭제: roomId={}", roomId);
+        chatMapper.deleteChatRoom(roomId);
+    }
 
     @Override
     @Transactional

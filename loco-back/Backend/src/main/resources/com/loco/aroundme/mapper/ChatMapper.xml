@@ -25,6 +25,11 @@
 	  WHERE R.SELLER_ID = #{userId} OR R.BUYER_ID = #{userId}
 	  ORDER BY CREATED_AT DESC
 	</select>
+	
+	<delete id="deleteChatRoom">
+	    DELETE FROM CHAT_ROOMS WHERE ROOM_ID = #{roomId}
+	</delete>
+	
 
 
     <!-- ✅ 새로운 채팅방 생성 -->

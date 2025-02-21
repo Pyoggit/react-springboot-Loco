@@ -9,6 +9,10 @@ import {
 import "@/css/member/common/ServicePage.css";
 
 const ServicePage = () => {
+  const onKakaoIconButtonClickHandler = () => {
+    window.open("https://open.kakao.com/o/sMPZvjhh");
+  };
+
   return (
     <div className="service-wrapper">
       <div className="service-container">
@@ -47,9 +51,12 @@ const ServicePage = () => {
           <p className="service-description">
             업무시간 내에 가장 빠른 답변을 받아보실 수 있습니다.
           </p>
-          <Link to="/service/chat" className="service-button">
+          <div
+            className="service-button"
+            onClick={onKakaoIconButtonClickHandler}
+          >
             카카오톡 상담
-          </Link>
+          </div>
         </div>
       </div>
     </div>
