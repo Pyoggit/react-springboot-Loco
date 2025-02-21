@@ -1,11 +1,11 @@
-import React, { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import axios from 'axios';
-import '@/css/member/market/ProductPage.css';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faMinus, faPlus } from '@fortawesome/free-solid-svg-icons';
-import { faHeart as solidHeart } from '@fortawesome/free-solid-svg-icons'; // 꽉 찬 하트
-import { faHeart as regularHeart } from '@fortawesome/free-regular-svg-icons'; // 빈 하트
+import React, { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
+import axios from "axios";
+import "@/css/member/market/ProductPage.css";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faMinus, faPlus } from "@fortawesome/free-solid-svg-icons";
+import { faHeart as solidHeart } from "@fortawesome/free-solid-svg-icons"; // 꽉 찬 하트
+import { faHeart as regularHeart } from "@fortawesome/free-regular-svg-icons"; // 빈 하트
 
 const ListItem = ({
   productId,
@@ -27,14 +27,24 @@ const ListItem = ({
   const thumbnail =
     images && images.length > 0
       ? `${import.meta.env.VITE_API_URL}/upload/${images[0].pictureUrl}`
-      : '/default-placeholder.png';
+      : "/default-placeholder.png";
 
   return (
     <div className="product-List-Item">
       <div className="like-button">
         <button
           className="like-button"
-          onClick={() => setIsLikeClick((prev) => !prev)}
+          onClick={() => {
+            setIsLikeClick((prev) => {
+              const newState = !prev;
+              alert(
+                newState
+                  ? "좋아요를 눌렀습니다! 💖"
+                  : "좋아요를 취소했습니다. 💔"
+              );
+              return newState;
+            });
+          }}
         >
           <FontAwesomeIcon
             icon={isLikeClick ? solidHeart : regularHeart}
@@ -43,20 +53,19 @@ const ListItem = ({
         </button>
       </div>
       <div className="product-list">
-        <img src={thumbnail} alt={productName} className="product-image" />
-        <div className="product-info">
-          <p className="product-name">상품명: {productName}</p>
-          <p className="product-category">카테고리: {productCategory}</p>
-          <p className="product-price">가격: {price.toLocaleString()}원</p>
-          <p className="product-seller">
-            판매자: {userName || '알 수 없음'}
-          </p>{' '}
-          {/* 판매자 정보 표시 */}
-          <div className="product-item-button">
-            <button onClick={handleDetailClick} className="team-button">
-              상세보기
-            </button>
-          </div>
+        <img
+          src={thumbnail}
+          alt={productName}
+          className="productPage-image"
+          onClick={handleDetailClick}
+        />
+        <div className="productPage-info">
+          <p className="productPage-name">상품명: {productName}</p>
+          <p className="productPage-category">카테고리: {productCategory}</p>
+          <p className="productPage-price">가격: {price.toLocaleString()}원</p>
+          <p className="productPage-seller">
+            판매자: {userName || "알 수 없음"}
+          </p>
         </div>
       </div>
     </div>
@@ -65,19 +74,19 @@ const ListItem = ({
 
 export default function ProductPage() {
   const navigate = useNavigate();
-  const [search, setSearch] = useState('');
-  const [searchOpt, setSearchOpt] = useState('name');
-  const [selectedCategory, setSelectedCategory] = useState('전체');
+  const [search, setSearch] = useState("");
+  const [searchOpt, setSearchOpt] = useState("name");
+  const [selectedCategory, setSelectedCategory] = useState("전체");
   const [products, setProducts] = useState([]);
 
   const categories = [
-    '전체',
-    '스포츠용품',
-    '도서',
-    '의류',
-    '필기도구',
-    '여행용품',
-    '전자제품',
+    "전체",
+    "스포츠용품",
+    "도서",
+    "의류",
+    "필기도구",
+    "여행용품",
+    "전자제품",
   ];
 
   // 컴포넌트가 마운트될 때 등록된 상품들을 API로 불러옵니다.
@@ -88,10 +97,10 @@ export default function ProductPage() {
           `${import.meta.env.VITE_API_URL}/api/market/products`
         );
         // 백엔드에서 반환하는 데이터 형식에 맞게 수정하세요.
-        console.log('✅ 상품 데이터 응답:', response.data); // 🚨 userName과 images 확인
+        console.log("✅ 상품 데이터 응답:", response.data); // 🚨 userName과 images 확인
         setProducts(response.data);
       } catch (error) {
-        console.error('상품 목록 조회 실패:', error);
+        console.error("상품 목록 조회 실패:", error);
       }
     };
     fetchProducts();
@@ -99,9 +108,9 @@ export default function ProductPage() {
 
   const filteredItems = products.filter((item) => {
     const matchesCategory =
-      selectedCategory === '전체' || item.productCategory === selectedCategory;
+      selectedCategory === "전체" || item.productCategory === selectedCategory;
     const matchesSearch =
-      searchOpt === 'name'
+      searchOpt === "name"
         ? item.productName.toLowerCase().includes(search.toLowerCase())
         : item.productCategory.toLowerCase().includes(search.toLowerCase());
     return matchesCategory && matchesSearch;
@@ -109,8 +118,8 @@ export default function ProductPage() {
 
   return (
     <div className="productPage">
-      <div className="topBar">
-        <div className="searchBar">
+      <div className="productPage-topBar">
+        <div className="product-searchBar">
           <select onChange={(e) => setSearchOpt(e.target.value)}>
             <option value="name">상품명</option>
             <option value="category">카테고리</option>
@@ -129,7 +138,7 @@ export default function ProductPage() {
             <span
               key={index}
               className={`market-category-item ${
-                selectedCategory === category ? 'active' : ''
+                selectedCategory === category ? "active" : ""
               }`}
               onClick={() => setSelectedCategory(category)}
             >
@@ -138,35 +147,19 @@ export default function ProductPage() {
           ))}
         </div>
       </section>
-      <div className="product-register-button">
-        <button
-          className="register-button"
-          onClick={() => navigate('/market/insert')}
-        >
-          <FontAwesomeIcon icon={faPlus} />
-        </button>
-      </div>
-      <div className="product-delete-button">
-        <button
-          className="delete-button"
-          onClick={() => navigate('/market/remove')}
-        >
-          <FontAwesomeIcon icon={faMinus} />
-        </button>
-      </div>
       <div className="marketList">
         <div className="productList">
           {filteredItems.length > 0 ? (
             <ul className="product-grid">
               {filteredItems.map((item) => (
                 <li key={item.productId}>
-                  <ListItem {...item} userName={item.userName} />{' '}
+                  <ListItem {...item} userName={item.userName} />{" "}
                   {/* 판매자 정보 전달 */}
                 </li>
               ))}
             </ul>
           ) : (
-            <p>결과가 없습니다.</p>
+            <p className="productPage-default-message">결과가 없습니다.</p>
           )}
         </div>
       </div>

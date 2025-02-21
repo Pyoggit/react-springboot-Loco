@@ -207,6 +207,29 @@ public class BoardController {
 	        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("댓글 삭제 실패: " + e.getMessage());
 	    }
 	}
+	
+	/** ✅ 특정 게시판에서 특정 유저의 댓글 조회 */
+	@GetMapping("/{type}/comments/{userId}")
+	public ResponseEntity<?> getUserCommentsByType(@PathVariable String type, @PathVariable Long userId) {
+	    try {
+	        List<BoardComment> comments = boardService.getUserCommentsByType(type, userId);
+	        return ResponseEntity.ok(comments);
+	    } catch (Exception e) {
+	        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("댓글 조회 실패: " + e.getMessage());
+	    }
+	}
+
+	/** ✅ 특정 유저의 모든 댓글 조회 */
+	@GetMapping("/comments/{userId}")
+	public ResponseEntity<?> getAllUserComments(@PathVariable Long userId) {
+	    try {
+	        List<BoardComment> comments = boardService.getAllUserComments(userId);
+	        return ResponseEntity.ok(comments);
+	    } catch (Exception e) {
+	        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("댓글 조회 실패: " + e.getMessage());
+	    }
+	}
+
 
 
 }

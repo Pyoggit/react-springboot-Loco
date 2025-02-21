@@ -1,13 +1,13 @@
-import { Link, Route, Routes } from 'react-router-dom';
-import MypageCircle from './MypageCircle';
-import MypageBoard from './MypageBoard';
-import MypageComment from './MypageComment';
-import MypageOrder from './MypageOrder';
-import ModifyMember from './ModifyMember';
-import DeleteMember from './DeleteMember';
-import MypageProduct from './MypageProduct';
-import MypageLikeCircle from './MypageLikeCircle';
-import '@/css/member/mypage/MypageMain.css';
+import { Link, Route, Routes } from "react-router-dom";
+import MypageCircle from "./MypageCircle";
+import MypageBoard from "./MypageBoard";
+import MypageComment from "./MypageComment";
+import MypageOrder from "./MypageOrder";
+import ModifyMember from "./ModifyMember";
+import DeleteMember from "./DeleteMember";
+import MypageProduct from "./MypageProduct";
+import MypageLikeCircle from "./MypageLikeCircle";
+import "@/css/member/mypage/MypageMain.css";
 
 const MypageMain = () => {
   return (
@@ -52,7 +52,8 @@ const MypageMain = () => {
           <Route path="/modify" element={<ModifyMember />} />
           <Route path="/delete" element={<DeleteMember />} />
           <Route path="/product" element={<MypageProduct />} />
-          <Route path="/*" element={<div>미작성한 mypage 컴포넌트</div>} />
+          {/* <Route path="/*" element={<div>미작성한 mypage 컴포넌트</div>} /> */}
+          <Route path="/*" element={<MypageCircle />} />
         </Routes>
       </article>
     </div>

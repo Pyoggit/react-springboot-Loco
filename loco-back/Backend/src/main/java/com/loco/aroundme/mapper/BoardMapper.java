@@ -20,7 +20,7 @@ public interface BoardMapper {
 	Board selectBoardById(@Param("id") Long id);
 
 	/** ✅ 게시글 수정 */
-    void updateBoard(Board board);
+	void updateBoard(Board board);
 
 	// 게시글 삭제
 	void deleteBoard(@Param("id") Long id);
@@ -28,26 +28,40 @@ public interface BoardMapper {
 	// 조회수 증가
 	void updateViews(@Param("id") Long id);
 
-	 // 댓글 등록
-    void insertComment(BoardComment comment);
+	// 댓글 등록
+	void insertComment(BoardComment comment);
 
-    // 특정 게시글의 댓글 조회
-    List<BoardComment> selectCommentsByBoardId(@Param("boardId") Long boardId);
+	// 특정 게시글의 댓글 조회
+	List<BoardComment> selectCommentsByBoardId(@Param("boardId") Long boardId);
 
-    // 댓글 수정
-    void updateComment(BoardComment comment);
+	// 댓글 수정
+	void updateComment(BoardComment comment);
 
-    // 단건 댓글 조회
-    BoardComment selectCommentById(@Param("commentId") Long commentId);
+	// 단건 댓글 조회
+	BoardComment selectCommentById(@Param("commentId") Long commentId);
 
-    // 댓글 삭제
-    void deleteComment(@Param("commentId") Long commentId);
+	// 댓글 삭제
+	void deleteComment(@Param("commentId") Long commentId);
 
-    List<Board> selectAllBoards();
-    int deleteBoards(List<Long> boardIds);
+	List<Board> selectAllBoards();
 
-    List<BoardComment> selectAllComments();
-    int deleteComments(List<Long> commentIds);
+	int deleteBoards(List<Long> boardIds);
+
+	List<BoardComment> selectAllComments();
+
+	int deleteComments(List<Long> commentIds);
+
+	/** ✅ 특정 게시판에서 특정 유저의 댓글 조회 */
+	List<BoardComment> getUserCommentsByType(String type, Long userId);
+
+	/** ✅ 특정 유저의 모든 댓글 조회 */
+	List<BoardComment> getAllUserComments(Long userId);
+
+	/** ✅ 특정 게시판에서 특정 유저가 작성한 댓글 조회 */
+	List<BoardComment> selectUserCommentsByType(@Param("type") String type, @Param("userId") Long userId);
+
+	/** ✅ 특정 유저가 작성한 모든 댓글 조회 */
+	List<BoardComment> selectAllUserComments(@Param("userId") Long userId);
 
 }
 

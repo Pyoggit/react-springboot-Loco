@@ -25,7 +25,7 @@
 	</update>
 
 	<!-- ✅ 게시판 타입별 게시글 조회 -->
-	<select id="selectBoardsByType" parameterType="String"
+<!-- 	<select id="selectBoardsByType" parameterType="String"
 		resultMap="boardResultMap">
 		SELECT BOARD_ID, TYPE, TITLE, USER_ID, CONTENT, VIEWS,
 		BOARD_REGDATE
@@ -33,16 +33,47 @@
 		WHERE TYPE = #{type}
 		ORDER BY
 		BOARD_REGDATE DESC
-	</select>
+	</select> -->
+	<select id="selectBoardsByType" parameterType="String" resultMap="boardResultMap">
+  SELECT 
+    b.BOARD_ID as BOARD_ID,
+    b.TYPE as TYPE,
+    b.TITLE as TITLE,
+    b.USER_ID as USER_ID,
+    b.CONTENT as CONTENT,
+    b.VIEWS as VIEWS,
+    b.BOARD_REGDATE as BOARD_REGDATE,
+    u.USER_EMAIL as userEmail
+  FROM BOARD b
+  LEFT JOIN USERS u ON b.USER_ID = u.USER_ID
+  WHERE b.TYPE = #{type}
+  ORDER BY b.BOARD_REGDATE DESC
+</select>
 
 	<!-- 특정 게시글 조회 -->
-	<select id="selectBoardById" parameterType="long"
+<!-- 	<select id="selectBoardById" parameterType="long"
 		resultMap="boardResultMap">
 		SELECT BOARD_ID, TYPE, TITLE, USER_ID, CONTENT, VIEWS,
 		BOARD_REGDATE
 		FROM BOARD
 		WHERE BOARD_ID = #{id}
-	</select>
+	</select> -->
+	<!-- 특정 게시글 조회 -->
+<select id="selectBoardById" parameterType="long"
+resultMap="boardResultMap">
+  SELECT 
+    b.BOARD_ID as BOARD_ID,
+    b.TYPE as TYPE,
+    b.TITLE as TITLE,
+    b.USER_ID as USER_ID,
+    b.CONTENT as CONTENT,
+    b.VIEWS as VIEWS,
+    b.BOARD_REGDATE as BOARD_REGDATE,
+    u.USER_EMAIL as userEmail
+  FROM BOARD b
+  LEFT JOIN USERS u ON b.USER_ID = u.USER_ID
+  WHERE b.BOARD_ID =  #{id}  
+</select>
 
 	<!-- 조회수 증가 -->
 	<update id="updateViews" parameterType="long">
@@ -164,7 +195,8 @@
 		bc.REGDATE as regdate,
 		u.USER_EMAIL as userEmail
 		FROM BOARD_COMMENT bc
-		LEFT JOIN USERS u ON bc.USER_ID = u.USER_ID
+		LEFT JOIN USERS u ON
+		bc.USER_ID = u.USER_ID
 		ORDER BY bc.REGDATE DESC
 	</select>
 
@@ -177,6 +209,26 @@
 			#{id}
 		</foreach>
 	</delete>
+
+	<!-- ✅ 특정 게시판에서 특정 유저의 댓글 조회 -->
+	<select id="selectUserCommentsByType" parameterType="map"
+		resultMap="boardCommentResultMap">
+		SELECT COMMENT_ID, BOARD_ID, USER_ID, CONTENT, REGDATE
+		FROM BOARD_COMMENT
+		WHERE BOARD_ID IN (SELECT BOARD_ID FROM BOARD WHERE TYPE = #{type})
+		AND USER_ID = #{userId}
+		ORDER BY REGDATE DESC
+	</select>
+
+	<!-- ✅ 특정 유저의 모든 댓글 조회 -->
+	<select id="selectAllUserComments" parameterType="long"
+		resultMap="boardCommentResultMap">
+		SELECT COMMENT_ID, BOARD_ID, USER_ID, CONTENT, REGDATE
+		FROM BOARD_COMMENT
+		WHERE USER_ID = #{userId}
+		ORDER BY REGDATE DESC
+	</select>
+
 
 
 

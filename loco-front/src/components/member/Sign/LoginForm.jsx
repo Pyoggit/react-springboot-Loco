@@ -132,6 +132,65 @@ const LoginForm = () => {
       setIsLoading(false);
     }
   };
+  /** ✅ 로그인 처리 함수 =============================================================================== */
+  // const handleSubmit = async (e) => {
+  //   e.preventDefault();
+  //   setError("");
+  //   setIsLoading(true);
+
+  //   try {
+  //     let response;
+
+  //     // ✅ 관리자 로그인 시도
+  //     response = await axios.post("/api/adminpage/login", {
+  //       email: email.trim(),
+  //       password: password.trim(),
+  //     });
+
+  //     if (response.data.accessToken) {
+  //       const accessToken = response.data.accessToken;
+  //       localStorage.setItem("admin_accessToken", accessToken);
+  //       alert("✅ 관리자 로그인 성공!");
+  //       navigate("/adminpage");
+  //       return;
+  //     }
+
+  //     // ✅ 일반 사용자 로그인 시도
+  //     response = await axios.post("/api/users/login", {
+  //       email: email.trim(),
+  //       password: password.trim(),
+  //     });
+
+  //     if (response.data.normal_accessToken) {
+  //       const accessToken = response.data.normal_accessToken;
+  //       localStorage.setItem("normal_accessToken", accessToken);
+  //       localStorage.setItem(
+  //         "normal_refreshToken",
+  //         response.data.normal_refreshToken
+  //       );
+
+  //       // ✅ 로그인한 유저 정보 가져오기
+  //       const userInfoResponse = await axios.get("/api/users/mypage", {
+  //         headers: { Authorization: `Bearer ${accessToken}` },
+  //       });
+
+  //       const userData = userInfoResponse.data;
+  //       localStorage.setItem("userId", userData.userId);
+  //       localStorage.setItem("userName", userData.userName);
+
+  //       alert("✅ 로그인 성공!");
+  //       navigate("/");
+  //       setTimeout(() => window.location.reload(), 100);
+  //     } else {
+  //       throw new Error("토큰이 응답에서 누락되었습니다.");
+  //     }
+  //   } catch (error) {
+  //     console.error("❌ 로그인 실패:", error.response?.data || error.message);
+  //     setError("이메일 또는 비밀번호를 확인하세요.");
+  //   } finally {
+  //     setIsLoading(false);
+  //   }
+  // };
 
   return (
     <div id="auth-wrapper">
