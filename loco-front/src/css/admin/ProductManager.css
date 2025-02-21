@@ -104,6 +104,22 @@
   cursor: not-allowed;
 }
 
+.admin-product-info-btn {
+  padding: 8px 12px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: bold;
+  transition: background-color 0.2s ease-in-out;
+  background-color: rgba(52, 152, 219, 0.9); /* 파란색 */
+  color: white;
+}
+
+.admin-product-info-btn:hover {
+  background-color: rgba(41, 128, 185, 1);
+}
+
 .pagination {
   display: flex;
   justify-content: center;
