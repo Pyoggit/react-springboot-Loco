@@ -13,29 +13,117 @@ const Qna = () => {
   const nav = useNavigate();
   const userName = localStorage.getItem("userName");
 
-  // ✅ 게시글 목록 불러오기
+  // Q&A 게시판용 목업데이터 11개 (각 항목마다 제목, 이메일, 작성일을 실제처럼 구성)
+  const mockPosts = [
+    {
+      boardId: 2001,
+      title: "회원가입 오류 관련 문의",
+      userEmail: "susan.connor@gmail.com",
+      boardRegdate: "2025-02-22T09:00:00",
+      views: 15,
+      type: "qna",
+    },
+    {
+      boardId: 2002,
+      title: "로그인 문제 발생 문의",
+      userEmail: "michael.scott@ermin.com",
+      boardRegdate: "2025-02-21T10:30:00",
+      views: 10,
+      type: "qna",
+    },
+    {
+      boardId: 2003,
+      title: "결제 시스템 오류 문의",
+      userEmail: "pam.beesly@gmail.com",
+      boardRegdate: "2025-02-20T11:45:00",
+      views: 8,
+      type: "qna",
+    },
+    {
+      boardId: 2004,
+      title: "사이트 속도 저하 문제 문의",
+      userEmail: "jim.halpert@yahoo.com",
+      boardRegdate: "2025-02-19T12:15:00",
+      views: 5,
+      type: "qna",
+    },
+    {
+      boardId: 2005,
+      title: "비밀번호 재설정 관련 문의",
+      userEmail: "dwight.hrute@hotmail.com",
+      boardRegdate: "2025-02-18T13:00:00",
+      views: 7,
+      type: "qna",
+    },
+    {
+      boardId: 2006,
+      title: "이메일 알림 설정 문의",
+      userEmail: "angela.main@gmail.com",
+      boardRegdate: "2025-02-17T14:20:00",
+      views: 3,
+      type: "qna",
+    },
+    {
+      boardId: 2007,
+      title: "사이트 기능 개선 요청",
+      userEmail: "stanley.hun@outlook.com",
+      boardRegdate: "2025-02-16T15:30:00",
+      views: 6,
+      type: "qna",
+    },
+    {
+      boardId: 2008,
+      title: "데이터 보안 관련 문의",
+      userEmail: "kevin.malone@yahoo.com",
+      boardRegdate: "2025-02-15T16:45:00",
+      views: 4,
+      type: "qna",
+    },
+    {
+      boardId: 2009,
+      title: "모바일 앱 사용 문의",
+      userEmail: "merth.palmer@gmail.com",
+      boardRegdate: "2025-02-14T17:00:00",
+      views: 2,
+      type: "qna",
+    },
+    {
+      boardId: 2010,
+      title: "이벤트 참여 방법 문의",
+      userEmail: "phyllis.vance@hmail.com",
+      boardRegdate: "2025-02-13T18:30:00",
+      views: 9,
+      type: "qna",
+    },
+    {
+      boardId: 2011,
+      title: "기타 사이트 문의 사항",
+      userEmail: "oscar.manez@gmail.com",
+      boardRegdate: "2025-02-12T19:00:00",
+      views: 11,
+      type: "qna",
+    },
+  ];
 
+  // 게시글 목록 불러오기 (실제 API와 목업데이터를 합쳐서 사용)
   const fetchPosts = async () => {
     try {
       const response = await axios.get(
         `${import.meta.env.VITE_API_URL}/api/board/qna`
       );
-      setPosts(response.data);
+      setPosts([...response.data, ...mockPosts]);
     } catch (error) {
       console.error("게시글 불러오기 실패:", error);
+      setPosts([...mockPosts]);
     }
   };
 
   useEffect(() => {
-    console.log(
-      "***********************************✅ 저장된 userId:",
-      localStorage.getItem("userId")
-    );
-
+    console.log("저장된 userId:", localStorage.getItem("userId"));
     fetchPosts();
   }, []);
 
-  // ✅ 검색 필터링
+  // 검색 필터링
   const getFilteredItems = () => {
     if (search === "") return posts;
     return posts.filter((item) =>
@@ -43,14 +131,14 @@ const Qna = () => {
     );
   };
 
-  // ✅ 정렬 (최신순 / 오래된순)
+  // 정렬 (최신순 / 오래된순)
   const sortedData = getFilteredItems().sort((a, b) =>
     sortType === "oldest"
       ? new Date(a.boardRegdate) - new Date(b.boardRegdate)
       : new Date(b.boardRegdate) - new Date(a.boardRegdate)
   );
 
-  // ✅ 페이지네이션
+  // 페이지네이션 계산
   const indexOfLastPost = currentPage * postsPerPage;
   const indexOfFirstPost = indexOfLastPost - postsPerPage;
   const currentPosts = sortedData.slice(indexOfFirstPost, indexOfLastPost);
@@ -111,7 +199,7 @@ const Qna = () => {
         </table>
       </div>
 
-      {/* ✅ 게시글 목록 */}
+      {/* 게시글 목록 */}
       <div>
         {currentPosts.length > 0 ? (
           currentPosts.map((item) => (
@@ -133,7 +221,7 @@ const Qna = () => {
         )}
       </div>
 
-      {/* ✅ 페이지네이션 */}
+      {/* 페이지네이션 */}
       <div className="notice-pagination">
         <button
           onClick={goToPrevPage}

@@ -13,29 +13,93 @@ const Improvement = () => {
   const nav = useNavigate();
   const userName = localStorage.getItem("userName");
 
-  // ✅ 게시글 목록 불러오기
+  // Improvement 게시판용 목업데이터 8개
+  const mockPosts = [
+    {
+      boardId: 3001,
+      title: "사이트 로딩 속도 개선 요청",
+      userEmail: "kim@naver.com",
+      boardRegdate: "2025-02-22T08:00:00",
+      views: 12,
+      type: "improvement",
+    },
+    {
+      boardId: 3002,
+      title: "모바일 인터페이스 개선 필요",
+      userEmail: "lee@daum.net",
+      boardRegdate: "2025-02-21T09:30:00",
+      views: 8,
+      type: "improvement",
+    },
+    {
+      boardId: 3003,
+      title: "오류 메시지 수정 요청",
+      userEmail: "park@gmail.com",
+      boardRegdate: "2025-02-20T10:15:00",
+      views: 5,
+      type: "improvement",
+    },
+    {
+      boardId: 3004,
+      title: "UI 불편 개선 건의",
+      userEmail: "choi@hanmail.net",
+      boardRegdate: "2025-02-19T11:45:00",
+      views: 7,
+      type: "improvement",
+    },
+    {
+      boardId: 3005,
+      title: "검색 기능 오류 개선 요청",
+      userEmail: "jung@naver.com",
+      boardRegdate: "2025-02-18T12:00:00",
+      views: 4,
+      type: "improvement",
+    },
+    {
+      boardId: 3006,
+      title: "공지사항 업데이트 제안",
+      userEmail: "yoon@gmail.com",
+      boardRegdate: "2025-02-17T13:30:00",
+      views: 6,
+      type: "improvement",
+    },
+    {
+      boardId: 3007,
+      title: "FAQ 추가 건의",
+      userEmail: "lim@daum.net",
+      boardRegdate: "2025-02-16T14:45:00",
+      views: 3,
+      type: "improvement",
+    },
+    {
+      boardId: 3008,
+      title: "사용자 피드백 반영 요청",
+      userEmail: "seo@hanmail.net",
+      boardRegdate: "2025-02-15T15:00:00",
+      views: 9,
+      type: "improvement",
+    },
+  ];
 
+  // 실제 API에서 게시글을 불러오고 목업데이터와 합치기
   const fetchPosts = async () => {
     try {
       const response = await axios.get(
         `${import.meta.env.VITE_API_URL}/api/board/improvement`
       );
-      setPosts(response.data);
+      setPosts([...response.data, ...mockPosts]);
     } catch (error) {
       console.error("게시글 불러오기 실패:", error);
+      setPosts([...mockPosts]);
     }
   };
 
   useEffect(() => {
-    console.log(
-      "***********************************✅ 저장된 userId:",
-      localStorage.getItem("userId")
-    );
-
+    console.log("저장된 userId:", localStorage.getItem("userId"));
     fetchPosts();
   }, []);
 
-  // ✅ 검색 필터링
+  // 검색 필터링
   const getFilteredItems = () => {
     if (search === "") return posts;
     return posts.filter((item) =>
@@ -43,14 +107,14 @@ const Improvement = () => {
     );
   };
 
-  // ✅ 정렬 (최신순 / 오래된순)
+  // 정렬 (최신순 / 오래된순)
   const sortedData = getFilteredItems().sort((a, b) =>
     sortType === "oldest"
       ? new Date(a.boardRegdate) - new Date(b.boardRegdate)
       : new Date(b.boardRegdate) - new Date(a.boardRegdate)
   );
 
-  // ✅ 페이지네이션
+  // 페이지네이션 계산
   const indexOfLastPost = currentPage * postsPerPage;
   const indexOfFirstPost = indexOfLastPost - postsPerPage;
   const currentPosts = sortedData.slice(indexOfFirstPost, indexOfLastPost);
@@ -69,7 +133,7 @@ const Improvement = () => {
   return (
     <div className="notice-list">
       <header className="notice-header">
-        <div className="notice-title">불편&개선사항</div>
+        <div className="notice-title">불편 & 개선사항</div>
         <button
           className="notice-write-button"
           onClick={() => nav("/board/improvement/new")}
@@ -98,7 +162,6 @@ const Improvement = () => {
             />
           </div>
         </div>
-
         <table className="notice-list-header">
           <tbody>
             <tr>
@@ -110,8 +173,7 @@ const Improvement = () => {
           </tbody>
         </table>
       </div>
-
-      {/* ✅ 게시글 목록 */}
+      {/* 게시글 목록 */}
       <div>
         {currentPosts.length > 0 ? (
           currentPosts.map((item) => (
@@ -132,8 +194,7 @@ const Improvement = () => {
           <p>게시글이 없습니다.</p>
         )}
       </div>
-
-      {/* ✅ 페이지네이션 */}
+      {/* 페이지네이션 */}
       <div className="notice-pagination">
         <button
           onClick={goToPrevPage}

@@ -13,29 +13,93 @@ const Freeboard = () => {
   const nav = useNavigate();
   const userName = localStorage.getItem("userName");
 
-  // ✅ 게시글 목록 불러오기
+  // 자유게시판 목업데이터 8개
+  const mockPosts = [
+    {
+      boardId: 5001,
+      title: "오늘의 자유로운 이야기",
+      userEmail: "park@naver.com",
+      boardRegdate: "2025-02-22T10:00:00",
+      views: 20,
+      type: "freeboard",
+    },
+    {
+      boardId: 5002,
+      title: "자유게시판 첫 글",
+      userEmail: "lee@daum.net",
+      boardRegdate: "2025-02-21T11:15:00",
+      views: 15,
+      type: "freeboard",
+    },
+    {
+      boardId: 5003,
+      title: "주말 계획 공유해요",
+      userEmail: "kim@gmail.com",
+      boardRegdate: "2025-02-20T12:30:00",
+      views: 25,
+      type: "freeboard",
+    },
+    {
+      boardId: 5004,
+      title: "요즘 유행하는 드라마 추천",
+      userEmail: "choi@hanmail.net",
+      boardRegdate: "2025-02-19T13:45:00",
+      views: 30,
+      type: "freeboard",
+    },
+    {
+      boardId: 5005,
+      title: "취미 생활에 관해",
+      userEmail: "jung@naver.com",
+      boardRegdate: "2025-02-18T14:00:00",
+      views: 10,
+      type: "freeboard",
+    },
+    {
+      boardId: 5006,
+      title: "여행 이야기 나눠요",
+      userEmail: "seo@daum.net",
+      boardRegdate: "2025-02-17T15:00:00",
+      views: 18,
+      type: "freeboard",
+    },
+    {
+      boardId: 5007,
+      title: "맛집 추천해주세요",
+      userEmail: "lim@naver.com",
+      boardRegdate: "2025-02-16T16:30:00",
+      views: 22,
+      type: "freeboard",
+    },
+    {
+      boardId: 5008,
+      title: "자유롭게 수다 떨어요",
+      userEmail: "choi@naver.com",
+      boardRegdate: "2025-02-15T17:45:00",
+      views: 14,
+      type: "freeboard",
+    },
+  ];
 
+  // 게시글 목록 불러오기 (실제 API와 목업데이터를 합쳐서 사용)
   const fetchPosts = async () => {
     try {
       const response = await axios.get(
         `${import.meta.env.VITE_API_URL}/api/board/freeboard`
       );
-      setPosts(response.data);
+      setPosts([...response.data, ...mockPosts]);
     } catch (error) {
       console.error("게시글 불러오기 실패:", error);
+      setPosts([...mockPosts]);
     }
   };
 
   useEffect(() => {
-    console.log(
-      "***********************************✅ 저장된 userId:",
-      localStorage.getItem("userId")
-    );
-
+    console.log("저장된 userId:", localStorage.getItem("userId"));
     fetchPosts();
   }, []);
 
-  // ✅ 검색 필터링
+  // 검색 필터링
   const getFilteredItems = () => {
     if (search === "") return posts;
     return posts.filter((item) =>
@@ -43,14 +107,14 @@ const Freeboard = () => {
     );
   };
 
-  // ✅ 정렬 (최신순 / 오래된순)
+  // 정렬 (최신순 / 오래된순)
   const sortedData = getFilteredItems().sort((a, b) =>
     sortType === "oldest"
       ? new Date(a.boardRegdate) - new Date(b.boardRegdate)
       : new Date(b.boardRegdate) - new Date(a.boardRegdate)
   );
 
-  // ✅ 페이지네이션
+  // 페이지네이션 계산
   const indexOfLastPost = currentPage * postsPerPage;
   const indexOfFirstPost = indexOfLastPost - postsPerPage;
   const currentPosts = sortedData.slice(indexOfFirstPost, indexOfLastPost);
@@ -111,7 +175,7 @@ const Freeboard = () => {
         </table>
       </div>
 
-      {/* ✅ 게시글 목록 */}
+      {/* 게시글 목록 */}
       <div>
         {currentPosts.length > 0 ? (
           currentPosts.map((item) => (
@@ -133,7 +197,7 @@ const Freeboard = () => {
         )}
       </div>
 
-      {/* ✅ 페이지네이션 */}
+      {/* 페이지네이션 */}
       <div className="notice-pagination">
         <button
           onClick={goToPrevPage}
