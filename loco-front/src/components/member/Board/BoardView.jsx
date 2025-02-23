@@ -14,7 +14,7 @@ const BoardView = () => {
   const [editingCommentContent, setEditingCommentContent] = useState("");
   const nav = useNavigate();
 
-  //userId 가져오기
+  // userId 가져오기
   const myuserName = localStorage.getItem("userName");
   const myuserId = localStorage.getItem("userId");
 
@@ -89,8 +89,11 @@ const BoardView = () => {
         }
       );
       console.log("댓글 등록 성공, 응답:", response.data);
-      // 새로운 댓글을 기존 댓글 배열에 추가
-      setComments((prevComments) => [...prevComments, response.data]);
+      // 새 댓글 등록 후 전체 댓글 목록을 다시 불러옵니다.
+      const refreshResponse = await axios.get(
+        `${import.meta.env.VITE_API_URL}/api/board/${type}/${boardId}`
+      );
+      setComments(refreshResponse.data.comments);
 
       // 등록 후 입력 필드 초기화
       setNewComment("");
@@ -137,7 +140,9 @@ const BoardView = () => {
           import.meta.env.VITE_API_URL
         }/api/board/${type}/comments/${commentId}`
       );
-      setComments(comments.filter((c) => c.commentId !== commentId));
+      setComments((prevComments) =>
+        prevComments.filter((c) => c.commentId !== commentId)
+      );
     } catch (error) {
       console.error("댓글 삭제 실패:", error);
       window.alert("댓글 삭제 중 오류가 발생했습니다.");
@@ -177,14 +182,13 @@ const BoardView = () => {
               <tr>
                 <td colSpan={2}>{boardItem.content}</td>
               </tr>
-              {/* 이미지 관련 코드 제거됨 */}
+              {/* 수정된 부분 시작 */}
               <tr height="80px">
-                <td>작성자 : {boardItem.userEmail}</td>
+                <td>이메일 : {boardItem.userEmail}</td>
                 <td>작성일 : {getStringedDate(boardItem.boardRegdate)}</td>
+                <td>조회수 : {boardItem.views}</td>
               </tr>
-              <tr>
-                <td colSpan={2}>조회수 : {boardItem.views}</td>
-              </tr>
+              {/* 수정된 부분 끝 */}
             </tbody>
           </table>
         </div>
@@ -195,7 +199,8 @@ const BoardView = () => {
         <ul>
           {comments.map((comment) => (
             <li key={comment.commentId}>
-              {editingCommentId === comment.commentId ? (
+              {editingCommentId !== null &&
+              editingCommentId === comment.commentId ? (
                 <div>
                   <textarea
                     value={editingCommentContent}
@@ -350,7 +355,7 @@ export default BoardView;
 //         }
 //       );
 //       console.log("댓글 등록 성공, 응답:", response.data);
-//       // ✅ 새로운 댓글을 맨 위에 추가 (최근 댓글이 먼저 보이도록)
+//       // 새로운 댓글을 기존 댓글 배열에 추가
 //       setComments((prevComments) => [...prevComments, response.data]);
 
 //       // 등록 후 입력 필드 초기화
@@ -409,14 +414,6 @@ export default BoardView;
 //     return <div>로딩 중...</div>;
 //   }
 
-//   // 이미지 URL을 처리하는 함수: 절대경로가 아니면 업로드 폴더 경로를 붙여줍니다.
-//   const getImageUrl = (url) => {
-//     if (!url) return null;
-//     return url.startsWith("http")
-//       ? url
-//       : `${import.meta.env.VITE_API_URL}/upload/${url}`;
-//   };
-
 //   return (
 //     <div className="freeview-freeBoardView">
 //       <header className="freeview-header">
@@ -446,32 +443,9 @@ export default BoardView;
 //               <tr>
 //                 <td colSpan={2}>{boardItem.content}</td>
 //               </tr>
-//               {boardItem.pictureUrl || boardItem.PICTURE_URL ? (
-//                 <tr>
-//                   <td colSpan={2}>
-//                     <img
-//                       src={getImageUrl(
-//                         boardItem.pictureUrl || boardItem.PICTURE_URL
-//                       )}
-//                       alt="Uploaded"
-//                       className="freeview-image"
-//                     />
-//                   </td>
-//                 </tr>
-//               ) : (
-//                 <tr>
-//                   <td colSpan={2}>
-//                     <img
-//                       src="/images/default-image.png"
-//                       alt="Default"
-//                       className="freeview-image"
-//                     />
-//                   </td>
-//                 </tr>
-//               )}
-
+//               {/* 이미지 관련 코드 제거됨 */}
 //               <tr height="80px">
-//                 <td>작성자 : {myuserName}</td>
+//                 <td>이메일 : {boardItem.userEmail}</td>
 //                 <td>작성일 : {getStringedDate(boardItem.boardRegdate)}</td>
 //               </tr>
 //               <tr>
@@ -512,7 +486,7 @@ export default BoardView;
 //                 </div>
 //               ) : (
 //                 <div>
-//                   <strong>{myuserName}:</strong> {comment.content}
+//                   <strong>{boardItem.userEmail}:</strong> {comment.content}
 //                   <button
 //                     onClick={() => {
 //                       setEditingCommentId(comment.commentId);

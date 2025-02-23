@@ -113,12 +113,7 @@ const MypageBoard = () => {
         <tbody>
           {currentPosts.length > 0 ? (
             currentPosts.map((post) => (
-              <tr
-                key={post.boardId}
-                onClick={() =>
-                  navigate(`/board/${selectedType}/view/${post.boardId}`)
-                }
-              >
+              <tr key={post.boardId}>
                 <td>{post.title}</td>
                 <td>{userName}</td>
                 <td>{new Date(post.boardRegdate).toLocaleDateString()}</td>
@@ -127,7 +122,6 @@ const MypageBoard = () => {
             ))
           ) : (
             <tr>
-              {/* ✅ 테이블 헤더 개수에 맞게 colspan 설정 → 레이아웃 유지됨 */}
               <td colSpan="4" className="no-posts">
                 게시글이 없습니다.
               </td>

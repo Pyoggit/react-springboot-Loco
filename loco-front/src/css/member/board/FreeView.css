@@ -56,8 +56,12 @@
   border-collapse: collapse;
 }
 
+/* td의 padding 유지하고 border-bottom은 tr에 적용하여 모든 행에 동일한 밑줄 적용 */
 .freeview-table td {
   padding: 10px;
+}
+
+.freeview-table tr {
   border-bottom: 1px solid rgb(207, 207, 207);
 }
 
