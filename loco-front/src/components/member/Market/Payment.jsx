@@ -4,8 +4,8 @@ import axios from 'axios';
 
 const Payment = ({ amount, orderName, productId, sellerName }) => {
   const [userId, setUserId] = useState(null);
-  const [userName, setUserName] = useState('고객'); // 기본값 설정
-  const paymentMethod = '카드'; // 기본 결제 방법 설정
+  const [userName, setUserName] = useState('고객');
+  const paymentMethod = '카드';
 
   // ✅ API를 통해 로그인한 사용자 정보 가져오기
   useEffect(() => {

@@ -63,11 +63,13 @@
 		ORDER_ID,
 		PRODUCT_NAME,
 		TOTAL_AMOUNT AS PRICE,
-		TO_CHAR(ORDER_DATE, 'YYYY-MM-DD') AS ORDER_DATE,
+		TO_CHAR(ORDER_DATE, 'YYYY-MM-DD')
+		AS ORDER_DATE,
 		CUSTOMER_NAME,
 		SELLER_NAME
 		FROM ORDERS
-		ORDER BY ORDER_DATE DESC
+		ORDER BY ORDER_DATE
+		DESC
 	</select>
 
 	<delete id="deleteOrders">
@@ -77,5 +79,11 @@
 			#{id}
 		</foreach>
 	</delete>
+
+	<!-- ✅ 주문 ID로 상품 ID 조회 -->
+	<select id="getProductIdByOrderId" parameterType="string"
+		resultType="string">
+		SELECT PRODUCT_ID FROM ORDERS WHERE ORDER_ID = #{orderId}
+	</select>
 
 </mapper>

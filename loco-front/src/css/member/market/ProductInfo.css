@@ -255,6 +255,23 @@
   font-weight: bold;
 }
 
+/* ✅ 상품 상태 스타일 */
+.product-info-status {
+  font-size: 16px;
+  font-weight: bold;
+  margin-top: 10px;
+}
+
+/* ✅ 판매 완료 스타일 (빨간색 글씨) */
+.product-info-status.sold-out {
+  color: #ff4d4d; /* 빨간색 */
+}
+
+/* ✅ 판매 중 스타일 (초록색 글씨) */
+.product-info-status.available {
+  color: #4caf50; /* 초록색 */
+}
+
 /* 지도 스타일 */
 .product-info-map-container {
   margin-top: 20px;

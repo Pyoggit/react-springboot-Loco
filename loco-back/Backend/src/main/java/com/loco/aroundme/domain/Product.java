@@ -20,6 +20,7 @@ public class Product {
 	private String productCategory; // 상품 카테고리
 	private String description; // 상세 설명
 	private Timestamp productRegdate; // 등록일
+	private String status;  // 상품 상태
 	
 	private String productAddress; // 거래 장소 주소 (추가)
 	private double productLat; // 거래 장소 위도 (추가)

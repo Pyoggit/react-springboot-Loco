@@ -49,5 +49,10 @@ public interface ProductMapper {
 	// ✅ 상품명 조회 (새로운 메서드 추가)
 	String getProductNameById(@Param("productId") Long productId);
 
+	// ✅ 상품 ID로 판매자 이름 조회
 	String getSellerNameByProductId(@Param("productId") Long productId);
+
+	// ✅ 상품 상태 변경 (판매완료, 판매중 등)
+	void updateProductStatus(@Param("productId") Long productId, @Param("status") String status);
+
 }

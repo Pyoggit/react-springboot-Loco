@@ -91,49 +91,54 @@ public class ProductServiceImpl implements ProductService {
 		if (product != null) {
 			List<ProductPic> productPics = productMapper.getProductPics(productId);
 			product.setImages(productPics);
-			log.info("🔹 상품 ID: {}, 판매자: {}", product.getProductId(), product.getUserName()); // ✅ 추가 확인
+			log.info("🔹 상품 ID: {}, 판매자: {}, 상태: {}", product.getProductId(), product.getUserName(),
+					product.getStatus());
 		}
 		return product;
 	}
 
 	@Override
 	public List<Map<String, Object>> getProducts() {
-	    log.info("🔹 전체 상품 목록 조회 요청");
+		log.info("🔹 전체 상품 목록 조회 요청");
 
-	    List<Product> products = productMapper.selectProducts();
-	    List<Map<String, Object>> productListWithDetails = new ArrayList<>();
+		List<Product> products = productMapper.selectProducts();
+		List<Map<String, Object>> productListWithDetails = new ArrayList<>();
 
-	    for (Product product : products) {
-	        Map<String, Object> productData = new HashMap<>();
-	        productData.put("productId", product.getProductId());
-	        productData.put("productName", product.getProductName());
-	        productData.put("productCategory", product.getProductCategory());
-	        productData.put("price", product.getPrice());
-	        productData.put("userName", product.getUserName());
-	        productData.put("userEmail", product.getUserEmail());
-	        productData.put("productRegdate", product.getProductRegdate());
+		for (Product product : products) {
+			Map<String, Object> productData = new HashMap<>();
+			productData.put("productId", product.getProductId());
+			productData.put("productName", product.getProductName());
+			productData.put("productCategory", product.getProductCategory());
+			productData.put("price", product.getPrice());
+			productData.put("status", product.getStatus()); // ✅ 상품 상태 포함
+			productData.put("userName", product.getUserName());
+			productData.put("userEmail", product.getUserEmail());
+			productData.put("productRegdate", product.getProductRegdate());
+			productData.put("productAddress", product.getProductAddress());
+			productData.put("productLat", product.getProductLat());
+			productData.put("productLng", product.getProductLng());
+			productData.put("productPlaceId", product.getProductPlaceId());
 
-	        // ✅ 거래장소 추가
-	        productData.put("productAddress", product.getProductAddress());
-	        productData.put("productLat", product.getProductLat());
-	        productData.put("productLng", product.getProductLng());
-	        productData.put("productPlaceId", product.getProductPlaceId());
+			List<ProductPic> productPics = productMapper.getProductPics(product.getProductId());
+			productData.put("images", productPics);
 
-	        // ✅ 이미지 정보 가져오기
-	        List<ProductPic> productPics = productMapper.getProductPics(product.getProductId());
-	        productData.put("images", productPics);
+			productListWithDetails.add(productData);
+		}
 
-	        productListWithDetails.add(productData);
-	    }
-
-	    return productListWithDetails;
+		return productListWithDetails;
 	}
-
 
 	@Override
 	public List<Product> getProductsByUserId(Long userId) {
-		log.info("🔹 특정 유저(userId={})가 등록한 상품 조회", userId);
-		return productMapper.findProductsByUserId(userId);
+		log.info("🔹 특정 유저(userId={})가 등록한 상품 조회 (상품 상태 포함)", userId);
+		List<Product> products = productMapper.findProductsByUserId(userId);
+
+		for (Product product : products) {
+			log.info("🔹 상품 ID: {}, 상품명: {}, 상태: {}", product.getProductId(), product.getProductName(),
+					product.getStatus());
+		}
+
+		return products;
 	}
 
 	@Override
@@ -173,10 +178,18 @@ public class ProductServiceImpl implements ProductService {
 	}
 
 	@Override
-    @Transactional(readOnly = true)
+	@Transactional(readOnly = true)
 	public String getSellerNameByProductId(Long productId) {
 		log.info("🔍 [상품 판매자 조회 요청] - 상품 ID: {}", productId);
 		return productMapper.getSellerNameByProductId(productId);
+	}
+
+	@Override
+	@Transactional
+	public void updateProductStatus(Long productId, String status) {
+		log.info("🔹 [상품 상태 변경 요청] - Product ID: {}, Status: {}", productId, status);
+		productMapper.updateProductStatus(productId, status);
+		log.info("✅ [상품 상태 변경 완료] - Product ID: {}, New Status: {}", productId, status);
 	}
 
 }

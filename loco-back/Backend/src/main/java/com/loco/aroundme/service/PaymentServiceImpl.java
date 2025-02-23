@@ -77,7 +77,25 @@ public class PaymentServiceImpl implements PaymentService {
 	@Transactional
 	public void updatePaymentStatus(String orderId, String status, String paymentKey) {
 		log.info("🔹 [결제 상태 업데이트 요청] - Order ID: {}, Status: {}, Payment Key: {}", orderId, status, paymentKey);
+
+		// ✅ 주문 상태 업데이트
 		paymentMapper.updateOrderStatus(orderId, status, paymentKey);
+
+		// ✅ 해당 상품의 상태를 '판매완료(SOLD_OUT)'으로 변경
+		String productIdStr = paymentMapper.getProductIdByOrderId(orderId);
+
+		if (productIdStr != null) {
+			try {
+				Long productId = Long.parseLong(productIdStr); // ✅ String → Long 변환
+				productService.updateProductStatus(productId, "SOLD_OUT"); // 🔄 변경된 메서드 사용
+				log.info("✅ [상품 상태 업데이트 완료] - Product ID: {} -> SOLD_OUT", productId);
+			} catch (NumberFormatException e) {
+				log.error("❌ 상품 ID 변환 실패: {} (Order ID: {})", productIdStr, orderId, e);
+			}
+		} else {
+			log.warn("⚠️ 주문에 연결된 상품 ID를 찾을 수 없음 - Order ID: {}", orderId);
+		}
+
 		log.info("✅ [결제 상태 업데이트 완료] - Order ID: {}", orderId);
 	}
 

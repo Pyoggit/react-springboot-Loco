@@ -61,7 +61,13 @@ const MypageProduct = () => {
         );
 
         console.log('📌 불러온 상품 목록:', response.data);
-        setProducts(response.data || []);
+        // ✅ 백엔드에서 `productStatus` 필드가 정확한지 확인
+        setProducts(
+          response.data.map((product) => ({
+            ...product,
+            status: product.status || 'AVAILABLE', // 기본값 설정
+          }))
+        );
       } catch (error) {
         console.error('❌ 상품 목록 불러오기 실패:', error);
         if (error.response?.status === 401) {
@@ -81,7 +87,7 @@ const MypageProduct = () => {
       product.productName.toLowerCase().includes(search.toLowerCase())
     );
     setFilteredProducts(filtered);
-    setCurrentPage(1); // 검색 시 첫 페이지로 이동
+    setCurrentPage(1);
   }, [search, products]);
 
   /** ✅ 페이지네이션 적용 */
@@ -140,6 +146,7 @@ const MypageProduct = () => {
             <th>카테고리</th>
             <th>가격</th>
             <th>등록 날짜</th>
+            <th>판매 상태</th>
             <th>관리</th>
           </tr>
         </thead>
@@ -155,13 +162,20 @@ const MypageProduct = () => {
                     ? new Date(product.productRegdate).toLocaleDateString()
                     : '날짜 없음'}
                 </td>
-
+                <td
+                  className={`mypage-product-status ${
+                    product.status === 'SOLD_OUT' ? 'sold-out' : 'on-sale'
+                  }`}
+                >
+                  {product.status === 'SOLD_OUT' ? '판매완료' : '판매중'}
+                </td>
                 <td>
                   <button
                     className="mypage-edit-btn"
                     onClick={() =>
                       navigate(`/market/update/${product.productId}`)
                     }
+                    disabled={product.productStatus === 'SOLD_OUT'}
                   >
                     수정
                   </button>
@@ -176,7 +190,7 @@ const MypageProduct = () => {
             ))
           ) : (
             <tr>
-              <td colSpan="5">등록한 상품이 없습니다.</td>
+              <td colSpan="6">등록한 상품이 없습니다.</td>
             </tr>
           )}
         </tbody>
