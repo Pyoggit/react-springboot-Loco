@@ -1,6 +1,8 @@
 package com.loco.aroundme.service;
 
 import java.io.IOException;
+import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 import org.apache.ibatis.annotations.Param;
@@ -58,4 +60,6 @@ public interface UsersService {
 	String updateProfileImage(Users user, MultipartFile profileImage) throws Exception;
 	
 	Users getUserById(Long userId);
+
+	Map<Long, String> selectUserNamesByIds(List<Long> userIds);
 }

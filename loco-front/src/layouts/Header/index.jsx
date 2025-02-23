@@ -79,7 +79,6 @@ export default function Header() {
     }
   };
 
-  // ✅ useEffect에서 `fetchUserInfo` 호출 (로그인 상태 체크)
   useEffect(() => {
     (async () => {
       await fetchUserInfo();
@@ -153,10 +152,16 @@ export default function Header() {
       console.log("✅ 로그아웃 API 응답:", response);
 
       if (response.status === 200) {
+        // ✅ 모든 토큰과 사용자 정보 삭제
         localStorage.removeItem("normal_accessToken");
         localStorage.removeItem("normal_refreshToken");
         localStorage.removeItem("kakao_accessToken");
         localStorage.removeItem("kakao_refreshToken");
+        localStorage.removeItem("userEmail"); // ✅ userEmail 삭제
+        localStorage.removeItem("userId"); // ✅ userId도 삭제
+        localStorage.removeItem("selectedPost"); // ✅ 선택된 모임 정보 삭제
+        localStorage.removeItem("userName");
+        localStorage.removeItem("profileImage"); // ✅ userNickname ��제
 
         setLoginUser(null);
         setLogin(false);
@@ -175,11 +180,10 @@ export default function Header() {
 
   const profileUrl =
     localStorage.getItem("kakao_accessToken") && loginUser?.profileImage
-      ? loginUser.profileImage // ✅ 카카오 유저는 URL 그대로 사용
+      ? loginUser.profileImage
       : loginUser?.profileImage
-      ? // ? `http://localhost:8080/upload/${loginUser.profileImage}` // ✅ 일반 로그인 유저는 /upload/ 추가
-        `${loginUser.profileImage}` // ✅ 일반 로그인 유저는 /upload/ 추가
-      : "http://localhost:8080/images/default-image.png"; // ✅ 기본 이미지
+      ? `${loginUser.profileImage}`
+      : "http://localhost:8080/images/default-image.png";
 
   console.log("📌 유저 프로필 profileImage(sysFile):", loginUser?.profileImage);
   console.log("📌 유저 프로필 url:", profileUrl);

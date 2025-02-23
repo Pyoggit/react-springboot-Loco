@@ -1,6 +1,7 @@
 package com.loco.aroundme.mapper;
 
 import java.util.List;
+import java.util.Map;
 
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
@@ -62,6 +63,10 @@ public interface BoardMapper {
 
 	/** ✅ 특정 유저가 작성한 모든 댓글 조회 */
 	List<BoardComment> selectAllUserComments(@Param("userId") Long userId);
+
+	List<BoardComment> selectCommentsWithUserNamesByBoardId(Long boardId);
+
+	Map<Long, String> selectUserNamesByIds(@Param("userIds") List<Long> userIds);
 
 }
 

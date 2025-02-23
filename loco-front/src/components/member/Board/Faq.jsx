@@ -12,96 +12,39 @@ const Faq = () => {
   const postsPerPage = 10;
   const nav = useNavigate();
   const userName = localStorage.getItem("userName");
+  const [userRole, setUserRole] = useState(null);
 
-  // 관리자가 작성하는 FAQ 목업데이터 8개 (이메일은 admin@naver.com)
-  const mockPosts = [
-    {
-      boardId: 6001,
-      title: "서비스 이용 시간은 어떻게 되나요?",
-      userEmail: "admin@naver.com",
-      boardRegdate: "2025-02-22T10:00:00",
-      views: 120,
-      type: "faq"
-    },
-    {
-      boardId: 6002,
-      title: "회원가입 시 필요한 정보는 무엇인가요?",
-      userEmail: "admin@naver.com",
-      boardRegdate: "2025-02-21T11:15:00",
-      views: 95,
-      type: "faq"
-    },
-    {
-      boardId: 6003,
-      title: "비밀번호 분실 시 어떻게 복구하나요?",
-      userEmail: "admin@naver.com",
-      boardRegdate: "2025-02-20T12:30:00",
-      views: 80,
-      type: "faq"
-    },
-    {
-      boardId: 6004,
-      title: "이용 약관은 어디서 확인할 수 있나요?",
-      userEmail: "admin@naver.com",
-      boardRegdate: "2025-02-19T13:45:00",
-      views: 70,
-      type: "faq"
-    },
-    {
-      boardId: 6005,
-      title: "문의사항은 어디로 보내야 하나요?",
-      userEmail: "admin@naver.com",
-      boardRegdate: "2025-02-18T14:00:00",
-      views: 65,
-      type: "faq"
-    },
-    {
-      boardId: 6006,
-      title: "서비스 이용 중 오류가 발생하면?",
-      userEmail: "admin@naver.com",
-      boardRegdate: "2025-02-17T15:30:00",
-      views: 55,
-      type: "faq"
-    },
-    {
-      boardId: 6007,
-      title: "개인정보 보호 정책은 어떻게 되나요?",
-      userEmail: "admin@naver.com",
-      boardRegdate: "2025-02-16T16:45:00",
-      views: 50,
-      type: "faq"
-    },
-    {
-      boardId: 6008,
-      title: "FAQ 업데이트 주기는 어떻게 되나요?",
-      userEmail: "admin@naver.com",
-      boardRegdate: "2025-02-15T17:00:00",
-      views: 45,
-      type: "faq"
+  // ✅ 로그인한 유저의 ROLE 가져오기
+  const fetchUserInfo = async () => {
+    try {
+      const response = await axios.get("/api/users/mypage", {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("normal_accessToken")}`,
+        },
+      });
+      setUserRole(response.data.role); // ✅ ROLE 저장
+    } catch (error) {
+      console.error("🚨 로그인 정보 불러오기 실패:", error);
+      setUserRole(null); // 오류 발생 시 role 초기화
     }
-  ];
-
-  // 게시글 목록 불러오기 (실제 API와 목업데이터 합치기)
+  };
+  // ✅ FAQ 게시글 불러오기 (API 호출)
   const fetchPosts = async () => {
     try {
       const response = await axios.get(
         `${import.meta.env.VITE_API_URL}/api/board/faq`
       );
-      setPosts([...response.data, ...mockPosts]);
+      setPosts(response.data); // API에서 가져온 데이터를 그대로 저장
     } catch (error) {
-      console.error("게시글 불러오기 실패:", error);
-      setPosts([...mockPosts]);
+      console.error("🚨 게시글 불러오기 실패:", error);
+      setPosts([]); // API 오류 발생 시 빈 배열 유지
     }
   };
 
   useEffect(() => {
-    console.log(
-      "***********************************✅ 저장된 userId:",
-      localStorage.getItem("userId")
-    );
-    fetchPosts();
+    fetchUserInfo(); // ✅ 로그인한 유저 ROLE 가져오기
+    fetchPosts(); // ✅ FAQ 게시글 가져오기
   }, []);
-
   // 검색 필터링
   const getFilteredItems = () => {
     if (search === "") return posts;
@@ -123,8 +66,7 @@ const Faq = () => {
   const currentPosts = sortedData.slice(indexOfFirstPost, indexOfLastPost);
 
   const paginate = (pageNumber) => setCurrentPage(pageNumber);
-  const goToPrevPage = () =>
-    currentPage > 1 && setCurrentPage(currentPage - 1);
+  const goToPrevPage = () => currentPage > 1 && setCurrentPage(currentPage - 1);
   const goToNextPage = () =>
     currentPage < Math.ceil(sortedData.length / postsPerPage) &&
     setCurrentPage(currentPage + 1);
@@ -138,12 +80,15 @@ const Faq = () => {
     <div className="notice-list">
       <header className="notice-header">
         <div className="notice-title">FAQ(자주 묻는 질문)</div>
-        <button
-          className="notice-write-button"
-          onClick={() => nav("/board/faq/new")}
-        >
-          글쓰기
-        </button>
+        {/* ✅ userRole === 1 (관리자)일 때만 "글쓰기" 버튼 보이게 설정 */}
+        {userRole === 1 && (
+          <button
+            className="notice-write-button"
+            onClick={() => nav("/board/faq/new")}
+          >
+            글쓰기
+          </button>
+        )}
       </header>
       <div className="notice-listTopWrapper">
         <div className="notice-listTop">

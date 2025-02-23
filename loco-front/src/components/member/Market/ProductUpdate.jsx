@@ -1,8 +1,8 @@
-import React, { useState, useEffect, useRef } from 'react';
-import { useNavigate, useParams } from 'react-router-dom';
-import axios from 'axios';
-import GoogleMap from './GoogleMap';
-import '@/css/member/market/ProductInsert.css';
+import React, { useState, useEffect, useRef } from "react";
+import { useNavigate, useParams } from "react-router-dom";
+import axios from "axios";
+import GoogleMap from "./GoogleMap";
+import "@/css/member/market/ProductInsert.css";
 
 const ProductUpdate = () => {
   const { id } = useParams();
@@ -10,14 +10,14 @@ const ProductUpdate = () => {
   const fileInputRef = useRef(null);
 
   const [formData, setFormData] = useState({
-    name: '',
-    content: '',
-    category: '',
-    price: '',
+    name: "",
+    content: "",
+    category: "",
+    price: "",
     images: [],
-    address: '',
+    address: "",
     coordinates: { lat: null, lng: null },
-    placeId: '',
+    placeId: "",
   });
 
   const [userId, setUserId] = useState(null);
@@ -27,21 +27,38 @@ const ProductUpdate = () => {
   const [loading, setLoading] = useState(true);
 
   /** ✅ 로그인한 사용자 정보 가져오기 */
-  useEffect(() => {
-    const loginUser = localStorage.getItem('loginUser');
+  // useEffect(() => {
+  //   const loginUser = localStorage.getItem('loginUser');
 
-    if (!loginUser) {
-      console.warn('⚠️ 로그인 정보가 없습니다. 다시 로그인 필요');
-      navigate('/login');
+  //   if (!loginUser) {
+  //     console.warn('⚠️ 로그인 정보가 없습니다. 다시 로그인 필요');
+  //     navigate('/login');
+  //     return;
+  //   }
+
+  //   try {
+  //     const parsedUser = JSON.parse(loginUser);
+  //     console.log('✅ 로그인한 사용자 정보:', parsedUser);
+  //     setUserId(parsedUser.userId);
+  //   } catch (error) {
+  //     console.error('❌ 로그인 사용자 정보 파싱 오류:', error);
+  //   }
+  // }, [navigate]);
+  useEffect(() => {
+    const userId = localStorage.getItem("userId");
+
+    if (!userId) {
+      console.warn("⚠️ 로그인 정보가 없습니다. 다시 로그인 필요");
+      navigate("/login");
       return;
     }
 
     try {
-      const parsedUser = JSON.parse(loginUser);
-      console.log('✅ 로그인한 사용자 정보:', parsedUser);
-      setUserId(parsedUser.userId);
+      const parsedId = JSON.parse(userId);
+      console.log("✅ 로그인한 사용자 정보:", parsedId);
+      setUserId(parsedId.userId);
     } catch (error) {
-      console.error('❌ 로그인 사용자 정보 파싱 오류:', error);
+      console.error("❌ 로그인 사용자 정보 파싱 오류:", error);
     }
   }, [navigate]);
 
@@ -52,7 +69,7 @@ const ProductUpdate = () => {
         const response = await axios.get(
           `${import.meta.env.VITE_API_URL}/api/market/info/${id}`
         );
-        console.log('✅ 상품 정보:', response.data);
+        console.log("✅ 상품 정보:", response.data);
         setProduct(response.data.product); // ✅ 여기서 product 객체만 저장
         setFormData({
           name: response.data.product.productName,
@@ -73,9 +90,9 @@ const ProductUpdate = () => {
           )
         );
       } catch (error) {
-        console.error('❌ 상품 정보를 불러오는 중 오류 발생:', error);
-        alert('존재하지 않는 상품입니다.');
-        navigate('/market', { replace: true });
+        console.error("❌ 상품 정보를 불러오는 중 오류 발생:", error);
+        alert("존재하지 않는 상품입니다.");
+        navigate("/market", { replace: true });
       } finally {
         setLoading(false);
       }
@@ -86,8 +103,8 @@ const ProductUpdate = () => {
 
   useEffect(() => {
     // ✅ localStorage에서 userId를 올바르게 가져오는지 확인
-    const storedUserId = localStorage.getItem('userId');
-    console.log('🔍 localStorage 저장된 userId:', storedUserId);
+    const storedUserId = localStorage.getItem("userId");
+    console.log("🔍 localStorage 저장된 userId:", storedUserId);
 
     if (storedUserId) {
       setUserId(Number(storedUserId)); // ✅ 반드시 숫자로 변환
@@ -97,12 +114,12 @@ const ProductUpdate = () => {
   /** ✅ 본인만 수정 가능하도록 체크 */
   useEffect(() => {
     if (product && userId) {
-      console.log('🟢 로그인한 유저 ID:', Number(userId));
-      console.log('🟢 상품 등록자 ID:', Number(product.userId));
+      console.log("🟢 로그인한 유저 ID:", Number(userId));
+      console.log("🟢 상품 등록자 ID:", Number(product.userId));
 
       if (Number(product?.userId) !== Number(userId)) {
-        alert('본인이 등록한 상품만 수정할 수 있습니다.');
-        navigate('/market');
+        alert("본인이 등록한 상품만 수정할 수 있습니다.");
+        navigate("/market");
       }
     }
   }, [product, userId, navigate]);
@@ -128,25 +145,25 @@ const ProductUpdate = () => {
       !formData.category ||
       !formData.price
     ) {
-      alert('모든 항목을 입력해주세요.');
+      alert("모든 항목을 입력해주세요.");
       return;
     }
 
     // ✅ 수정 요청 전에 accessToken 확인
-    let token = localStorage.getItem('normal_accessToken'); // ✅ 올바른 토큰 키 확인
+    let token = localStorage.getItem("normal_accessToken"); // ✅ 올바른 토큰 키 확인
     if (!token) {
-      console.error('❌ 저장된 토큰 없음! 다시 로그인 필요');
-      alert('로그인이 필요합니다. 다시 로그인해주세요.');
-      navigate('/login');
+      console.error("❌ 저장된 토큰 없음! 다시 로그인 필요");
+      alert("로그인이 필요합니다. 다시 로그인해주세요.");
+      navigate("/login");
       return;
     }
 
-    console.log('🟢 수정 요청 전 accessToken 확인:', token);
-    console.log('🟢 로그인한 유저 ID:', userId);
-    console.log('🟢 상품 등록자 ID:', product?.userId);
+    console.log("🟢 수정 요청 전 accessToken 확인:", token);
+    console.log("🟢 로그인한 유저 ID:", userId);
+    console.log("🟢 상품 등록자 ID:", product?.userId);
 
     if (!userId || Number(userId) !== Number(product?.userId)) {
-      alert('본인이 등록한 상품만 수정할 수 있습니다.');
+      alert("본인이 등록한 상품만 수정할 수 있습니다.");
       return;
     }
 
@@ -166,25 +183,25 @@ const ProductUpdate = () => {
     };
 
     formDataToSend.append(
-      'product',
+      "product",
       new Blob([JSON.stringify(updatedProductData)], {
-        type: 'application/json',
+        type: "application/json",
       })
     );
 
     newFiles.forEach((file) => {
-      formDataToSend.append('images', file);
+      formDataToSend.append("images", file);
     });
 
     try {
-      console.log('🔹 수정 요청 데이터:', updatedProductData);
+      console.log("🔹 수정 요청 데이터:", updatedProductData);
 
       const response = await axios.put(
         `${import.meta.env.VITE_API_URL}/api/market/update/${id}`,
         formDataToSend,
         {
           headers: {
-            'Content-Type': 'multipart/form-data',
+            "Content-Type": "multipart/form-data",
             Authorization: `Bearer ${token}`, // ✅ 토큰 포함
           },
           withCredentials: true,
@@ -192,19 +209,19 @@ const ProductUpdate = () => {
       );
 
       if (response.status === 200) {
-        alert('상품이 성공적으로 수정되었습니다!');
+        alert("상품이 성공적으로 수정되었습니다!");
         navigate(`/market/info/${id}`);
       }
     } catch (error) {
-      console.error('❌ 상품 수정 실패:', error);
+      console.error("❌ 상품 수정 실패:", error);
 
       // ✅ 백엔드에서 401(Unauthorized) 응답 시 로그인 필요 안내
       if (error.response?.status === 401) {
-        alert('로그인 세션이 만료되었습니다. 다시 로그인해주세요.');
-        localStorage.removeItem('normal_accessToken');
-        navigate('/login');
+        alert("로그인 세션이 만료되었습니다. 다시 로그인해주세요.");
+        localStorage.removeItem("normal_accessToken");
+        navigate("/login");
       } else {
-        alert('상품 수정에 실패했습니다.');
+        alert("상품 수정에 실패했습니다.");
       }
     }
   };
