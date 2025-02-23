@@ -13,29 +13,93 @@ const Notice = () => {
   const nav = useNavigate();
   const userName = localStorage.getItem("userName");
 
-  // ✅ 게시글 목록 불러오기
+  // 공지사항 게시판용 목업데이터 8개
+  const mockPosts = [
+    {
+      boardId: 4001,
+      title: "시스템 업데이트 안내",
+      userEmail: "park@naver.com",
+      boardRegdate: "2025-02-22T08:00:00",
+      views: 50,
+      type: "notice",
+    },
+    {
+      boardId: 4002,
+      title: "서비스 점검 안내",
+      userEmail: "kim@daum.net",
+      boardRegdate: "2025-02-21T09:15:00",
+      views: 45,
+      type: "notice",
+    },
+    {
+      boardId: 4003,
+      title: "신규 기능 출시 공지",
+      userEmail: "lee@gmail.com",
+      boardRegdate: "2025-02-20T10:30:00",
+      views: 60,
+      type: "notice",
+    },
+    {
+      boardId: 4004,
+      title: "정기 점검 일정 공지",
+      userEmail: "choi@hanmail.net",
+      boardRegdate: "2025-02-19T11:45:00",
+      views: 35,
+      type: "notice",
+    },
+    {
+      boardId: 4005,
+      title: "서비스 개선 사항 안내",
+      userEmail: "jung@naver.com",
+      boardRegdate: "2025-02-18T12:00:00",
+      views: 40,
+      type: "notice",
+    },
+    {
+      boardId: 4006,
+      title: "고객센터 운영 시간 변경",
+      userEmail: "seo@daum.net",
+      boardRegdate: "2025-02-17T13:15:00",
+      views: 30,
+      type: "notice",
+    },
+    {
+      boardId: 4007,
+      title: "이벤트 당첨자 발표",
+      userEmail: "min@naver.com",
+      boardRegdate: "2025-02-16T14:30:00",
+      views: 55,
+      type: "notice",
+    },
+    {
+      boardId: 4008,
+      title: "기타 공지사항",
+      userEmail: "choi@naver.com",
+      boardRegdate: "2025-02-15T15:45:00",
+      views: 20,
+      type: "notice",
+    },
+  ];
 
+  // 실제 API에서 게시글을 불러오고 목업데이터와 합치기
   const fetchPosts = async () => {
     try {
       const response = await axios.get(
         `${import.meta.env.VITE_API_URL}/api/board/notice`
       );
-      setPosts(response.data);
+      setPosts([...response.data, ...mockPosts]);
     } catch (error) {
       console.error("게시글 불러오기 실패:", error);
+      setPosts([...mockPosts]);
     }
   };
 
   useEffect(() => {
-    console.log(
-      "***********************************✅ 저장된 userId:",
-      localStorage.getItem("userId")
-    );
-
+    console.log("저장된 userId:", localStorage.getItem("userId"));
     fetchPosts();
   }, []);
 
-  // ✅ 검색 필터링
+  // 검색 필터링
   const getFilteredItems = () => {
     if (search === "") return posts;
     return posts.filter((item) =>
@@ -43,14 +107,14 @@ const Notice = () => {
     );
   };
 
-  // ✅ 정렬 (최신순 / 오래된순)
+  // 정렬 (최신순 / 오래된순)
   const sortedData = getFilteredItems().sort((a, b) =>
     sortType === "oldest"
       ? new Date(a.boardRegdate) - new Date(b.boardRegdate)
       : new Date(b.boardRegdate) - new Date(a.boardRegdate)
   );
 
-  // ✅ 페이지네이션
+  // 페이지네이션 계산
   const indexOfLastPost = currentPage * postsPerPage;
   const indexOfFirstPost = indexOfLastPost - postsPerPage;
   const currentPosts = sortedData.slice(indexOfFirstPost, indexOfLastPost);
@@ -98,7 +162,6 @@ const Notice = () => {
             />
           </div>
         </div>
-
         <table className="notice-list-header">
           <tbody>
             <tr>
@@ -110,8 +173,7 @@ const Notice = () => {
           </tbody>
         </table>
       </div>
-
-      {/* ✅ 게시글 목록 */}
+      {/* 게시글 목록 */}
       <div>
         {currentPosts.length > 0 ? (
           currentPosts.map((item) => (
@@ -132,8 +194,7 @@ const Notice = () => {
           <p>게시글이 없습니다.</p>
         )}
       </div>
-
-      {/* ✅ 페이지네이션 */}
+      {/* 페이지네이션 */}
       <div className="notice-pagination">
         <button
           onClick={goToPrevPage}
