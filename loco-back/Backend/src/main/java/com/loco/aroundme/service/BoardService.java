@@ -1,6 +1,10 @@
 package com.loco.aroundme.service;
 
 import java.util.List;
+import java.util.Map;
+
+import org.apache.ibatis.annotations.Param;
+
 import com.loco.aroundme.domain.Board;
 import com.loco.aroundme.domain.BoardComment;
 
@@ -23,25 +27,27 @@ public interface BoardService {
 	/** 특정 게시글의 댓글 조회 */
 	List<BoardComment> getCommentsByBoardId(Long boardId);
 
-    /** ✅ 게시글 수정 */
-    void updateBoard(String type, Long boardId, Board board);
+	/** ✅ 게시글 수정 */
+	void updateBoard(String type, Long boardId, Board board);
 
-    /** 댓글 등록 (userId 사용) */
-    BoardComment addComment(Long boardId, BoardComment comment);
+	/** 댓글 등록 (userId 사용) */
+	BoardComment addComment(Long boardId, BoardComment comment);
 
-    /** 댓글 수정 */
-    BoardComment updateComment(Long commentId, BoardComment comment);
+	/** 댓글 수정 */
+	BoardComment updateComment(Long commentId, BoardComment comment);
 
-    /** 댓글 삭제 */
-    void deleteComment(Long commentId);
+	/** 댓글 삭제 */
+	void deleteComment(Long commentId);
 
 	/** 게시글 삭제 */
 	void deleteBoard(String type, Long id);
 
 	List<Board> getAllBoards();
+
 	void deleteBoards(List<Long> boardIds);
 
 	List<BoardComment> getAllComments();
+
 	void deleteComments(List<Long> commentIds);
 
 	/** ✅ 특정 게시판에서 특정 유저의 댓글 조회 */
@@ -49,6 +55,10 @@ public interface BoardService {
 
 	/** ✅ 특정 유저의 모든 댓글 조회 */
 	List<BoardComment> getAllUserComments(Long userId);
+
+	Map<Long, String> selectUserNamesByIds(List<Long> userIds);
+
+
 
 }
 

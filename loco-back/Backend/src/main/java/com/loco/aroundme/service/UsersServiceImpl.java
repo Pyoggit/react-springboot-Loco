@@ -6,6 +6,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Random;
@@ -415,6 +416,13 @@ public class UsersServiceImpl implements UsersService {
 	@Override
 	public Users getUserById(Long userId) {
 		 return usersMapper.findUserById(userId);
+	}
+
+
+	@Override
+	public Map<Long, String> selectUserNamesByIds(List<Long> userIds) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 }

@@ -125,6 +125,21 @@
 	<update id="updatePassword" parameterType="map">
 	    UPDATE USERS SET PASSWORD = #{password} WHERE USER_EMAIL = #{email}
 	</update>
+	
+	<select id="selectUserNamesByIds" resultMap="userNameMap">
+    SELECT user_id, user_name 
+    FROM users
+    WHERE user_id IN
+    <foreach item="userId" collection="userIds" open="(" separator="," close=")">
+        #{userId}
+    </foreach>
+</select>
+
+<resultMap id="userNameMap" type="map">
+    <id property="userId" column="user_id"/>
+    <result property="userName" column="user_name"/>
+</resultMap>
+	
 
 
 </mapper>

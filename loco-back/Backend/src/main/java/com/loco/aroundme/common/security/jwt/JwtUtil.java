@@ -31,7 +31,7 @@ public class JwtUtil {
 	@Value("${jwt.secret}") // 🔹 application.properties에서 불러오는 JWT 비밀 키
 	private String secretKey;
 
-	private final long ACCESS_TOKEN_EXPIRATION = 1000 * 60 * 60; // 🔹 1시간 (60분)
+	private final long ACCESS_TOKEN_EXPIRATION = 1000 * 60 * 60 * 6; // 🔹 6시간
 	private final long REFRESH_TOKEN_EXPIRATION = 1000 * 60 * 60 * 24 * 7; // 🔹 7일 (일주일)
 
 	// 🔹 로그아웃된 토큰(블랙리스트) 관리
@@ -50,37 +50,6 @@ public class JwtUtil {
 				.compact().trim();
 	}
 
-//    /** ✅ 카카오 사용자(KakaoUsers)용 액세스 토큰 생성 */
-//    public String generateAccessToken(KakaoUsers user) {
-//        String role = "ROLE_USER"; // 카카오 로그인 사용자는 기본적으로 일반 유저
-//
-//        return Jwts.builder()
-//                .setSubject(user.getKakaoId()) // ✅ 카카오 ID 저장
-//                .claim("email", user.getUserEmail()) // 이메일 저장
-//                .claim("name", user.getUserName()) // 이름 저장
-//                .claim("profile", user.getSysFile()) // 프로필 이미지 저장
-//                .claim("role", role) // 역할 정보 저장
-//                .setIssuedAt(new Date()) // 발급 시간
-//                .setExpiration(new Date(System.currentTimeMillis() + ACCESS_TOKEN_EXPIRATION)) // 만료 시간
-//                .signWith(getSigningKey(), SignatureAlgorithm.HS256) // 서명 설정
-//                .compact();
-//    }
-//
-//    /** ✅ 구글 사용자(GoogleUsers)용 액세스 토큰 생성 */
-//    public String generateAccessToken(GoogleUsers user) {
-//        String role = "ROLE_USER"; // Google 로그인 사용자는 기본적으로 일반 유저
-//
-//        return Jwts.builder()
-//                .setSubject(user.getGoogleId()) // ✅ Google ID 저장
-//                .claim("email", user.getUserEmail()) // 이메일 저장
-//                .claim("name", user.getUserName()) // 이름 저장
-//                .claim("profile", user.getSysFile()) // 프로필 이미지 저장
-//                .claim("role", role) // 역할 정보 저장
-//                .setIssuedAt(new Date()) // 발급 시간
-//                .setExpiration(new Date(System.currentTimeMillis() + ACCESS_TOKEN_EXPIRATION)) // 만료 시간
-//                .signWith(getSigningKey(), SignatureAlgorithm.HS256) // 서명 설정
-//                .compact();
-//    }
 
 	/** ✅ 일반 사용자(Users)용 리프레시 토큰 생성 */
 	public String generateRefreshToken(Users user) {
@@ -90,26 +59,6 @@ public class JwtUtil {
 				.signWith(getSigningKey(), SignatureAlgorithm.HS256) // 서명 설정
 				.compact().trim();
 	}
-
-//    /** ✅ 카카오 사용자(KakaoUsers)용 리프레시 토큰 생성 */
-//    public String generateRefreshToken(KakaoUsers user) {
-//        return Jwts.builder()
-//                .setSubject(user.getKakaoId()) // ✅ 카카오 ID 저장
-//                .setIssuedAt(new Date()) // 발급 시간
-//                .setExpiration(new Date(System.currentTimeMillis() + REFRESH_TOKEN_EXPIRATION)) // 만료 시간
-//                .signWith(getSigningKey(), SignatureAlgorithm.HS256) // 서명 설정
-//                .compact();
-//    }
-//
-//    /** ✅ 구글 사용자(GoogleUsers)용 리프레시 토큰 생성 */
-//    public String generateRefreshToken(GoogleUsers user) {
-//        return Jwts.builder()
-//                .setSubject(user.getGoogleId()) // ✅ Google ID 저장
-//                .setIssuedAt(new Date()) // 발급 시간
-//                .setExpiration(new Date(System.currentTimeMillis() + REFRESH_TOKEN_EXPIRATION)) // 만료 시간
-//                .signWith(getSigningKey(), SignatureAlgorithm.HS256) // 서명 설정
-//                .compact();
-//    }
 
 	/** ✅ JWT 검증 (블랙리스트 체크 포함) */
 	public boolean validateToken(String token) {

@@ -1,13 +1,13 @@
-import React, { useEffect, useState, useRef } from 'react';
-import { useNavigate } from 'react-router-dom';
-import axios from 'axios';
-import '@/css/member/circle/CircleDetail.css';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faTrash, faEdit } from '@fortawesome/free-solid-svg-icons';
+import React, { useEffect, useState, useRef } from "react";
+import { useNavigate } from "react-router-dom";
+import axios from "axios";
+import "@/css/member/circle/CircleDetail.css";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faTrash, faEdit } from "@fortawesome/free-solid-svg-icons";
 
 const CircleDetail = () => {
   const navigate = useNavigate();
-  const storedEmail = localStorage.getItem('userEmail');
+  const storedEmail = localStorage.getItem("userEmail");
 
   const [post, setPost] = useState(null);
   const [attendees, setAttendees] = useState([]);
@@ -21,7 +21,7 @@ const CircleDetail = () => {
   /** ✅ Google Maps API를 사용해 지도 초기화 */
   const initMap = (lat, lng) => {
     if (!window.google || !window.google.maps || !mapRef.current) {
-      console.error('❌ Google Maps API가 로드되지 않았습니다.');
+      console.error("❌ Google Maps API가 로드되지 않았습니다.");
       return;
     }
 
@@ -33,7 +33,7 @@ const CircleDetail = () => {
     new window.google.maps.Marker({
       position: { lat, lng },
       map,
-      title: '모임 위치',
+      title: "모임 위치",
     });
   };
 
@@ -46,21 +46,21 @@ const CircleDetail = () => {
       const response = await axios.get(
         `${import.meta.env.VITE_API_URL}/api/circles/${circleId}/creator-email`
       );
-      console.log('✅ 모임 생성자 데이터 응답:', response.data);
+      console.log("✅ 모임 생성자 데이터 응답:", response.data);
 
-      if (!response.data || response.data.trim() === '') {
-        console.warn('⚠️ 서버에서 받은 creatorEmail이 비어 있음!');
+      if (!response.data || response.data.trim() === "") {
+        console.warn("⚠️ 서버에서 받은 creatorEmail이 비어 있음!");
       }
 
       setCreatorEmail(response.data);
     } catch (error) {
-      console.error('❌ 모임 생성자 이메일 가져오기 실패:', error);
+      console.error("❌ 모임 생성자 이메일 가져오기 실패:", error);
     }
   };
 
   const fetchUserEmail = async (userId, token) => {
     try {
-      console.log('📌 fetchUserEmail 실행됨! userId:', userId, 'token:', token);
+      console.log("📌 fetchUserEmail 실행됨! userId:", userId, "token:", token);
 
       const response = await axios.get(
         `${import.meta.env.VITE_API_URL}/api/users/${userId}`,
@@ -71,37 +71,37 @@ const CircleDetail = () => {
         }
       );
 
-      console.log('✅ 서버에서 받은 사용자 정보:', response.data);
+      console.log("✅ 서버에서 받은 사용자 정보:", response.data);
 
       if (response.data.userEmail) {
-        localStorage.setItem('userEmail', response.data.userEmail);
-        console.log('✅ 저장된 이메일:', localStorage.getItem('userEmail'));
+        localStorage.setItem("userEmail", response.data.userEmail);
+        console.log("✅ 저장된 이메일:", localStorage.getItem("userEmail"));
       } else {
-        console.error('❌ 이메일을 가져오지 못함:', response.data);
+        console.error("❌ 이메일을 가져오지 못함:", response.data);
       }
     } catch (error) {
-      console.error('❌ 이메일 가져오기 실패:', error);
+      console.error("❌ 이메일 가져오기 실패:", error);
     }
   };
 
   useEffect(() => {
-    console.log('📌 useEffect 실행됨! storedEmail:', storedEmail);
+    console.log("📌 useEffect 실행됨! storedEmail:", storedEmail);
 
     if (!storedEmail) {
-      console.log('📌 storedEmail이 없으므로 사용자 이메일을 가져옵니다.');
-      const userId = localStorage.getItem('userId');
-      const token = localStorage.getItem('normal_accessToken');
+      console.log("📌 storedEmail이 없으므로 사용자 이메일을 가져옵니다.");
+      const userId = localStorage.getItem("userId");
+      const token = localStorage.getItem("normal_accessToken");
 
       if (userId && token) {
         fetchUserEmail(userId, token);
       } else {
-        console.warn('⚠️ userId 또는 token이 없어서 fetchUserEmail 실행 불가.');
+        console.warn("⚠️ userId 또는 token이 없어서 fetchUserEmail 실행 불가.");
       }
     }
   }, [storedEmail]);
 
   useEffect(() => {
-    console.log('🔥 isAttending 상태 업데이트됨:', isAttending);
+    console.log("🔥 isAttending 상태 업데이트됨:", isAttending);
   }, [isAttending]);
   /** ✅ 참석자 목록 가져오기 */
   const fetchAttendees = async () => {
@@ -112,34 +112,34 @@ const CircleDetail = () => {
         `${import.meta.env.VITE_API_URL}/api/circles/${post.circleId}/attendees`
       );
 
-      console.log('📌 참석자 목록 응답:', response.data);
+      console.log("📌 참석자 목록 응답:", response.data);
       setAttendees(response.data);
 
       const isUserAttending = response.data.some(
         (user) => String(user.userId) === String(userId)
       );
-      console.log('🔥 로그인한 유저가 참석했는가?', isUserAttending);
+      console.log("🔥 로그인한 유저가 참석했는가?", isUserAttending);
 
       setIsAttending(isUserAttending); // ✅ 상태 업데이트
     } catch (error) {
-      console.error('❌ 참석자 목록 가져오기 실패:', error);
+      console.error("❌ 참석자 목록 가져오기 실패:", error);
     }
   };
 
   useEffect(() => {
-    console.log('✅ 참석 버튼 조건 확인:');
-    console.log('📌 userId:', userId);
-    console.log('📌 isCreator:', isCreator);
-    console.log('📌 isAttending:', isAttending);
+    console.log("✅ 참석 버튼 조건 확인:");
+    console.log("📌 userId:", userId);
+    console.log("📌 isCreator:", isCreator);
+    console.log("📌 isAttending:", isAttending);
   }, [userId, isCreator, isAttending]);
 
   /** ✅ 모임 참석 */
   const handleAttend = async () => {
     if (!userId) {
-      alert('로그인이 필요합니다!');
-      return navigate('/login');
+      alert("로그인이 필요합니다!");
+      return navigate("/login");
     }
-    alert('참석 되었습니다!');
+    alert("참석 되었습니다!");
     try {
       await axios.post(
         `${import.meta.env.VITE_API_URL}/api/circles/${post.circleId}/attend`,
@@ -147,17 +147,17 @@ const CircleDetail = () => {
       );
       fetchAttendees();
     } catch (error) {
-      console.error('❌ 참석 요청 실패:', error);
+      console.error("❌ 참석 요청 실패:", error);
     }
   };
 
   /** ✅ 참석 취소 */
   const handleCancelAttendance = async () => {
     if (!userId) {
-      alert('로그인이 필요합니다!');
-      return navigate('/login');
+      alert("로그인이 필요합니다!");
+      return navigate("/login");
     }
-    alert('참석 취소 되었습니다!');
+    alert("참석 취소 되었습니다!");
     try {
       await axios.delete(
         `${import.meta.env.VITE_API_URL}/api/circles/${post.circleId}/cancel`,
@@ -165,24 +165,24 @@ const CircleDetail = () => {
       );
       fetchAttendees();
     } catch (error) {
-      console.error('❌ 참석 취소 실패:', error);
+      console.error("❌ 참석 취소 실패:", error);
     }
   };
 
   /** ✅ 모임 삭제 */
   const handleDeleteCircle = async () => {
     if (!post || !post.circleId) {
-      console.error('❌ 삭제하려는 모임의 circleId가 없음!');
+      console.error("❌ 삭제하려는 모임의 circleId가 없음!");
       return;
     }
 
-    console.log('🗑️ 삭제 버튼 클릭됨!');
-    if (!window.confirm('정말로 이 모임을 삭제하시겠습니까?')) return;
+    console.log("🗑️ 삭제 버튼 클릭됨!");
+    if (!window.confirm("정말로 이 모임을 삭제하시겠습니까?")) return;
 
     try {
       console.log(`🗑️ 삭제 요청: circleId=${post.circleId}`); // 확인용 로그
 
-      const token = localStorage.getItem('normal_accessToken');
+      const token = localStorage.getItem("normal_accessToken");
 
       await axios.delete(
         `${import.meta.env.VITE_API_URL}/api/circles/${post.circleId}`,
@@ -193,17 +193,17 @@ const CircleDetail = () => {
         }
       );
 
-      alert('모임이 삭제되었습니다.');
-      navigate('/');
+      alert("모임이 삭제되었습니다.");
+      navigate("/");
     } catch (error) {
-      console.error('❌ 모임 삭제 실패:', error);
+      console.error("❌ 모임 삭제 실패:", error);
     }
   };
 
   /** ✅ 모임 수정 (이동) */
   const handleEditCircle = () => {
     if (!post || !post.circleId) {
-      console.error('❌ 수정하려는 모임의 circleId가 없음!');
+      console.error("❌ 수정하려는 모임의 circleId가 없음!");
       return;
     }
     console.log(`📝 수정 버튼 클릭됨! circleId=${post.circleId}`, {
@@ -213,19 +213,19 @@ const CircleDetail = () => {
     navigate(`/circle/edit/${post.circleId}`, { state: { post } });
   };
   useEffect(() => {
-    const storedPost = localStorage.getItem('selectedPost');
-    const storedUserId = localStorage.getItem('userId');
+    const storedPost = localStorage.getItem("selectedPost");
+    const storedUserId = localStorage.getItem("userId");
 
     if (storedPost) {
       const parsedPost = JSON.parse(storedPost);
-      console.log('📌 저장된 모임 데이터:', parsedPost);
+      console.log("📌 저장된 모임 데이터:", parsedPost);
 
       setPost(parsedPost);
       setUserId(storedUserId);
 
-      console.log('📌 로그인한 유저 ID:', storedUserId);
+      console.log("📌 로그인한 유저 ID:", storedUserId);
       console.log(
-        '📌 모임 생성자 ID (프론트에서 받은 데이터):',
+        "📌 모임 생성자 ID (프론트에서 받은 데이터):",
         parsedPost.createdById
       ); // ✅ 확인용
 
@@ -238,7 +238,7 @@ const CircleDetail = () => {
         );
       }
     } else {
-      navigate('/');
+      navigate("/");
     }
   }, [navigate]);
 
@@ -247,9 +247,9 @@ const CircleDetail = () => {
       fetchAttendees();
       fetchCreatorEmail(post.circleId);
 
-      console.log('📌 로그인한 유저 ID:', userId);
+      console.log("📌 로그인한 유저 ID:", userId);
       console.log(
-        '📌 모임 생성자 ID (프론트에서 받은 데이터):',
+        "📌 모임 생성자 ID (프론트에서 받은 데이터):",
         post.createdById
       ); // ✅ 여기서 확인!
 
@@ -268,7 +268,7 @@ const CircleDetail = () => {
   }, [post, userId]);
 
   useEffect(() => {
-    console.log('🔥 isAttending 상태 업데이트됨:', isAttending);
+    console.log("🔥 isAttending 상태 업데이트됨:", isAttending);
   }, [isAttending]);
 
   useEffect(() => {
@@ -278,13 +278,13 @@ const CircleDetail = () => {
   }, [post, userId]);
 
   useEffect(() => {
-    console.log('📌 로그인한 유저 이메일 (storedEmail):', storedEmail);
-    console.log('📌 모임 생성자 이메일 (creatorEmail):', creatorEmail);
+    console.log("📌 로그인한 유저 이메일 (storedEmail):", storedEmail);
+    console.log("📌 모임 생성자 이메일 (creatorEmail):", creatorEmail);
 
     if (!storedEmail)
-      console.warn('⚠️ storedEmail이 null 또는 undefined 입니다!');
+      console.warn("⚠️ storedEmail이 null 또는 undefined 입니다!");
     if (!creatorEmail)
-      console.warn('⚠️ creatorEmail이 null 또는 undefined 입니다!');
+      console.warn("⚠️ creatorEmail이 null 또는 undefined 입니다!");
 
     if (storedEmail && creatorEmail) {
       const isCreatorMatch =
@@ -292,37 +292,37 @@ const CircleDetail = () => {
       setIsCreator(isCreatorMatch);
       console.log(`🔥 isCreator 상태 업데이트됨: ${isCreatorMatch}`);
     } else {
-      console.log('⚠️ 이메일 비교가 불가능함 (값이 null일 가능성 있음)');
+      console.log("⚠️ 이메일 비교가 불가능함 (값이 null일 가능성 있음)");
       setIsCreator(false);
     }
   }, [storedEmail, creatorEmail]);
   useEffect(() => {
     if (!storedEmail) {
-      console.log('📌 storedEmail이 없으므로 사용자 이메일을 가져옵니다.');
-      const userId = localStorage.getItem('userId');
-      const token = localStorage.getItem('normal_accessToken');
+      console.log("📌 storedEmail이 없으므로 사용자 이메일을 가져옵니다.");
+      const userId = localStorage.getItem("userId");
+      const token = localStorage.getItem("normal_accessToken");
 
       if (userId && token) {
         fetchUserEmail(userId, token);
       } else {
-        console.warn('⚠️ userId 또는 token이 없어서 fetchUserEmail 실행 불가.');
+        console.warn("⚠️ userId 또는 token이 없어서 fetchUserEmail 실행 불가.");
       }
     }
   }, [storedEmail]);
   useEffect(() => {
-    const email = localStorage.getItem('userEmail');
-    console.log('📌 localStorage에서 가져온 userEmail:', email);
+    const email = localStorage.getItem("userEmail");
+    console.log("📌 localStorage에서 가져온 userEmail:", email);
 
     if (!email) {
-      console.warn('⚠️ localStorage에 userEmail이 저장되지 않았음!');
+      console.warn("⚠️ localStorage에 userEmail이 저장되지 않았음!");
     }
   }, []);
 
   useEffect(() => {
     if (!storedEmail) {
-      console.log('📌 storedEmail이 없으므로 사용자 이메일을 가져옵니다.');
-      const userId = localStorage.getItem('userId');
-      const token = localStorage.getItem('normal_accessToken');
+      console.log("📌 storedEmail이 없으므로 사용자 이메일을 가져옵니다.");
+      const userId = localStorage.getItem("userId");
+      const token = localStorage.getItem("normal_accessToken");
       if (userId && token) {
         fetchUserEmail(userId, token);
       }
@@ -341,7 +341,7 @@ const CircleDetail = () => {
         <h1 className="title">{post?.circleName}</h1>
 
         <p className="creator-email">
-          ✉️ 모임 생성자: {creatorEmail || '정보 없음'}
+          ✉️ 모임 생성자: {creatorEmail || "정보 없음"}
         </p>
 
         <div className="attendees-list">
@@ -382,7 +382,7 @@ const CircleDetail = () => {
           <div
             ref={mapRef}
             className="map"
-            style={{ width: '100%', height: '300px' }}
+            style={{ width: "100%", height: "300px" }}
           ></div>
           {post &&
             storedEmail &&

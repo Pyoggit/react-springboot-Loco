@@ -6,7 +6,7 @@ import "@/css/member/common/Circles.css";
 const Circles = ({ selectedCategory }) => {
   const [circles, setCircles] = useState([]);
   const navigate = useNavigate();
-  const [visibleCircles, setVisibleCircles] = useState(6);
+  const [visibleCircles, setVisibleCircles] = useState(8);
 
   useEffect(() => {
     if (selectedCategory) {

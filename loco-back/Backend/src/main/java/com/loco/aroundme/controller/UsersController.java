@@ -1,9 +1,12 @@
 package com.loco.aroundme.controller;
 
+import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -117,84 +120,6 @@ public class UsersController {
 		return ResponseEntity.ok("✅ 로그아웃 성공!");
 	}
 
-	/**
-	 * 로그인한 사용자 정보 가져오기 (경로: /api/users/mypage)
-	 */
-//	@GetMapping("/mypage")
-//	public ResponseEntity<?> getCurrentUser(
-//			@CookieValue(value = "normal_accessToken", required = false) String normalToken,
-//			@CookieValue(value = "kakao_accessToken", required = false) String kakaoToken) {
-//
-//		// ✅ 둘 다 없으면 401 에러 반환
-//		if (normalToken == null && kakaoToken == null) {
-//			return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(Map.of("error", "No token found in cookies"));
-//		}
-//
-//		// ✅ 쿠키에서 가져온 토큰 중 하나 사용
-//		String token = (normalToken != null) ? normalToken : kakaoToken;
-//
-//		// ✅ 블랙리스트 체크
-//		if (jwtUtil.isBlacklisted(token)) {
-//			System.out.println("🚨 블랙리스트에 등록된 토큰: " + token);
-//			return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(Map.of("error", "Token is blacklisted"));
-//		}
-//
-//		// ✅ 토큰 유효성 검사
-//		if (!jwtUtil.validateToken(token)) {
-//			System.out.println("🚨 유효하지 않은 토큰: " + token);
-//			return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(Map.of("error", "Invalid token"));
-//		}
-//
-//		// ✅ 토큰에서 이메일 가져오기
-//		String userEmail = jwtUtil.getUserEmail(token);
-//		if (userEmail == null) {
-//			return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
-//					.body(Map.of("error", "Failed to extract email from token"));
-//		}
-//
-//		// ✅ DB에서 사용자 조회
-//		Users user = usersMapper.read(userEmail);
-//		if (user == null) {
-//			return ResponseEntity.status(HttpStatus.NOT_FOUND).body(Map.of("error", "User not found"));
-//		}
-//
-//		// ✅ 정상 응답 반환
-//		return ResponseEntity
-//				.ok(Map.ofEntries(Map.entry("userId", user.getUserId()), Map.entry("email", user.getUserEmail()),
-//						Map.entry("userName", user.getUserName()), Map.entry("role", user.getRoleId()),
-//						Map.entry("gender", user.getGender() == null ? "" : user.getGender()),
-//						Map.entry("mobile1", user.getMobile1() == null ? "" : user.getMobile1()),
-//						Map.entry("mobile2", user.getMobile2() == null ? "" : user.getMobile2()),
-//						Map.entry("mobile3", user.getMobile3() == null ? "" : user.getMobile3()),
-//						Map.entry("phone1", user.getPhone1() == null ? "" : user.getPhone1()),
-//						Map.entry("phone2", user.getPhone2() == null ? "" : user.getPhone2()),
-//						Map.entry("phone3", user.getPhone3() == null ? "" : user.getPhone3()),
-//						Map.entry("birthDate", user.getBirth() == null ? "" : user.getBirth()),
-//						Map.entry("zipcode", user.getZipcode() == null ? "" : user.getZipcode()),
-//						Map.entry("address", user.getAddress1() == null ? "" : user.getAddress1()),
-//						Map.entry("detailAddress", user.getAddress2() == null ? "" : user.getAddress2()),
-//						Map.entry("profileImage", user.getOriginUser() == null ? "" : user.getOriginUser())));
-//	}
-
-//	@GetMapping("/mypage")
-//	public ResponseEntity<?> getCurrentUser(@RequestHeader("Authorization") String authorizationHeader) {
-//		if (authorizationHeader == null || !authorizationHeader.startsWith("Bearer ")) {
-//			return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(Map.of("error", "토큰이 없습니다."));
-//		}
-//
-//		String token = authorizationHeader.substring(7); // "Bearer " 이후의 토큰 값 추출
-//
-//		if (!jwtUtil.validateToken(token)) {
-//			return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(Map.of("error", "유효하지 않은 토큰"));
-//		}
-//
-//		String userEmail = jwtUtil.getUserEmail(token);
-//		Users user = usersMapper.read(userEmail);
-//
-//		if (user == null) {
-//			return ResponseEntity.status(HttpStatus.NOT_FOUND).body(Map.of("error", "유저 정보를 찾을 수 없습니다."));
-//		}
-
 	@GetMapping("/mypage")
 	public ResponseEntity<?> getCurrentUser(@RequestHeader("Authorization") String authorizationHeader) {
 		if (authorizationHeader == null || !authorizationHeader.startsWith("Bearer ")) {
@@ -221,15 +146,6 @@ public class UsersController {
 			profileImage = "http://localhost:8080/upload/" + user.getSysUser(); // 일반 사용자는 /upload/ 추가
 		}
 
-		// ✅ 프로필 이미지 URL 설정 (기본값 추가)
-//	    String profileImage = (user.getSysUser() != null && !user.getSysUser().isEmpty())
-//	        ? "/upload/" + user.getSysUser()  // ✅ 업로드된 이미지 사용
-//	        : "/images/default-image.png";  // ✅ 기본 이미지
-		// ✅ 프로필 이미지 URL 설정 (기본값 추가)
-//		String profileImage = (user.getSysUser() != null && !user.getSysUser().isEmpty())
-//		    ? "/upload/" + user.getSysUser()  // ✅ 업로드된 이미지 사용
-//		    : "/images/default-image.png";  // ✅ 기본 이미지
-
 		return ResponseEntity
 				.ok(Map.ofEntries(Map.entry("userId", user.getUserId()), Map.entry("email", user.getUserEmail()),
 						Map.entry("userName", user.getUserName()), Map.entry("role", user.getRoleId()),
@@ -254,58 +170,6 @@ public class UsersController {
 						Map.entry("profileImage", profileImage)));
 	}
 
-//	@PutMapping("/update")
-//	public ResponseEntity<?> updateUser(@RequestHeader("Authorization") String authorizationHeader,
-//			@RequestPart("user") Users user, // ✅ JSON 데이터는 @RequestPart로 받아야 함
-//			@RequestPart(value = "profileImage", required = false) MultipartFile profileImage) { // ✅ 파일은 @RequestPart
-//
-//		try {
-//			if (authorizationHeader == null || !authorizationHeader.startsWith("Bearer ")) {
-//				return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(Map.of("error", "토큰이 없습니다."));
-//			}
-//
-//			String token = authorizationHeader.substring(7);
-//			if (!jwtUtil.validateToken(token)) {
-//				return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(Map.of("error", "유효하지 않은 토큰"));
-//			}
-//
-//			String userEmail = jwtUtil.getUserEmail(token);
-//			Users existingUser = usersMapper.read(userEmail);
-//
-//			if (existingUser == null) {
-//				return ResponseEntity.status(HttpStatus.NOT_FOUND).body(Map.of("error", "유저 정보를 찾을 수 없습니다."));
-//			}
-//
-//			// ✅ 기존 유저 정보 업데이트
-//			existingUser.setUserName(user.getUserName());
-//			existingUser.setGender(user.getGender());
-//			existingUser.setMobile1(user.getMobile1());
-//			existingUser.setMobile2(user.getMobile2());
-//			existingUser.setMobile3(user.getMobile3());
-//			existingUser.setPhone1(user.getPhone1());
-//			existingUser.setPhone2(user.getPhone2());
-//			existingUser.setPhone3(user.getPhone3());
-//			existingUser.setZipcode(user.getZipcode());
-//			existingUser.setAddress1(user.getAddress1());
-//			existingUser.setAddress2(user.getAddress2());
-//
-//			// ✅ 프로필 이미지 처리
-//			if (profileImage != null && !profileImage.isEmpty()) {
-//				usersService.uploadProfileImage(existingUser, profileImage);
-//			}
-//
-//			usersMapper.updateUser(existingUser);
-////	        log.info("✅ 회원 정보 업데이트 완료: {}", existingUser.getUserEmail());
-//			log.info("✅ 회원 정보 업데이트 완료: {}", existingUser);
-//
-//			return ResponseEntity.ok(Map.of("message", "회원정보가 성공적으로 수정되었습니다!"));
-//
-//		} catch (Exception e) {
-//			log.error("❌ 회원 정보 업데이트 중 오류 발생", e);
-//			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-//					.body(Map.of("error", "서버 오류가 발생했습니다.", "details", e.getMessage()));
-//		}
-//	}
 	@PutMapping("/update")
 	@Transactional
 	public ResponseEntity<?> updateUser(@RequestHeader("Authorization") String authorizationHeader,
@@ -564,5 +428,27 @@ public class UsersController {
 		List<Circle> likedCircles = circleService.getLikedCircles(userId);
 		return ResponseEntity.ok(likedCircles);
 	}
+	
+	@GetMapping("/getUserNames")
+	public ResponseEntity<Map<Long, String>> getUserNamesByIds(
+	    @RequestParam("userIds") String userIdsParam
+	) {
+	    // 문자열 userIdsParam을 쉼표(,)로 구분된 숫자로 변환
+	    List<Long> userIds = Arrays.stream(userIdsParam.split(","))
+	        .map(Long::parseLong)
+	        .collect(Collectors.toList());
+
+	    Map<Long, String> userNames = new HashMap<>();
+	    
+	    for (Long userId : userIds) {
+	        Users user = usersService.getUserById(userId);
+	        if (user != null) {
+	            userNames.put(userId, user.getUserName());
+	        }
+	    }
+
+	    return ResponseEntity.ok(userNames);
+	}
+
 
 }

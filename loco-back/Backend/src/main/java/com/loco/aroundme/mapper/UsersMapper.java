@@ -1,6 +1,7 @@
 package com.loco.aroundme.mapper;
 
 import java.util.List;
+import java.util.Map;
 
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
@@ -45,4 +46,7 @@ public interface UsersMapper {
 	 /* ✅ 사용자 ID로 사용자 정보 조회 */
     @Select("SELECT * FROM USERS WHERE USER_ID = #{userId}")
     Users findUserById(@Param("userId") Long userId);
+    
+    Map<Long, String> selectUserNamesByIds(List<Long> userIds);
+
 }

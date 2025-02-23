@@ -12,107 +12,70 @@ const Notice = () => {
   const postsPerPage = 10;
   const nav = useNavigate();
   const userName = localStorage.getItem("userName");
+  const [userRole, setUserRole] = useState(null); // ✅ API에서 가져온 유저 역할 저장
 
-  // 공지사항 게시판용 목업데이터 8개
-  const mockPosts = [
-    {
-      boardId: 4001,
-      title: "시스템 업데이트 안내",
-      userEmail: "park@naver.com",
-      boardRegdate: "2025-02-22T08:00:00",
-      views: 50,
-      type: "notice",
-    },
-    {
-      boardId: 4002,
-      title: "서비스 점검 안내",
-      userEmail: "kim@daum.net",
-      boardRegdate: "2025-02-21T09:15:00",
-      views: 45,
-      type: "notice",
-    },
-    {
-      boardId: 4003,
-      title: "신규 기능 출시 공지",
-      userEmail: "lee@gmail.com",
-      boardRegdate: "2025-02-20T10:30:00",
-      views: 60,
-      type: "notice",
-    },
-    {
-      boardId: 4004,
-      title: "정기 점검 일정 공지",
-      userEmail: "choi@hanmail.net",
-      boardRegdate: "2025-02-19T11:45:00",
-      views: 35,
-      type: "notice",
-    },
-    {
-      boardId: 4005,
-      title: "서비스 개선 사항 안내",
-      userEmail: "jung@naver.com",
-      boardRegdate: "2025-02-18T12:00:00",
-      views: 40,
-      type: "notice",
-    },
-    {
-      boardId: 4006,
-      title: "고객센터 운영 시간 변경",
-      userEmail: "seo@daum.net",
-      boardRegdate: "2025-02-17T13:15:00",
-      views: 30,
-      type: "notice",
-    },
-    {
-      boardId: 4007,
-      title: "이벤트 당첨자 발표",
-      userEmail: "min@naver.com",
-      boardRegdate: "2025-02-16T14:30:00",
-      views: 55,
-      type: "notice",
-    },
-    {
-      boardId: 4008,
-      title: "기타 공지사항",
-      userEmail: "choi@naver.com",
-      boardRegdate: "2025-02-15T15:45:00",
-      views: 20,
-      type: "notice",
-    },
-  ];
-
-  // 실제 API에서 게시글을 불러오고 목업데이터와 합치기
+  // ✅ 로그인한 유저 정보 가져오기
+  const fetchUserInfo = async () => {
+    try {
+      const response = await axios.get("/api/users/mypage", {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("normal_accessToken")}`,
+        },
+      });
+      setUserRole(response.data.role); // ✅ role 값 저장
+    } catch (error) {
+      console.error("🚨 로그인 정보 불러오기 실패:", error);
+      setUserRole(null); // 오류 발생 시 role 초기화
+    }
+  };
+  // ✅ 공지사항 게시글 불러오기
   const fetchPosts = async () => {
     try {
       const response = await axios.get(
         `${import.meta.env.VITE_API_URL}/api/board/notice`
       );
-      setPosts([...response.data, ...mockPosts]);
+
+      console.log("📌 API 응답 상태 코드:", response.status);
+      console.log("📌 API 응답 데이터:", response.data);
+
+      if (Array.isArray(response.data)) {
+        setPosts(response.data);
+      } else {
+        console.error("🚨 API 응답이 배열이 아님:", response.data);
+        setPosts([]);
+      }
     } catch (error) {
-      console.error("게시글 불러오기 실패:", error);
-      setPosts([...mockPosts]);
+      console.error("🚨 게시글 불러오기 실패:", error);
+      setPosts([]);
     }
   };
 
   useEffect(() => {
-    console.log("저장된 userId:", localStorage.getItem("userId"));
-    fetchPosts();
+    fetchUserInfo();
+    fetchPosts(); // ✅ 한 번만 호출
   }, []);
 
   // 검색 필터링
   const getFilteredItems = () => {
+    if (!Array.isArray(posts)) {
+      console.error("🚨 posts 데이터가 배열이 아님:", posts);
+      return []; // ✅ posts가 배열이 아니면 빈 배열 반환
+    }
+
     if (search === "") return posts;
     return posts.filter((item) =>
-      item[searchOpt].toLowerCase().includes(search.toLowerCase())
+      item[searchOpt]?.toLowerCase().includes(search.toLowerCase())
     );
   };
 
   // 정렬 (최신순 / 오래된순)
-  const sortedData = getFilteredItems().sort((a, b) =>
-    sortType === "oldest"
-      ? new Date(a.boardRegdate) - new Date(b.boardRegdate)
-      : new Date(b.boardRegdate) - new Date(a.boardRegdate)
-  );
+  const sortedData = Array.isArray(getFilteredItems())
+    ? getFilteredItems().sort((a, b) =>
+        sortType === "oldest"
+          ? new Date(a.boardRegdate) - new Date(b.boardRegdate)
+          : new Date(b.boardRegdate) - new Date(a.boardRegdate)
+      )
+    : []; // ✅ getFilteredItems()가 배열이 아니면 빈 배열 반환
 
   // 페이지네이션 계산
   const indexOfLastPost = currentPage * postsPerPage;
@@ -134,12 +97,14 @@ const Notice = () => {
     <div className="notice-list">
       <header className="notice-header">
         <div className="notice-title">공지사항</div>
-        <button
-          className="notice-write-button"
-          onClick={() => nav("/board/notice/new")}
-        >
-          글쓰기
-        </button>
+        {userRole === 1 && ( // ✅ 관리자만 "글쓰기" 버튼 보이게!
+          <button
+            className="notice-write-button"
+            onClick={() => nav("/board/notice/new")}
+          >
+            글쓰기
+          </button>
+        )}
       </header>
       <div className="notice-listTopWrapper">
         <div className="notice-listTop">

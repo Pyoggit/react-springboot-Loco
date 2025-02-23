@@ -2,6 +2,7 @@ package com.loco.aroundme.service;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -132,6 +133,11 @@ public class BoardServiceImpl implements BoardService {
 	    return boardMapper.selectAllUserComments(userId);
 	}
 
+
+	@Override
+	public Map<Long, String> selectUserNamesByIds(List<Long> userIds) {
+	    return boardMapper.selectUserNamesByIds(userIds);
+	}
 
 
 }
