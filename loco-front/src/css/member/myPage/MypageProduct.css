@@ -50,6 +50,26 @@
   background: rgba(177, 121, 241, 0.8);
 }
 
+/* ✅ 상품 상태 표시 스타일 */
+.mypage-product-status {
+  font-weight: bold;
+  text-align: center;
+}
+
+/* ✅ 판매중 스타일 */
+.mypage-product-status.on-sale {
+  color: #2ecc71;
+  font-size: 16px;
+  text-shadow: 1px 1px 3px rgba(46, 204, 113, 0.3);
+}
+
+/* ✅ 판매완료 스타일 (강조된 빨간색) */
+.mypage-product-status.sold-out {
+  color: #ff3b3b;
+  font-size: 16px;
+  text-shadow: 1px 1px 3px rgba(255, 59, 59, 0.3);
+}
+
 /* ✅ 수정 & 삭제 버튼 스타일 */
 .mypage-edit-btn,
 .mypage-delete-btn {
