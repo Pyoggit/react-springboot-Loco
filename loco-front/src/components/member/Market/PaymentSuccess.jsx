@@ -7,7 +7,7 @@ export function PaymentSuccess() {
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
   const [isLoading, setIsLoading] = useState(true);
-  const [productName, setProductName] = useState('상품 정보 없음'); // ✅ 상품명 추가
+  const [productName, setProductName] = useState('상품 정보 없음');
   const [userId, setUserId] = useState(null);
   const [customerName, setCustomerName] = useState('고객');
 
@@ -70,35 +70,34 @@ export function PaymentSuccess() {
             paymentMethod: '카드',
             totalAmount: amount,
             paymentKey,
-            customerName, // ✅ 주문자 이름 포함
+            customerName,
             status: 'COMPLETED',
           },
           {
-            headers: { Authorization: `Bearer ${token}` }, // ✅ 인증 추가
+            headers: { Authorization: `Bearer ${token}` },
           }
         );
 
         if (response.data.success) {
           console.log('✅ 결제 승인 및 저장 완료');
+          return true;
         } else {
+          console.error('❌ 결제 내역 저장 실패:', response.data);
           alert('결제 정보 저장 중 오류가 발생했습니다.');
-          navigate('/market');
+          return false;
         }
       } catch (error) {
         console.error('❌ 결제 정보 저장 실패:', error);
         alert('결제 처리 중 문제가 발생했습니다.');
-        navigate('/market');
+        return false;
       }
     };
 
-    /** ✅ 결제 정보 저장 후 상품명 가져오기 */
+    /** ✅ 상품명 가져오기 */
     const fetchProductName = async () => {
       try {
-        const numericProductId = Number(productId);
         const response = await axios.get(
-          `${
-            import.meta.env.VITE_API_URL
-          }/api/market/product-name/${numericProductId}`
+          `${import.meta.env.VITE_API_URL}/api/market/product-name/${productId}`
         );
         setProductName(response.data);
         console.log('✅ 상품명 조회 성공:', response.data);
@@ -107,11 +106,12 @@ export function PaymentSuccess() {
       }
     };
 
-    /** ✅ 순서: 사용자 정보 가져오기 → 결제 승인 → 상품명 조회 */
+    /** ✅ 순서: 결제 승인 → 상품명 가져오기 */
     const processPaymentSuccess = async () => {
-      await fetchUserInfo(); // ✅ 로그인한 사용자 정보 가져오기
-      await sendPaymentData(); // ✅ 결제 정보 저장 완료!
-      await fetchProductName(); // ✅ 결제 정보 저장 후 상품명 조회
+      await fetchUserInfo();
+      await fetchProductName();
+      await sendPaymentData(); // 상품 상태는 여기서 변경됨
+
       setIsLoading(false);
     };
 
@@ -142,9 +142,9 @@ export function PaymentSuccess() {
           </div>
           <button
             className="success-button"
-            onClick={() => (window.location.href = '/')}
+            onClick={() => navigate('/market')}
           >
-            홈으로 돌아가기
+            마켓으로 돌아가기
           </button>
         </>
       )}

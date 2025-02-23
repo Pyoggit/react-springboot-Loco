@@ -18,18 +18,21 @@ public interface ProductService {
 	Product findProductById(Long productId);
 
 	// ✅ 전체 상품 조회 (판매자 정보 + 이미지 포함)
-    List<Map<String, Object>> getProducts();
+	List<Map<String, Object>> getProducts();
 
 	// ✅ 특정 유저가 등록한 상품 조회 (하나만 유지)
 	List<Product> getProductsByUserId(Long userId);
 
 	// ✅ 본인이 등록한 상품 삭제
 	void deleteProductsByUser(List<Long> productIds, Long userId);
-	
+
 	List<Product> getProductsByIds(List<Long> productIds);
-	
+
 	// ✅ 상품 ID로 상품명 조회 (새로 추가)
-    String getProductNameById(Long productId);
-    
-    String getSellerNameByProductId(Long productId);
+	String getProductNameById(Long productId);
+
+	String getSellerNameByProductId(Long productId);
+
+	void updateProductStatus(Long productId, String status);
+
 }

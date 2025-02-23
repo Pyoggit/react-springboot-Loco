@@ -16,7 +16,8 @@
 		<result property="productLng" column="PRODUCT_LNG" />
 		<result property="productPlaceId" column="PRODUCT_PLACE_ID" />
 		<result property="productRegdate" column="PRODUCT_REGDATE" />
-		<result property="userName" column="USER_NAME" /> <!-- ✅ 추가: 판매자 이름 매핑 -->
+		<result property="userName" column="USER_NAME" />
+		<result property="status" column="PRODUCT_STATUS" />
 	</resultMap>
 
 	<!-- ✅ 상품 등록 -->
@@ -24,17 +25,27 @@
 		parameterType="com.loco.aroundme.domain.Product">
 		INSERT INTO PRODUCT (
 		PRODUCT_ID, USER_ID, PRODUCT_NAME,
-		PRICE, PRODUCT_CATEGORY,
-		DESCRIPTION, PRODUCT_ADDRESS, PRODUCT_LAT,
-		PRODUCT_LNG,
-		PRODUCT_PLACE_ID, PRODUCT_REGDATE
-		) VALUES (
+		PRICE, PRODUCT_CATEGORY, DESCRIPTION,
+		PRODUCT_ADDRESS, PRODUCT_LAT,
+		PRODUCT_LNG, PRODUCT_PLACE_ID,
+		PRODUCT_REGDATE, PRODUCT_STATUS
+		) VALUES
+		(
 		PRODUCT_SEQ.NEXTVAL, #{userId}, #{productName}, #{price},
-		#{productCategory}, #{description}, #{productAddress},
-		#{productLat},
-		#{productLng}, #{productPlaceId}, SYSTIMESTAMP
+		#{productCategory},
+		#{description},
+		#{productAddress}, #{productLat},
+		#{productLng}, #{productPlaceId}, SYSTIMESTAMP,
+		'AVAILABLE'
 		)
 	</insert>
+
+	<!-- ✅ 상품 상태 변경 (판매완료, 판매중 등) -->
+	<update id="updateProductStatus">
+		UPDATE PRODUCT
+		SET PRODUCT_STATUS = #{status}
+		WHERE PRODUCT_ID = #{productId}
+	</update>
 
 	<!-- ✅ 상품 수정 -->
 	<update id="updateProduct"
@@ -61,13 +72,14 @@
 		SELECT
 		p.*,
 		u.USER_NAME AS USER_NAME,
-		u.USER_EMAIL AS USER_EMAIL,  <!-- ✅ 판매자 
-			이메일 추가 -->
-		TO_CHAR(p.PRODUCT_REGDATE, 'YYYY-MM-DD') AS PRODUCT_REGDATE  <!-- ✅ 등록일 추가 -->
-		FROM PRODUCT p
+		u.USER_EMAIL AS USER_EMAIL,
+		p.PRODUCT_STATUS AS STATUS, <!-- ✅ 상품 상태 추가 -->
+		TO_CHAR(p.PRODUCT_REGDATE, 'YYYY-MM-DD') AS PRODUCT_REGDATE
+		FROM
+		PRODUCT p
 		LEFT JOIN USERS u ON p.USER_ID = u.USER_ID
-		WHERE
-		p.PRODUCT_ID = #{productId}
+		WHERE p.PRODUCT_ID
+		= #{productId}
 	</select>
 
 	<!-- ✅ 전체 상품 조회 -->
@@ -79,29 +91,47 @@
 		p.PRICE,
 		p.PRODUCT_CATEGORY,
 		p.DESCRIPTION,
-		p.PRODUCT_ADDRESS,  <!-- ✅ 거래장소 추가 -->
-		p.PRODUCT_LAT,      <!-- ✅ 위도 추가 -->
-		p.PRODUCT_LNG,      <!-- ✅ 경도 추가 -->
-		p.PRODUCT_PLACE_ID, <!-- ✅ 장소 ID 추가 -->
+		p.PRODUCT_ADDRESS,
+		p.PRODUCT_LAT,
+		p.PRODUCT_LNG,
+		p.PRODUCT_PLACE_ID,
 		p.PRODUCT_REGDATE,
+		p.PRODUCT_STATUS,
 		u.USER_NAME AS USER_NAME,
 		u.USER_EMAIL AS USER_EMAIL,
-		TO_CHAR(p.PRODUCT_REGDATE, 'YYYY-MM-DD') AS PRODUCT_REGDATE
-		FROM PRODUCT p
+		TO_CHAR(p.PRODUCT_REGDATE, 'YYYY-MM-DD') AS
+		PRODUCT_REGDATE
+		FROM
+		PRODUCT p
 		LEFT JOIN USERS u ON p.USER_ID = u.USER_ID
-		ORDER BY p.PRODUCT_REGDATE DESC
+		ORDER BY
+		p.PRODUCT_REGDATE DESC
 	</select>
 
 
-	<!-- ✅ 특정 유저가 등록한 상품 조회 -->
+	<!-- ✅ 특정 유저가 등록한 상품 조회 (상품 상태 포함) -->
 	<select id="findProductsByUserId" parameterType="long"
 		resultMap="productResultMap">
-		SELECT p.*, u.USER_NAME AS USER_NAME
+		SELECT
+		p.PRODUCT_ID,
+		p.USER_ID,
+		p.PRODUCT_NAME,
+		p.PRICE,
+		p.PRODUCT_CATEGORY,
+		p.DESCRIPTION,
+		p.PRODUCT_ADDRESS,
+		p.PRODUCT_LAT,
+		p.PRODUCT_LNG,
+		p.PRODUCT_PLACE_ID,
+		p.PRODUCT_REGDATE,
+		p.PRODUCT_STATUS,
+		u.USER_NAME AS USER_NAME
 		FROM PRODUCT p
-		LEFT JOIN
-		USERS u ON p.USER_ID = u.USER_ID
+		LEFT JOIN USERS u ON p.USER_ID =
+		u.USER_ID
 		WHERE p.USER_ID = #{userId}
 	</select>
+
 
 	<!-- ✅ 최근 등록된 상품 ID 가져오기 -->
 	<select id="getLastInsertedProductId" parameterType="long"

@@ -20,7 +20,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
 
 import com.loco.aroundme.common.security.jwt.JwtUtil;
@@ -36,21 +35,18 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 @RestController
 @RequestMapping("/api/payment")
-@CrossOrigin(origins = "http://localhost:5173") // ✅ CORS 설정 추가
+@CrossOrigin(origins = "http://localhost:5173")
 @RequiredArgsConstructor
 public class PaymentController {
 
 	private final PaymentService paymentService;
 	private final ProductService productService;
 	private final UsersMapper usersMapper;
-	private final JwtUtil jwtUtil; // ✅ JWT 유틸 추가
+	private final JwtUtil jwtUtil;
 
 	@Value("${toss.secret-key}")
 	private String SECRET_KEY;
 
-	/**
-	 * ✅ 결제 요청 정보 저장 (Frontend → Backend)
-	 */
 	@PostMapping("/create-order")
 	public ResponseEntity<?> createOrder(@RequestBody Order order) {
 		try {
@@ -75,9 +71,6 @@ public class PaymentController {
 		}
 	}
 
-	/**
-	 * ✅ Toss Payments 결제 승인 요청 (Backend → Toss API)
-	 */
 	@PostMapping("/confirm")
 	public ResponseEntity<?> confirmPayment(@RequestBody Map<String, Object> requestData) {
 		String paymentKey = (String) requestData.get("paymentKey");
@@ -90,24 +83,32 @@ public class PaymentController {
 			return ResponseEntity.badRequest().body(Map.of("success", false, "message", "결제 승인 데이터 누락"));
 		}
 
-		HttpHeaders headers = new HttpHeaders();
-		String encodedSecretKey = Base64.getEncoder().encodeToString((SECRET_KEY + ":").getBytes());
-		headers.set("Authorization", "Basic " + encodedSecretKey);
-		headers.setContentType(MediaType.APPLICATION_JSON);
-
-		HttpEntity<Map<String, Object>> entity = new HttpEntity<>(
-				Map.of("paymentKey", paymentKey, "orderId", orderId, "amount", amount), headers);
-		RestTemplate restTemplate = new RestTemplate();
-
 		try {
-			restTemplate.exchange("https://api.tosspayments.com/v1/payments/confirm", HttpMethod.POST, entity,
-					String.class);
-			paymentService.updatePaymentStatus(orderId, "COMPLETED", paymentKey);
+			// ✅ Toss Payments API로 결제 승인 요청
+			HttpHeaders headers = new HttpHeaders();
+			String encodedSecretKey = Base64.getEncoder().encodeToString((SECRET_KEY + ":").getBytes());
+			headers.set("Authorization", "Basic " + encodedSecretKey);
+			headers.setContentType(MediaType.APPLICATION_JSON);
 
-			return ResponseEntity.ok(Map.of("success", true, "message", "결제 승인 성공", "orderId", orderId));
-		} catch (HttpClientErrorException e) {
-			log.error("❌ [결제 승인 실패] - Status: {}, Body: {}", e.getStatusCode(), e.getResponseBodyAsString());
-			return ResponseEntity.status(e.getStatusCode()).body(Map.of("success", false, "message", "결제 승인 실패"));
+			HttpEntity<Map<String, Object>> entity = new HttpEntity<>(
+					Map.of("paymentKey", paymentKey, "orderId", orderId, "amount", amount), headers);
+
+			RestTemplate restTemplate = new RestTemplate();
+			ResponseEntity<String> tossResponse = restTemplate.exchange(
+					"https://api.tosspayments.com/v1/payments/confirm", HttpMethod.POST, entity, String.class);
+
+			if (tossResponse.getStatusCode() == HttpStatus.OK) {
+				paymentService.updatePaymentStatus(orderId, "COMPLETED", paymentKey);
+				return ResponseEntity.ok(Map.of("success", true, "message", "결제 승인 성공", "orderId", orderId));
+			} else {
+				log.error("❌ [결제 승인 실패] - Toss 응답: {}", tossResponse.getBody());
+				return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+						.body(Map.of("success", false, "message", "결제 승인 실패"));
+			}
+		} catch (Exception e) {
+			log.error("❌ [결제 승인 중 서버 오류 발생]", e);
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+					.body(Map.of("success", false, "message", "서버 오류 발생"));
 		}
 	}
 
@@ -142,15 +143,6 @@ public class PaymentController {
 			return null;
 		return usersMapper.read(jwtUtil.getUserEmail(token.substring(7)));
 	}
-//		}
-//		try {
-//			String email = jwtUtil.getUserEmail(token.substring(7));
-//			return usersMapper.read(email);
-//		} catch (Exception e) {
-//			log.error("❌ 토큰 검증 실패: {}", e.getMessage());
-//			return null;
-//		}
-//	}
 
 	/** ✅ 전체 주문 목록 조회 API */
 	@GetMapping("/all-orders")

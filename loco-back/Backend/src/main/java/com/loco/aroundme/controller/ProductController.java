@@ -56,6 +56,9 @@ public class ProductController {
 			Product product = objectMapper.readValue(productJson, Product.class);
 			product.setUserId(user.getUserId());
 
+			// ✅ 상품 상태 기본값 설정 (판매 가능)
+			product.setStatus("AVAILABLE");
+
 			productService.insertProduct(product, images);
 			return ResponseEntity.ok("상품이 성공적으로 등록되었습니다.");
 		} catch (Exception e) {
