@@ -55,7 +55,7 @@ const BoardEditor = () => {
 
   const onClickSubmit = async () => {
     if (!formData.title.trim() || !formData.content.trim()) {
-      alert("제목, 내용, 작성자를 모두 입력해주세요.");
+      alert("제목, 내용을 모두 입력해주세요.");
       return;
     }
 

@@ -18,7 +18,7 @@ const Improvement = () => {
   const fetchPosts = async () => {
     try {
       const response = await axios.get(
-        `${import.meta.env.VITE_API_URL}/api/board/freeboard`
+        `${import.meta.env.VITE_API_URL}/api/board/improvement`
       );
       setPosts(response.data);
     } catch (error) {
@@ -88,7 +88,7 @@ const Improvement = () => {
           <div className="notice-searchBar">
             <select onChange={(e) => setSearchOpt(e.target.value)}>
               <option value="title">제목</option>
-              <option value="writer">작성자</option>
+              <option value="userEmail">이메일</option>
             </select>
             <input
               type="text"
@@ -103,7 +103,7 @@ const Improvement = () => {
           <tbody>
             <tr>
               <td className="notice-board-title">글제목</td>
-              <td className="notice-board-writer">작성자</td>
+              <td className="notice-board-writer">이메일</td>
               <td className="notice-board-date">작성일</td>
               <td className="notice-board-views">조회수</td>
             </tr>

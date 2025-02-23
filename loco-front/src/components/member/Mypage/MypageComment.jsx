@@ -174,7 +174,7 @@ const MypageComment = () => {
       <table className="admin-freeboard-table">
         <thead>
           <tr>
-            <th>작성자</th>
+            <th>이메일</th>
             <th>내용</th>
           </tr>
         </thead>

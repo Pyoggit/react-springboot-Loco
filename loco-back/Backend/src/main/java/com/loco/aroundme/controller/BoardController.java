@@ -253,12 +253,10 @@ public class BoardController {
 //import org.springframework.web.bind.annotation.RequestMapping;
 //import org.springframework.web.bind.annotation.RequestPart;
 //import org.springframework.web.bind.annotation.RestController;
-//import org.springframework.web.multipart.MultipartFile;
 //
 //import com.loco.aroundme.domain.Board;
 //import com.loco.aroundme.domain.BoardComment;
 //import com.loco.aroundme.service.BoardService;
-//import com.loco.aroundme.service.FileService;
 //
 //import lombok.extern.slf4j.Slf4j;
 //
@@ -269,28 +267,16 @@ public class BoardController {
 //public class BoardController {
 //	@Autowired
 //	private BoardService boardService;
-//	@Autowired
-//	private FileService fileService;
 //
 //	/** ✅ 게시글 등록 */
 //	@PostMapping("/new")
-//	public ResponseEntity<String> createBoard(@RequestPart("post") String postJson,
-//			@RequestPart(value = "image", required = false) MultipartFile image) {
+//	public ResponseEntity<String> createBoard(@RequestPart("post") String postJson) {
 //		try {
 //			log.info("📌 게시글 등록 요청 수신 - postJson: {}", postJson);
-//			String imageUrl = null;
-//			// ✅ 이미지 저장 후 URL 반환
-//			if (image != null && !image.isEmpty()) {
-//				log.info("📌 이미지 업로드 요청됨 - 파일명: {}", image.getOriginalFilename());
-//				imageUrl = fileService.saveFile(image);
-//				log.info("✅ 이미지 저장 완료 - 저장된 URL: {}", imageUrl);
-//			} else {
-//				log.info("📌 이미지 업로드 없음");
-//			}
-//			// ✅ JSON을 Board 객체로 변환
-//			Board board = boardService.convertJsonToBoard(postJson, imageUrl);
+//			// 파일 업로드 기능 제거: convertJsonToBoard는 이제 postJson만 받음
+//			Board board = boardService.convertJsonToBoard(postJson);
 //			log.info("✅ 게시글 JSON 변환 완료 - 제목: {}, 작성자: {}", board.getTitle(), board.getUserId());
-//			// ✅ 게시글 저장
+//			// 게시글 저장
 //			boardService.createBoard(board);
 //			log.info("✅ 게시글 저장 완료 - ID: {}", board.getBoardId());
 //			return ResponseEntity.ok("게시글 등록 성공");
@@ -303,19 +289,11 @@ public class BoardController {
 //	/** ✅ 게시글 수정 */
 //	@PutMapping("/{type}/{id}")
 //	public ResponseEntity<String> updateBoard(@PathVariable String type, @PathVariable Long id,
-//			@RequestPart("post") String postJson, @RequestPart(value = "image", required = false) MultipartFile image) {
+//			@RequestBody String postJson) {
 //		try {
 //			log.info("📌 게시글 수정 요청: {}", postJson);
-//			String imageUrl = null;
-//
-//			// 이미지가 새로 업로드되었을 경우 저장
-//			if (image != null && !image.isEmpty()) {
-//				imageUrl = fileService.saveFile(image);
-//				log.info("✅ 새 이미지 저장 완료: {}", imageUrl);
-//			}
-//
-//			// JSON을 Board 객체로 변환 후 수정
-//			Board board = boardService.convertJsonToBoard(postJson, imageUrl);
+//			// 파일 업로드 기능 제거: convertJsonToBoard는 이제 postJson만 받음
+//			Board board = boardService.convertJsonToBoard(postJson);
 //			boardService.updateBoard(type, id, board);
 //			return ResponseEntity.ok("게시글 수정 성공");
 //		} catch (Exception e) {
@@ -399,6 +377,95 @@ public class BoardController {
 //		} catch (Exception e) {
 //			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("게시글 삭제 실패: " + e.getMessage());
 //		}
-//	}
-//}
 //
+//	}
+//
+//	/**
+//	 * 전체 게시글 조회
+//	 */
+//	@GetMapping("/all")
+//	public ResponseEntity<?> getAllBoards() {
+//		try {
+//			List<Board> boards = boardService.getAllBoards();
+//			return ResponseEntity.ok(boards);
+//		} catch (Exception e) {
+//			log.error("전체 게시글 조회 실패: {}", e.getMessage(), e);
+//			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("전체 게시글 조회 실패");
+//		}
+//	}
+//
+//	/**
+//	 * 선택한 게시글 삭제 프론트에서는 axios.delete 로 boardIds 를 JSON 바디에 담아 전송
+//	 */
+//	@DeleteMapping("/remove")
+//	public ResponseEntity<?> deleteBoards(@RequestBody Map<String, List<Long>> request) {
+//		try {
+//			List<Long> boardIds = request.get("boardIds");
+//			if (boardIds == null || boardIds.isEmpty()) {
+//				return ResponseEntity.badRequest().body("삭제할 게시글이 선택되지 않았습니다.");
+//			}
+//			boardService.deleteBoards(boardIds);
+//			return ResponseEntity.ok("선택한 게시글 삭제 성공");
+//		} catch (Exception e) {
+//			log.error("선택한 게시글 삭제 실패: {}", e.getMessage(), e);
+//			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("게시글 삭제 실패: " + e.getMessage());
+//		}
+//	}
+//	/**
+//	 * 전체 댓글 조회 (userEmail 포함)
+//	 */
+//	@GetMapping("/comments/all")
+//	public ResponseEntity<?> getAllComments() {
+//	    try {
+//	        List<BoardComment> comments = boardService.getAllComments();
+//	        return ResponseEntity.ok(comments);
+//	    } catch (Exception e) {
+//	        log.error("전체 댓글 조회 실패: {}", e.getMessage(), e);
+//	        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("전체 댓글 조회 실패");
+//	    }
+//	}
+//
+//	/**
+//	 * 선택한 댓글 삭제
+//	 * 프론트에서는 axios.delete 로 commentIds 를 JSON 바디에 담아 전송
+//	 */
+//	@DeleteMapping("/comments/remove")
+//	public ResponseEntity<?> deleteComments(@RequestBody Map<String, List<Long>> request) {
+//	    try {
+//	        List<Long> commentIds = request.get("commentIds");
+//	        if (commentIds == null || commentIds.isEmpty()) {
+//	            return ResponseEntity.badRequest().body("삭제할 댓글이 선택되지 않았습니다.");
+//	        }
+//	        boardService.deleteComments(commentIds);
+//	        return ResponseEntity.ok("선택한 댓글 삭제 성공");
+//	    } catch (Exception e) {
+//	        log.error("선택한 댓글 삭제 실패: {}", e.getMessage(), e);
+//	        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("댓글 삭제 실패: " + e.getMessage());
+//	    }
+//	}
+//	
+//	/** ✅ 특정 게시판에서 특정 유저의 댓글 조회 */
+//	@GetMapping("/{type}/comments/{userId}")
+//	public ResponseEntity<?> getUserCommentsByType(@PathVariable String type, @PathVariable Long userId) {
+//	    try {
+//	        List<BoardComment> comments = boardService.getUserCommentsByType(type, userId);
+//	        return ResponseEntity.ok(comments);
+//	    } catch (Exception e) {
+//	        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("댓글 조회 실패: " + e.getMessage());
+//	    }
+//	}
+//
+//	/** ✅ 특정 유저의 모든 댓글 조회 */
+//	@GetMapping("/comments/{userId}")
+//	public ResponseEntity<?> getAllUserComments(@PathVariable Long userId) {
+//	    try {
+//	        List<BoardComment> comments = boardService.getAllUserComments(userId);
+//	        return ResponseEntity.ok(comments);
+//	    } catch (Exception e) {
+//	        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("댓글 조회 실패: " + e.getMessage());
+//	    }
+//	}
+//
+//
+//
+//}
