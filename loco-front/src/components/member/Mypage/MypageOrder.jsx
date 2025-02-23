@@ -63,12 +63,12 @@ const MypageOrder = () => {
     try {
       const response = await axios.post(
         `${import.meta.env.VITE_API_URL}/api/market/products-by-ids`,
-        { productIds }
+        productIds // ✅ productIds 배열을 직접 전송
       );
 
       const nameMap = {};
       response.data.forEach((product) => {
-        nameMap[product.productId] = product.productName; // ✅ 상품 ID -> 상품명 매칭
+        nameMap[product.productId] = product.productName;
       });
 
       setProductNames(nameMap);
@@ -79,11 +79,12 @@ const MypageOrder = () => {
 
   /** ✅ 검색 필터 적용 */
   useEffect(() => {
-    const filtered = orders.filter((order) =>
-      (productNames[order.productId] ?? '상품 정보 없음')
-        .toLowerCase()
-        .includes(search.toLowerCase())
-    );
+    const filtered = orders.filter((order) => {
+      const productName =
+        order.productName || productNames[order.productId] || '상품 정보 없음';
+      return productName.toLowerCase().includes(search.toLowerCase());
+    });
+
     setFilteredOrders(filtered);
     setCurrentPage(1); // 검색 시 첫 페이지로 이동
   }, [search, orders, productNames]);
