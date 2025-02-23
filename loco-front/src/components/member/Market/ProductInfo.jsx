@@ -79,6 +79,10 @@ const ProductInfo = () => {
   );
   console.log('✅ isOwner:', isOwner);
 
+  // ✅ 상품 상태 설정
+  const statusLabel = product.status === 'SOLD_OUT' ? '판매 완료' : '판매중';
+  const statusClass = product.status === 'SOLD_OUT' ? 'sold-out' : 'available';
+
   // 이미지 URL 설정
   const images =
     product.images && product.images.length > 0
@@ -196,6 +200,7 @@ const ProductInfo = () => {
             {product.price.toLocaleString()}원
           </p>
           <p className="product-info-seller">판매자: {sellerName}</p>
+          <p className={`product-info-status ${statusClass}`}>{statusLabel}</p>
 
           <div className="product-info-map-container">
             <p className="product-info-location">
