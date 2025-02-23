@@ -28,4 +28,7 @@ public interface PaymentMapper {
 
 	// ✅ 주문 삭제 (새롭게 추가)
 	void deleteOrders(@Param("orderIds") List<String> orderIds);
+
+	// ✅ 주문 ID로 해당 상품 ID 조회 (결제 승인 후 상품 상태 변경에 필요)
+	String getProductIdByOrderId(@Param("orderId") String orderId);
 }
