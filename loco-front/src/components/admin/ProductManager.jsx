@@ -8,7 +8,7 @@ const ProductManager = () => {
   const [products, setProducts] = useState([]);
   const [searchTerm, setSearchTerm] = useState('');
   const [currentPage, setCurrentPage] = useState(1);
-  const itemsPerPage = 10;
+  const itemsPerPage = 5;
   const [selectedProducts, setSelectedProducts] = useState(new Set());
   const [selectAll, setSelectAll] = useState(false);
 

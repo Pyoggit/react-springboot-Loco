@@ -8,7 +8,7 @@ const PayManager = () => {
   const [selectedPayments, setSelectedPayments] = useState(new Set());
   const [selectAll, setSelectAll] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
-  const itemsPerPage = 10;
+  const itemsPerPage = 5;
 
   // ✅ 주문 목록 불러오기 (DB에서 가져오기)
   useEffect(() => {
