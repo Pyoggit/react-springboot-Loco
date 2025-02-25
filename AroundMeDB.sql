@@ -88,18 +88,20 @@ CREATE SEQUENCE USERS_SEQ START WITH 1 INCREMENT BY 1;
 
 -- 상품 테이블 (PRODUCT) ---------------------------------------------------------------------------------------------
 CREATE TABLE PRODUCT (
-    PRODUCT_ID NUMBER PRIMARY KEY,                          -- PK 상품 고유키
-    PRODUCT_NAME VARCHAR2(255) NOT NULL,                    -- 상품명
-    PRICE NUMBER(10, 2) NOT NULL,                           -- 상품 가격
-    PRODUCT_CATEGORY VARCHAR2(100) NOT NULL,                -- 상품 카테고리
-    DESCRIPTION CLOB NOT NULL,                              -- 상품 설명
-    PRODUCT_REGDATE TIMESTAMP DEFAULT CURRENT_TIMESTAMP,    -- 상품 등록일자
-    USER_ID NUMBER NOT NULL,                                -- FK 판매자 유저 식별자
-    PRODUCT_ADDRESS VARCHAR2(255),                          -- 거래 장소 주소
-    PRODUCT_LAT NUMBER(10, 6),                              -- 위도
-    PRODUCT_LNG NUMBER(10, 6),                              -- 경도
-    PRODUCT_PLACE_ID VARCHAR2(100)                          -- Google Places API Place ID-- 모임 상태
+    PRODUCT_ID NUMBER PRIMARY KEY,                              -- PK 상품 고유키
+    PRODUCT_NAME VARCHAR2(255) NOT NULL,                        -- 상품명
+    PRICE NUMBER(10, 2) NOT NULL,                               -- 상품 가격
+    PRODUCT_CATEGORY VARCHAR2(100) NOT NULL,                    -- 상품 카테고리
+    DESCRIPTION CLOB NOT NULL,                                  -- 상품 설명
+    PRODUCT_REGDATE TIMESTAMP DEFAULT CURRENT_TIMESTAMP,        -- 상품 등록일자
+    USER_ID NUMBER NOT NULL,                                    -- FK 판매자 유저 식별자
+    PRODUCT_ADDRESS VARCHAR2(255),                              -- 거래 장소 주소
+    PRODUCT_LAT NUMBER(10, 6),                                  -- 위도
+    PRODUCT_LNG NUMBER(10, 6),                                  -- 경도
+    PRODUCT_PLACE_ID VARCHAR2(100),                             -- Google Places API Place ID
+    PRODUCT_STATUS VARCHAR2(20) DEFAULT 'AVAILABLE' NOT NULL    -- 상품상태
 );
+
 ALTER TABLE PRODUCT ADD CONSTRAINT PRODUCT_USER_ID FOREIGN KEY (USER_ID) REFERENCES USERS(USER_ID) ON DELETE CASCADE;
 CREATE SEQUENCE PRODUCT_SEQ START WITH 1 INCREMENT BY 1;
 
@@ -240,4 +242,3 @@ CREATE TABLE CHAT_MESSAGES (
 ALTER TABLE CHAT_MESSAGES ADD CONSTRAINT FK_CHATMESSAGE_ROOM FOREIGN KEY (ROOM_ID) REFERENCES CHAT_ROOMS(ROOM_ID) ON DELETE CASCADE;
 ALTER TABLE CHAT_MESSAGES ADD CONSTRAINT FK_CHATMESSAGE_SENDER FOREIGN KEY (SENDER_ID) REFERENCES USERS(USER_ID) ON DELETE CASCADE;
 CREATE SEQUENCE CHAT_MESSAGES_SEQ START WITH 1 INCREMENT BY 1;
-
