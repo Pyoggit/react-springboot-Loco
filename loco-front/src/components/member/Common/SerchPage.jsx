@@ -32,10 +32,13 @@ function SearchPage() {
     try {
       setIsLoading(true);
 
-      // ✅ 제목이 비어있으면 전체 데이터를 반환 (검색어 없으면 전체 조회)
-      const params = Object.fromEntries(
-        Object.entries(filters).filter(([_, v]) => v !== null && v !== "")
-      );
+      const params = {
+        clubTitle: filters.clubTitle || "",
+        category: filters.category || "",
+        city: filters.city || "",
+        district: filters.district || "",
+        startDate: filters.startDate || "",
+      };
 
       console.log("🔍 검색 요청 데이터:", params);
 
@@ -60,10 +63,15 @@ function SearchPage() {
   const handleCityChange = (event) => {
     const value = event.target.value;
     setSelectedCity(value);
+
+    // 선택한 도시가 변경되면, 해당 도시의 첫 번째 구를 자동 선택
+    const firstDistrict =
+      areaData.find((region) => region.city === value)?.districts?.[0] || "";
+
     setFilters((prevFilters) => ({
       ...prevFilters,
       city: value,
-      district: "",
+      district: firstDistrict, // ✅ 첫 번째 구 자동 선택
     }));
   };
 
@@ -146,7 +154,13 @@ function SearchPage() {
           </div>
 
           <div className="search-result-filter-apply-buttons">
-            <button className="search-result-apply-button" onClick={fetchClubs}>
+            <button
+              className="search-result-apply-button"
+              onClick={() => {
+                console.log("📌 필터 적용됨:", filters);
+                fetchClubs();
+              }}
+            >
               필터 적용
             </button>
           </div>
