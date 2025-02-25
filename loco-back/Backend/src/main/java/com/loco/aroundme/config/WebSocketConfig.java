@@ -20,7 +20,7 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
     @Override
     public void configureMessageBroker(MessageBrokerRegistry registry) {
         registry.enableSimpleBroker("/topic"); 
-        registry.setApplicationDestinationPrefixes("/app"); // 클라이언트 전송 경로 "/app/chat/send"와 일치하도록 수정
+        registry.setApplicationDestinationPrefixes("/app"); 
     }
 
 }
