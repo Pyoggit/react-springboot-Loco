@@ -8,6 +8,8 @@ import MypageMain from "../../components/member/Mypage/MypageMain";
 import SerchPage from "../../components/member/Common/SerchPage";
 import MarketPage from "./MarketPage";
 import ChatRoomPopup from "../../components/member/Common/ChatRoomPopup";
+import GreetingPage from "../../components/member/Common/GreetingPage";
+import UserGuidePage from "../../components/member/Common/UserGuidePage";
 import { ChatProvider } from "@/utils/ChatContext";
 
 //일반사용자 화면
@@ -26,6 +28,8 @@ const Member = () => {
           <Route path="/mypage/*" element={<MypageMain />} />
           <Route path="/market/*" element={<MarketPage />} />
           <Route path="/circle/*" element={<CirclePage />} />
+          <Route path="/greeting" element={<GreetingPage />} />
+          <Route path="/user-guide" element={<UserGuidePage />} />
         </Route>
       </Routes>
     </ChatProvider>
