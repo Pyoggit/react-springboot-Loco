@@ -1,1 +1,57 @@
-.vite/
+# --- [ Node.js (React) 관련 ] ---
+node_modules/
+.vite/ 
+dist/
+build/
+.env
+.env.local
+.npmrc
+.yarn.lock
+.pnpm-debug.log
+package-lock.json
+yarn-error.log
+.DS_Store
+*.log
+*.swp
+*.swo
+
+# --- [ Java (Spring Boot) 관련 ] ---
+target/
+bin/
+*.iml
+*.class
+*.war
+*.jar
+*.log
+hs_err_pid*
+!src/main/resources/application*.yml
+!src/main/resources/application*.properties
+src/main/resources/application.yml
+src/main/resources/application.properties
+
+# --- [ Eclipse 설정 파일 ] ---
+.idea/
+*.ipr
+*.iws
+*.class
+*.log
+*.swp
+*.swo
+*.DS_Store
+.gradle/
+out/
+*.classpath
+*.project
+*.settings/
+*.factorypath
+spring.log
+logs/
+
+# --- [ OS별 불필요한 파일 ] ---
+Thumbs.db
+.DS_Store
+*.~lock
+._*
+
+# --- [ Git 충돌 해결 잔여 파일 ] ---
+*.orig
