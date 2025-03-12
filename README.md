@@ -44,6 +44,17 @@
 
 ---
 
+## 📊 E-R Diagram
+
+<p align="center">
+<img width="90%" src="https://github.com/user-attachments/assets/6cc36970-6172-4065-bd1a-972483a3684b">
+
+---
+
+## 💻 실행 결과
+
+---
+
 ## 🔒 보안
 - 🔹 인증/인가 (JWT, Spring Security)
 - 🔹 JWT 만료
