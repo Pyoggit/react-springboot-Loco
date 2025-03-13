@@ -51,11 +51,6 @@ public class VerificationCodeService {
         return isValid;
     }
 
-    // 수동 삭제 (보안 강화)
-    public void removeCode(String email) {
-        verificationCodes.remove(email);
-    }
-
     // ✅ 일정 주기로 만료된 인증번호 자동 삭제 (1분마다 실행)
     @Scheduled(fixedRate = 60 * 1000)
     public void cleanupExpiredCodes() {
@@ -69,7 +64,12 @@ public class VerificationCodeService {
             }
         }
     }
-
+    
+    // 수동 삭제 (보안 강화)
+    public void removeCode(String email) {
+        verificationCodes.remove(email);
+    }
+    
     // 내부 클래스로 인증번호 정보 관리
     private static class VerificationInfo {
         String code;
@@ -80,4 +80,6 @@ public class VerificationCodeService {
             this.expirationTime = expirationTime;
         }
     }
+    
+  
 }
