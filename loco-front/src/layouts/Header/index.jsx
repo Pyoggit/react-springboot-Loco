@@ -214,14 +214,6 @@ export default function Header() {
               <div className="user-email">{loginUser?.email}</div>
             </div>
           </div>
-          {/* <div className="actions">
-            <div className="mypage-button" onClick={() => navigate("/mypage")}>
-              마이페이지
-            </div>
-            <div className="logout-button" onClick={handleLogout}>
-              로그아웃
-            </div>
-          </div> */}
           <div className="actions">
             {isAdmin ? ( // ✅ 관리자면 어드민 페이지 버튼
               <div
@@ -250,50 +242,6 @@ export default function Header() {
       </div>
     );
   };
-  /////////////////////////////////////////////////////////////////////////////////////////////////////////
-  //    return isLogin ? (
-  //     <div
-  //       className={`user-info ${isDropdownOpen ? "open" : ""}`}
-  //       onClick={() => setDropdownOpen(!isDropdownOpen)}
-  //     >
-  //       <span className="user-name">
-  //         {loginUser?.userName}님, Welcome!
-  //       </span>
-  //       <FontAwesomeIcon icon={faSquareCaretDown} className="dropdown-icon" />
-  //       <div className="user-dropdown">
-  //         <div className="user-profile">
-  //           <div
-  //             className="profile-pic"
-  //             style={{ backgroundImage: `url(${profileUrl})` }}
-  //           ></div>
-
-  //           <div className="user-details">
-  //             <div className="user-name">{loginUser?.userName}</div>
-  //             <div className="user-email">{loginUser?.email}</div>
-  //           </div>
-  //         </div>
-  //         <div className="actions">
-  //           {isAdmin ? ( // ✅ 관리자면 어드민 페이지 버튼
-  //             <div className="mypage-button" onClick={() => navigate("/adminpage")}>
-  //               어드민페이지
-  //             </div>
-  //           ) : (
-  //             <div className="mypage-button" onClick={() => navigate("/mypage")}>
-  //               마이페이지
-  //             </div>
-  //           )}
-  //           <div className="logout-button" onClick={handleLogout}>
-  //             로그아웃
-  //           </div>
-  //         </div>
-  //       </div>
-  //     </div>
-  //   ) : (
-  //     <div className="team-button" onClick={() => navigate("/login")}>
-  //       로그인
-  //     </div>
-  //   );
-  // };
 
   function SearchButton() {
     const searchButtonRef = useRef(null);
