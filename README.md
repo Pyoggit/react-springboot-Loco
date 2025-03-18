@@ -46,7 +46,7 @@
 ## 📊 데이터 모델링
 ### 🔗 ERD  
 <p align="center">
-<img width="90%" src="https://github.com/user-attachments/assets/6cc36970-6172-4065-bd1a-972483a3684b">
+<img src="https://github.com/user-attachments/assets/6cc36970-6172-4065-bd1a-972483a3684b">
 
 ---
 
