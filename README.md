@@ -50,9 +50,9 @@
 
 ---
 
-## 💻 실행 화면
+## 💻 실행 화면(YouTube Linked)
 
-### (준비중...)
+### [![YouTube Video](https://img.youtube.com/vi/2CA6hVGyeoo/0.jpg)](https://youtu.be/2CA6hVGyeoo)
 
 ---
 
