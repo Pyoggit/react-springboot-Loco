@@ -1,4 +1,4 @@
-# Loco 팀 프로젝트
+# <img src="https://github.com/user-attachments/assets/7f06fa30-e4bf-4454-b4a9-cffa4541b705" width="40"> Loco 팀 프로젝트
 ---
 
 ## 📖 프로젝트 개요
